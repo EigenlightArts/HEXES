@@ -1,10 +1,10 @@
 /natu
 /nimcache
-/out
+/output
 
-.elf
-.elf.map
-.gba
-.sav
-.h
-.bin
+*.elf
+*.elf.map
+*.gba
+*.sav
+*.h
+*.bin
