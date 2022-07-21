@@ -12,6 +12,7 @@ dispcnt = initDispCnt(obj = true, obj1d = true)
 
 irq.enable(iiVBlank)
 
+# TODO(Kal): Split this off to its own file
 # PlayerShip
 type
   PlayerShip = object
@@ -53,7 +54,7 @@ proc draw(self: PlayerShip) =
       tileId = self.tileId
       palId = self.paletteId
 
-# player control
+# ship controls
 proc controls(self: var PlayerShip) =
   if keyIsDown(kiLeft):
     self.angle += 350
@@ -61,7 +62,7 @@ proc controls(self: var PlayerShip) =
     self.angle -= 350
   # if keyIsDown(kiA): shoot()
 
-# calculate and update sprite position
+# calculate and update ship position
 proc updatePos(self: var PlayerShip) =
   self.pos.x = self.centerPoint.x + toInt(luCos(
       self.angle) * self.orbitRadius)
