@@ -1,19 +1,9 @@
 import natu/[video, bios, irq, input, math, utils, graphics, oam]
 import utils/objs
 
-# # Memory locations used by our sprite:
-# const oid = 0 # OAM entry number
-
-
-
-
- # var angle: Angle = 0
- # var speed: Angle = 2
- # var velocity = vec2f()
-
-
-# ship position vector
-# var pos =
+# background color, approximating eigengrau
+# TODO(Kal): change this to rgb8() later
+bgColorBuf[0] = rgb5(3, 3, 4) 
 
 # enable VBlank interrupt so we can wait for the end of the frame without burning CPU cycles
 irq.enable(iiVBlank)
@@ -32,8 +22,8 @@ type
 
 # constructor - create a ship object
 proc initPlayerShip(p: Vec2i): PlayerShip =
-  result.initialised = true   # you should add an extra field
-  result.orbitRadius = 75
+  result.initialised = true # you should add an extra field
+  result.orbitRadius = 67
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
   result.centerPoint = vec2i(120, 80)
@@ -47,57 +37,57 @@ proc `=destroy`(self: var PlayerShip) =
     freeObjTiles(self.tileId)
     releaseObjPal(gfxShipTemp)
 
-proc `=copy`(dest: var PlayerShip; source: PlayerShip) {.error:"Not implemented".}
+proc `=copy`(dest: var PlayerShip; source: PlayerShip) {.error: "Not implemented".}
 
+# draw ship sprite and all the affine snazziness
 proc draw(self: PlayerShip) =
   copyFrame(addr objTileMem[self.tileId], gfxShipTemp, 0)
   withObjAndAff:
-    
-# create a ship:
-var playerShipInstance = initPlayerShip(vec2i(120, 80))
+    let delta = self.centerPoint - self.pos
+    aff.setToRotationInv(ArcTan2(int16(delta.x), int16(delta.y)))
+    obj.init:
+      mode = omAff
+      affId = affId
+      pos = self.pos - vec2i(gfxShipTemp.width div 2, gfxShipTemp.height div 2)
+      size = gfxShipTemp.size
+      tileId = self.tileId
+      palId = self.paletteId
 
+# player control
+proc controls(self: var PlayerShip) =
+  if keyIsDown(kiLeft):
+    self.angle += 350
+  if keyIsDown(kiRight):
+    self.angle -= 350
+  # if keyIsDown(kiA): shoot()
 
+# calculate and update sprite position
+proc updatePos(self: var PlayerShip) =
+  self.pos.x = self.centerPoint.x + toInt(luCos(
+      self.angle) * self.orbitRadius)
+  self.pos.y = self.centerPoint.y + toInt(luSin(
+      self.angle) * self.orbitRadius)
 
-# # if you want to destroy the ship:
-# reset(myShip)
+# create a ship, 75 is orbitRadius:
+var playerShipInstance = initPlayerShip(vec2i(75, 0))
 
-# let pal = acquireObjPal(gfxShipTemp)
-# let tid = allocObjTiles(gfxShipTemp)
-
-# copyFrame(addr objTileMem[tid], gfxShipTemp, 0)
-
-
-# var playerShip = PlayerShip(orbitRadius: orbitRadius, angle: 0,
-#     centerPoint: screenCenter, pos: vec2i(orbitRadius, 0), tileId: tid,
-#     paletteId: pal)
-
-
-
-let shipPlayer = addr objMem[0]
-shipPlayer[].init:
-  mode = omAff
-  pos = pos
-  size = gfxShipTemp.size
-  tid = tid
-  pal = pal
 
 while true:
   # update key states
   keyPoll()
 
   # ship controls
-  if keyIsDown(kiLeft):
-    angle += 350
-  if keyIsDown(kiRight):
-    angle -= 350
-  pos.x = center.x + toInt(luCos(angle) * radius) - 8
-  pos.y = center.y + toInt(luSin(angle) * radius) - 8
-  # if keyIsDown(kiA): shoot()
+  playerShipInstance.controls()
 
   # wait for the end of the frame
   VBlankIntrWait()
-  playerShipInstance.draw()
-  flushPals()
 
-  # update sprite position
-  shipPlayer[].pos = pos
+  # update ship position
+  playerShipInstance.updatePos()
+  # draw the ship
+  playerShipInstance.draw()
+
+  # copy the PAL RAM buffer into the real PAL RAM.
+  flushPals()
+  # hide all the objects that weren't used
+  oamUpdate()
