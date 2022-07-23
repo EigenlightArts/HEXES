@@ -11,14 +11,16 @@ type Bullet = object
 
 type Shooter* = object
   bullets: seq[Bullet]
+  bulletsLimit: int
   bulletsTileId: int
   bulletsPalId: int
 
-proc initShooter*(self: var Shooter) =
-  self.bulletsTileId = allocObjTiles(gfxBulletTemp)
-  copyFrame(addr objTileMem[self.bulletsTileId], gfxBulletTemp, 0)
-  self.bulletsPalId = acquireObjPal(gfxBulletTemp)
-  self.bullets.setLen(0)
+proc initShooter*(limit = 5): Shooter =
+  result.bulletsTileId = allocObjTiles(gfxBulletTemp)
+  copyFrame(addr objTileMem[result.bulletsTileId], gfxBulletTemp, 0)
+  result.bulletsPalId = acquireObjPal(gfxBulletTemp)
+  result.bulletsLimit = limit
+  result.bullets.setLen(0)
 
 proc destroy*(self: var Shooter) =
   freeObjTiles(self.bulletsTileId)
@@ -42,9 +44,10 @@ proc draw(bullets: Bullet, shooter: Shooter) =
       size = s16x16
     )
 
-proc addBullet*(self: var Shooter, pos: Vec2i = vec2i(0,0), index = 0, showTimer = 25, fadeTimer = 10) = 
+proc fireBullet*(self: var Shooter, pos: Vec2i = vec2i(0,0), index = 0, showTimer = 25, fadeTimer = 10) = 
   
   var bullets: Bullet
+  var bulletsFired: int
   
   bullets.index = index
   bullets.pos = pos
@@ -53,7 +56,10 @@ proc addBullet*(self: var Shooter, pos: Vec2i = vec2i(0,0), index = 0, showTimer
   bullets.fadeTimerMax = fadeTimer
   bullets.finished = false
   
-  self.bullets.insert(bullets)
+  if bulletsFired <= self.bulletsLimit:
+    self.bullets.insert(bullets)
+    bulletsFired += 1
+  # TODO(Kal): else play sfx
   
 
 proc update*(self: var Shooter) =
@@ -70,5 +76,3 @@ proc update*(self: var Shooter) =
 proc draw*(self: Shooter) =
   for bullets in self.bullets:
     bullets.draw(self)
-
-

@@ -13,11 +13,7 @@ dispcnt = initDispCnt(obj = true, obj1d = true)
 
 irq.enable(iiVBlank)
 
-# create a ship, 75 is orbitRadius:
 var playerShipInstance = initPlayerShip(vec2i(75, 0))
-# create a bullet where the playerShip is
-# var bulletInstance = initBullet(playerShipInstance.pos)
-
 
 while true:
   # update key states

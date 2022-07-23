@@ -5,12 +5,12 @@ import bullet
 #TODO(Kal): Use the `Graphics` enum instead of calling gfxShipTemp, etc directly
 
 type
-  PlayerShip = object
+  PlayerShip* = object
     initialised: bool
     orbitRadius, tileId, paletteId: int
     angle: Angle
     centerPoint, pos: Vec2i
-
+    
     shooter: Shooter
 
 # constructor - create a ship object
@@ -23,7 +23,7 @@ proc initPlayerShip*(p: Vec2i): PlayerShip =
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
 
-  result.shooter.initShooter()
+  result.shooter = initShooter()
   
 
 # destructor - free the resources used by a ship object
@@ -38,6 +38,8 @@ proc `=copy`*(dest: var PlayerShip; source: PlayerShip) {.error: "Not implemente
 
 # draw ship sprite and all the affine snazziness
 proc draw*(self: PlayerShip) =
+  self.shooter.draw()
+
   copyFrame(addr objTileMem[self.tileId], gfxShipTemp, 0)
   withObjAndAff:
     let delta = self.centerPoint - self.pos
@@ -57,10 +59,7 @@ proc controls*(self: var PlayerShip) =
   if keyIsDown(kiRight):
     self.angle -= 350
   if keyIsDown(kiA):
-    var bulletsFired: int
-
-    if bulletsFired <= 3:
-      self.shooter.addBullet(self.pos)
+    self.shooter.fireBullet(self.pos)
 
 # calculate and update ship position
 proc updatePos*(self: var PlayerShip) =
@@ -68,3 +67,4 @@ proc updatePos*(self: var PlayerShip) =
       self.angle) * self.orbitRadius)
   self.pos.y = self.centerPoint.y + toInt(luSin(
       self.angle) * self.orbitRadius)
+  self.shooter.update()
