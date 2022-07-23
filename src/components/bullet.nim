@@ -1,50 +1,74 @@
-import natu/[math, graphics, video, bios]
+import natu/[math, graphics, video]
 import ../utils/objs
 
-type
-  Bullet* = object
-    initialised: bool
-    limit, tileId, paletteId: int
-    angle: Angle
-    centerPoint, pos: Vec2i
+type Bullet = object
+  pos: Vec2i
+  index: int
+  finished: bool
+  showTimer: int
+  fadeTimer: int
+  fadeTimerMax: int
 
-# constructor - create a bullet object
-proc initBullet*(p: Vec2i): Bullet =
-  result.initialised = true # you should add an extra field
-  result.limit = 3
-  result.pos = p
-  result.angle = 0
-  result.centerPoint = vec2i(120, 80)
-  result.tileId = allocObjTiles(gfxBulletTemp)
-  result.paletteId = acquireObjPal(gfxBulletTemp)
+type Shooter* = object
+  bullets: seq[Bullet]
+  bulletsTileId: int
+  bulletsPalId: int
 
-# destructor - free the resources used by a bullet object
-proc `=destroy`(self: var Bullet) =
-  if self.initialised:
-    self.initialised = false
-    freeObjTiles(self.tileId)
-    releaseObjPal(gfxBulletTemp)
+proc initShooter*(self: var Shooter) =
+  self.bulletsTileId = allocObjTiles(gfxBulletTemp)
+  copyFrame(addr objTileMem[self.bulletsTileId], gfxBulletTemp, 0)
+  self.bulletsPalId = acquireObjPal(gfxBulletTemp)
+  self.bullets.setLen(0)
 
-proc `=copy`(dest: var Bullet; source: Bullet) {.error: "Not implemented".}
+proc destroy*(self: var Shooter) =
+  freeObjTiles(self.bulletsTileId)
+  releaseObjPal(gfxBulletTemp)
 
-# draw bullet sprite and all the affine snazziness
-proc draw(self: Bullet) =
-  copyFrame(addr objTileMem[self.tileId], gfxBulletTemp, 0)
+proc update(bullets: var Bullet) =
+  dec bullets.showTimer
+  if bullets.showTimer <= 0:
+    dec bullets.fadeTimer
+    if bullets.fadeTimer <= 0: bullets.finished = true
+
+proc draw(bullets: Bullet, shooter: Shooter) =
   withObjAndAff:
-    let delta = self.centerPoint - self.pos
-    aff.setToRotationInv(ArcTan2(int16(delta.x), int16(delta.y)))
-    obj.init:
-      mode = omAff
-      affId = affId
-      pos = self.pos - vec2i(gfxBulletTemp.width div 2,
-          gfxBulletTemp.height div 2)
-      size = gfxBulletTemp.size
-      tileId = self.tileId
-      palId = self.paletteId
+    aff.setToScaleInv(fp 1, (fp bullets.fadeTimer / bullets.fadeTimerMax).clamp(fp 0, fp 1))
+    obj.init(
+      mode = omAff,
+      aff = affId,
+      pos = bullets.pos,
+      tid = shooter.bulletsTileId + (bullets.index),
+      pal = shooter.bulletsPalId,
+      size = s16x16
+    )
 
-# calculate and update ship position
-proc updatePos(self: var Bullet) =
-  self.pos.x += toInt(luCos(
-      self.angle))
-  self.pos.y += toInt(luSin(
-      self.angle))
+proc addBullet*(self: var Shooter, pos: Vec2i = vec2i(0,0), index = 0, showTimer = 25, fadeTimer = 10) = 
+  
+  var bullets: Bullet
+  
+  bullets.index = index
+  bullets.pos = pos
+  bullets.showTimer = showTimer
+  bullets.fadeTimer = fadeTimer
+  bullets.fadeTimerMax = fadeTimer
+  bullets.finished = false
+  
+  self.bullets.insert(bullets)
+  
+
+proc update*(self: var Shooter) =
+  var i = 0
+  
+  while i < self.bullets.len:
+    self.bullets[i].update()
+    if self.bullets[i].finished:
+      self.bullets.delete(i)
+    else:
+      inc i
+  
+
+proc draw*(self: Shooter) =
+  for bullets in self.bullets:
+    bullets.draw(self)
+
+

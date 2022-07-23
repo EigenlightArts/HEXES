@@ -16,6 +16,7 @@ irq.enable(iiVBlank)
 # create a ship, 75 is orbitRadius:
 var playerShipInstance = initPlayerShip(vec2i(75, 0))
 # create a bullet where the playerShip is
+# var bulletInstance = initBullet(playerShipInstance.pos)
 
 
 while true:
@@ -25,12 +26,11 @@ while true:
   # ship controls
   playerShipInstance.controls()
 
-  # update ship position
-  playerShipInstance.updatePos()
-
   # wait for the end of the frame
   VBlankIntrWait()
-  
+
+  # update ship position
+  playerShipInstance.updatePos()
   # draw the ship
   playerShipInstance.draw()
 

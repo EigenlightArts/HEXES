@@ -11,7 +11,9 @@ if projectPath() == thisDir() / main:
   # This runs only when compiling the project file:
   gbaCfg()                             # set C compiler + linker options for GBA target
   switch "os", "standalone"
-  switch "gc", "none"
+  switch "gc", "arc"
+  switch "define", "useMalloc"
+  switch "define", "noSignalHandler"
   switch "checks", "off"               # toggle assertions, bounds checking, etc.
   switch "path", projectDir()          # allow imports relative to the main file
   switch "header"                      # output "{project}.h"

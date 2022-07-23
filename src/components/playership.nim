@@ -2,24 +2,28 @@ import natu/[math, graphics, video, bios, input]
 import ../utils/objs
 import bullet
 
+#TODO(Kal): Use the `Graphics` enum instead of calling gfxShipTemp, etc directly
+
 type
   PlayerShip = object
     initialised: bool
     orbitRadius, tileId, paletteId: int
-    bullet: Bullet
     angle: Angle
     centerPoint, pos: Vec2i
 
+    shooter: Shooter
+
 # constructor - create a ship object
-proc initPlayerShip*(p: Vec2i, b: Bullet): PlayerShip =
+proc initPlayerShip*(p: Vec2i): PlayerShip =
   result.initialised = true # you should add an extra field
   result.orbitRadius = 67
   result.pos = p
-  result.bullet = b
   result.angle = 0
   result.centerPoint = vec2i(120, 80)
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
+
+  result.shooter.initShooter()
   
 
 # destructor - free the resources used by a ship object
@@ -28,6 +32,7 @@ proc `=destroy`*(self: var PlayerShip) =
     self.initialised = false
     freeObjTiles(self.tileId)
     releaseObjPal(gfxShipTemp)
+    self.shooter.destroy()
 
 proc `=copy`*(dest: var PlayerShip; source: PlayerShip) {.error: "Not implemented".}
 
@@ -52,11 +57,10 @@ proc controls*(self: var PlayerShip) =
   if keyIsDown(kiRight):
     self.angle -= 350
   if keyIsDown(kiA):
-    var bulletFired: int
-    var bulletInstance = self.bullet.initBullet(self.pos)
+    var bulletsFired: int
 
-    if bulletFired <= bulletInstance.limit:
-        bulletInstance.updatePos()
+    if bulletsFired <= 3:
+      self.shooter.addBullet(self.pos)
 
 # calculate and update ship position
 proc updatePos*(self: var PlayerShip) =
