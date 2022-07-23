@@ -2,11 +2,11 @@
 
 WIP GBA GAME.
 
-## Special Thanks:
+## Special Thanks
 
-- Exetotl for creating Natu
-- Justburner for the Math Help
+- Exetotl for creating Natu and code help
+- Justburner for the math help
 
 ## License
 
-MIT
+[MIT](LICENSE)
