@@ -59,6 +59,7 @@ proc controls*(self: var PlayerShip) =
   if keyIsDown(kiRight):
     self.angle -= 350
   if keyIsDown(kiA):
+    # TODO(Kal): Add cooldown timer
     self.shooter.fireBullet(self.pos)
 
 # calculate and update ship position
