@@ -1,4 +1,4 @@
-import natu/[math, graphics, video]
+import natu/[math, graphics, video, mgba]
 import ../utils/objs
 
 type Bullet = object
@@ -28,6 +28,7 @@ proc destroy*(self: var Shooter) =
   releaseObjPal(gfxBulletTemp)
 
 proc update(bullets: var Bullet) =
+  printf("in bullet.nim proc update x = %l, y = %l", bullets.pos.x.toInt(), bullets.pos.y.toInt())
   bullets.pos.x = bullets.pos.x - fp(luCos(
       bullets.angle))
   bullets.pos.y = bullets.pos.y - fp(luSin(
@@ -43,11 +44,13 @@ proc draw(bullets: Bullet, shooter: Shooter) =
     obj.init(
       mode = omAff,
       aff = affId,
-      pos = vec2i(bullets.pos),
+      pos = vec2i(bullets.pos) - vec2i(gfxBulletTemp.width div 2, gfxBulletTemp.height div 2),
       tid = shooter.bulletsTileId + (bullets.index),
       pal = shooter.bulletsPalId,
-      size = s16x16
+      size = gfxBulletTemp.size
     )
+  printf("in bullet.nim proc draw: x = %l, y = %l", bullets.pos.x.toInt(), bullets.pos.y.toInt())
+  
 
 proc fireBullet*(self: var Shooter, pos: Vec2f = vec2f(0, 0), index = 0,
     angle: Angle = 0, showTimer = 25, fadeTimer = 10) =
@@ -56,7 +59,7 @@ proc fireBullet*(self: var Shooter, pos: Vec2f = vec2f(0, 0), index = 0,
   var bulletsFired: int
 
   bullets.index = index
-  bullets.pos = pos - vec2f(gfxBulletTemp.width div 2, gfxBulletTemp.height div 2)
+  bullets.pos = pos
   bullets.angle = angle
   bullets.showTimer = showTimer
   bullets.fadeTimer = fadeTimer
@@ -64,6 +67,7 @@ proc fireBullet*(self: var Shooter, pos: Vec2f = vec2f(0, 0), index = 0,
   bullets.finished = false
 
   if bulletsFired <= self.bulletsLimit:
+    printf("in bullet.nim proc fireBullet: x = %l, y = %l", bullets.pos.x.toInt(), bullets.pos.y.toInt())
     self.bullets.insert(bullets)
     bulletsFired += 1
   # TODO(Kal): else play sfx

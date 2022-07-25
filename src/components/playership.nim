@@ -1,4 +1,4 @@
-import natu/[math, graphics, video, bios, input]
+import natu/[math, graphics, video, bios, input, mgba]
 import ../utils/objs
 import bullet
 
@@ -52,6 +52,8 @@ proc draw*(self: PlayerShip) =
       size = gfxShipTemp.size
       tileId = self.tileId
       palId = self.paletteId
+  
+  printf("in playership.nim proc draw x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
 
 # ship controls
 proc controls*(self: var PlayerShip) =
@@ -61,12 +63,15 @@ proc controls*(self: var PlayerShip) =
     self.angle -= 350
   if keyHit(kiA):
     # TODO(Kal): Add Bullet limit
+    printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
     self.shooter.fireBullet(pos=self.pos, angle=self.angle)
 
 # calculate and update ship position
 proc updatePos*(self: var PlayerShip) =
+  printf("in playership.nim proc updatePos 1 x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
   self.pos.x = self.centerPoint.x + fp(luCos(
       self.angle) * self.orbitRadius)
   self.pos.y = self.centerPoint.y + fp(luSin(
       self.angle) * self.orbitRadius)
+  printf("in playership.nim proc updatePos 2 x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
   self.shooter.update()
