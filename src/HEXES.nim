@@ -13,7 +13,7 @@ dispcnt = initDispCnt(obj = true, obj1d = true)
 
 irq.enable(iiVBlank)
 
-var playerShipInstance = initPlayerShip(vec2i(75, 0))
+var playerShipInstance = initPlayerShip(vec2f(75, 0))
 
 while true:
   # update key states

@@ -9,12 +9,13 @@ type
     initialised: bool
     orbitRadius, tileId, paletteId: int
     angle: Angle
-    centerPoint, pos: Vec2i
-    
+    centerPoint: Vec2i
+    pos: Vec2f
+
     shooter: Shooter
 
 # constructor - create a ship object
-proc initPlayerShip*(p: Vec2i): PlayerShip =
+proc initPlayerShip*(p: Vec2f): PlayerShip =
   result.initialised = true # you should add an extra field
   result.orbitRadius = 67
   result.pos = p
@@ -47,7 +48,7 @@ proc draw*(self: PlayerShip) =
     obj.init:
       mode = omAff
       affId = affId
-      pos = self.pos - vec2i(gfxShipTemp.width div 2, gfxShipTemp.height div 2)
+      pos = vec2i(self.pos) - vec2i(gfxShipTemp.width div 2, gfxShipTemp.height div 2)
       size = gfxShipTemp.size
       tileId = self.tileId
       palId = self.paletteId
@@ -58,14 +59,14 @@ proc controls*(self: var PlayerShip) =
     self.angle += 350
   if keyIsDown(kiRight):
     self.angle -= 350
-  if keyIsDown(kiA):
-    # TODO(Kal): Add cooldown timer
-    self.shooter.fireBullet(self.pos)
+  if keyHit(kiA):
+    # TODO(Kal): Add Bullet limit
+    self.shooter.fireBullet(pos=self.pos, angle=self.angle)
 
 # calculate and update ship position
 proc updatePos*(self: var PlayerShip) =
-  self.pos.x = self.centerPoint.x + toInt(luCos(
+  self.pos.x = self.centerPoint.x + fp(luCos(
       self.angle) * self.orbitRadius)
-  self.pos.y = self.centerPoint.y + toInt(luSin(
+  self.pos.y = self.centerPoint.y + fp(luSin(
       self.angle) * self.orbitRadius)
   self.shooter.update()
