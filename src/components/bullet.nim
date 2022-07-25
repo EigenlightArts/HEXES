@@ -28,7 +28,7 @@ proc destroy*(self: var Shooter) =
   releaseObjPal(gfxBulletTemp)
 
 proc update(bullets: var Bullet) =
-  printf("in bullet.nim proc update x = %l, y = %l", bullets.pos.x.toInt(), bullets.pos.y.toInt())
+  # printf("in bullet.nim proc update x = %l, y = %l", bullets.pos.x.toInt(), bullets.pos.y.toInt())
   bullets.pos.x = bullets.pos.x - fp(luCos(
       bullets.angle))
   bullets.pos.y = bullets.pos.y - fp(luSin(
@@ -49,7 +49,7 @@ proc draw(bullets: Bullet, shooter: Shooter) =
       pal = shooter.bulletsPalId,
       size = gfxBulletTemp.size
     )
-  printf("in bullet.nim proc draw: x = %l, y = %l", bullets.pos.x.toInt(), bullets.pos.y.toInt())
+  # printf("in bullet.nim proc draw: x = %l, y = %l", bullets.pos.x.toInt(), bullets.pos.y.toInt())
   
 
 proc fireBullet*(self: var Shooter, pos: Vec2f = vec2f(0, 0), index = 0,
@@ -67,7 +67,7 @@ proc fireBullet*(self: var Shooter, pos: Vec2f = vec2f(0, 0), index = 0,
   bullets.finished = false
 
   if bulletsFired <= self.bulletsLimit:
-    printf("in bullet.nim proc fireBullet: x = %l, y = %l", bullets.pos.x.toInt(), bullets.pos.y.toInt())
+    # printf("in bullet.nim proc fireBullet: x = %l, y = %l", bullets.pos.x.toInt(), bullets.pos.y.toInt())
     self.bullets.insert(bullets)
     bulletsFired += 1
   # TODO(Kal): else play sfx
