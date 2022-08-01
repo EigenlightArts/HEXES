@@ -7,7 +7,8 @@ import bullet
 type
   PlayerShip* = object
     initialised: bool
-    orbitRadius, tileId, paletteId: int
+    orbitXRadius, orbitYRadius: int
+    tileId, paletteId: int
     angle: Angle
     centerPoint: Vec2i
     pos: Vec2f
@@ -17,7 +18,8 @@ type
 # constructor - create a ship object
 proc initPlayerShip*(p: Vec2f): PlayerShip =
   result.initialised = true # you should add an extra field
-  result.orbitRadius = 67
+  result.orbitXRadius = 90
+  result.orbitYRadius = 60
   result.pos = p
   result.angle = 0
   result.centerPoint = vec2i(120, 80)
@@ -62,7 +64,6 @@ proc controls*(self: var PlayerShip) =
   if keyIsDown(kiRight):
     self.angle -= 350
   if keyHit(kiA):
-    # TODO(Kal): Add Bullet limit
     # printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
     self.shooter.fireBullet(pos=self.pos, angle=self.angle)
 
@@ -70,8 +71,8 @@ proc controls*(self: var PlayerShip) =
 proc updatePos*(self: var PlayerShip) =
   # printf("in playership.nim proc updatePos 1 x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
   self.pos.x = self.centerPoint.x + fp(luCos(
-      self.angle) * self.orbitRadius)
+      self.angle) * self.orbitXRadius)
   self.pos.y = self.centerPoint.y + fp(luSin(
-      self.angle) * self.orbitRadius)
+      self.angle) * self.orbitYRadius)
   # printf("in playership.nim proc updatePos 2 x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
   self.shooter.update()

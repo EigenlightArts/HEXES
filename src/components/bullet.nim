@@ -6,12 +6,13 @@ type Bullet = object
   angle: Angle
   index: int
   finished: bool
-  showTimer: int
-  fadeTimer: int
-  fadeTimerMax: int
+  # showTimer: int
+  # fadeTimer: int
+  # fadeTimerMax: int
 
 type Shooter* = object
   bullets: seq[Bullet]
+  bulletsActive: int
   bulletsLimit: int
   bulletsTileId: int
   bulletsPalId: int
@@ -27,16 +28,27 @@ proc destroy*(self: var Shooter) =
   freeObjTiles(self.bulletsTileId)
   releaseObjPal(gfxBulletTemp)
 
+proc rect(b: Bullet): Rect =
+  result.left = b.pos.x.toInt() - 5
+  result.top = b.pos.y.toInt() - 5
+  result.right = b.pos.x.toInt() + 5
+  result.bottom = b.pos.y.toInt() + 5
+
 proc update(bullets: var Bullet) =
   # printf("in bullet.nim proc update x = %l, y = %l", bullets.pos.x.toInt(), bullets.pos.y.toInt())
+
+  # make sure the bullets go where they are supposed to go
+  # the *2 is for speed reasons, without it, the bullets are very slow
   bullets.pos.x = bullets.pos.x - fp(luCos(
-      bullets.angle))
+      bullets.angle)) * 2
   bullets.pos.y = bullets.pos.y - fp(luSin(
-       bullets.angle))
-  dec bullets.showTimer
-  if bullets.showTimer <= 0:
-    dec bullets.fadeTimer
-    if bullets.fadeTimer <= 0: bullets.finished = true
+       bullets.angle)) * 2
+  # dec bullets.showTimer
+  # if bullets.showTimer <= 0:
+  #   dec bullets.fadeTimer
+  #   if bullets.fadeTimer <= 0: 
+  if (not onscreen(bullets.rect())):
+    bullets.finished = true
 
 proc draw(bullets: Bullet, shooter: Shooter) =
   withObjAndAff:
@@ -50,26 +62,24 @@ proc draw(bullets: Bullet, shooter: Shooter) =
       size = gfxBulletTemp.size
     )
   # printf("in bullet.nim proc draw: x = %l, y = %l", bullets.pos.x.toInt(), bullets.pos.y.toInt())
-  
 
 proc fireBullet*(self: var Shooter, pos: Vec2f = vec2f(0, 0), index = 0,
-    angle: Angle = 0, showTimer = 25, fadeTimer = 10) =
+    angle: Angle = 0#[, showTimer = 25, fadeTimer = 10 ]#) =
 
   var bullets: Bullet
-  var bulletsFired: int
 
   bullets.index = index
   bullets.pos = pos
   bullets.angle = angle
-  bullets.showTimer = showTimer
-  bullets.fadeTimer = fadeTimer
-  bullets.fadeTimerMax = fadeTimer
+  # bullets.showTimer = showTimer
+  # bullets.fadeTimer = fadeTimer
+  # bullets.fadeTimerMax = fadeTimer
   bullets.finished = false
 
-  if bulletsFired <= self.bulletsLimit:
+  if self.bulletsActive < self.bulletsLimit:
     # printf("in bullet.nim proc fireBullet: x = %l, y = %l", bullets.pos.x.toInt(), bullets.pos.y.toInt())
     self.bullets.insert(bullets)
-    bulletsFired += 1
+    self.bulletsActive += 1
   # TODO(Kal): else play sfx
 
 
@@ -80,6 +90,7 @@ proc update*(self: var Shooter) =
     self.bullets[i].update()
     if self.bullets[i].finished:
       self.bullets.delete(i)
+      self.bulletsActive -= 1
     else:
       inc i
 
