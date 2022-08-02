@@ -1,4 +1,4 @@
-import natu/[math, graphics, video, bios, input, mgba]
+import natu/[math, graphics, video, bios, input]
 import ../utils/objs
 import shooter
 
@@ -65,7 +65,7 @@ proc controls*(self: var PlayerShip) =
     self.angle -= 350
   if keyHit(kiA):
     # printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
-    self.shooter.fireBullet(pos=self.pos, angle=self.angle)
+    self.shooter.fire(pos=self.pos, angle=self.angle)
 
 # calculate and update ship position
 proc updatePos*(self: var PlayerShip) =
