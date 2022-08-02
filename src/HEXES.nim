@@ -1,6 +1,6 @@
 import natu/[video, bios, irq, input, math, graphics]
 import utils/objs
-import components/[playership]
+import components/[playership, centralhex]
 
 # TODO(Kal): change this to rgb8() later
 # background color, approximating eigengrau
@@ -9,9 +9,11 @@ bgColorBuf[0] = rgb5(3, 3, 4)
 # enable VBlank interrupt so we can wait for the end of the frame without burning CPU cycles
 irq.enable(iiVBlank)
 
-dispcnt = initDispCnt(obj = true, obj1d = true)
+dispcnt = initDispCnt(obj = true, obj1d = true, bg0 = true)
 
 irq.enable(iiVBlank)
+
+centralHex()
 
 var playerShipInstance = initPlayerShip(vec2f(75, 0))
 

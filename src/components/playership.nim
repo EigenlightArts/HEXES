@@ -1,6 +1,6 @@
 import natu/[math, graphics, video, bios, input, mgba]
 import ../utils/objs
-import bullet
+import shooter
 
 #TODO(Kal): Use the `Graphics` enum instead of calling gfxShipTemp, etc directly
 
