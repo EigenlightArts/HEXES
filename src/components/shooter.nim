@@ -1,5 +1,5 @@
 import natu/[math, graphics, video]
-import ../utils/objs
+import ../utils/[objs, labels]
 
 type
   EntityKind = enum
@@ -24,7 +24,8 @@ type
     of ekModifier:
       # fields that only modifiers have
       # modifier: Modifier
-      dummy: int
+      modLabel: Label
+      modType: string
 
 type Shooter* = object
   entity: seq[Entity]
@@ -33,28 +34,37 @@ type Shooter* = object
   entityTileId: int
   entityPalId: int
 
-proc initShooter*(limit = 5): Shooter =
-  result.entityTileId = allocObjTiles(gfxBulletTemp)
-  copyFrame(addr objTileMem[result.entityTileId], gfxBulletTemp, 0)
-  result.entityPalId = acquireObjPal(gfxBulletTemp)
+proc initShooter*(limit = 5, gfx = gfxBulletTemp, entityType: Entity): Shooter =
+  result.entityTileId = allocObjTiles(gfx)
+  copyFrame(addr objTileMem[result.entityTileId], gfx, 0)
+  result.entityPalId = acquireObjPal(gfx)
   result.entityLimit = limit
   result.entity.setLen(0)
 
-proc destroy*(self: var Shooter) =
-  freeObjTiles(self.entityTileId)
-  releaseObjPal(gfxBulletTemp)
+  # TODO(Kal): For Day 10, I feel awful today.
+  # case entityType
+  # of ekModifier:
+  #   modLabel.init(vec2i(20, 10), s8x16, count=22)
+  #   modLabel.obj.pal = getPalId(gfxShield)
+  #   modLabel.ink = 1  # set the ink colour index to use from the palette
+  #   modLabel.shadow = 2  # set the shadow colour (only relevant if the font actually has more than 1 colour)
 
-proc draw*(entity: Entity, shooter: Shooter) =
+
+proc destroy*(self: var Shooter, gfx = gfxBulletTemp) =
+  freeObjTiles(self.entityTileId)
+  releaseObjPal(gfx)
+
+proc draw*(entity: Entity, shooter: Shooter, gfx = gfxBulletTemp) =
   withObjAndAff:
     # aff.setToScaleInv(fp 1, (fp entity.fadeTimer / entity.fadeTimerMax).clamp(fp 0, fp 1))
     obj.init(
       mode = omAff,
       aff = affId,
-      pos = vec2i(entity.pos) - vec2i(gfxBulletTemp.width div 2,
-          gfxBulletTemp.height div 2),
+      pos = vec2i(entity.pos) - vec2i(gfx.width div 2,
+          gfx.height div 2),
       tid = shooter.entityTileId + (entity.index),
       pal = shooter.entityPalId,
-      size = gfxBulletTemp.size
+      size = gfx.size
     )
   # printf("in bullet.nim proc draw: x = %l, y = %l", entity.pos.x.toInt(), entity.pos.y.toInt())
 
