@@ -4,8 +4,8 @@ WIP GBA GAME.
 
 ## Special Thanks
 
-- Exetotl for creating Natu and code help
-- Justburner for the math help
+- Exelotl for creating Natu and a lot of code help
+- Justburner for some of the math help
 
 ## License
 
