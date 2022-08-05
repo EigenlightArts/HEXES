@@ -29,11 +29,6 @@ type
       modLabel*: Label
       modType*: string
 
-# * how to use these *
-# sharedEntityInstances.add(initBulletEntity())
-# sharedEntityInstances.add(initEnemyEntity())
-# sharedEntityInstances.add(initModifierEntity())
-
 var sharedEntityInstances*: List[16, Entity]
 
 proc initBulletEntity*(isPlayer: bool = false): Entity =
@@ -50,14 +45,3 @@ proc initModifierEntity*(gfxText: Graphic = gfxShipTemp): Entity =
   result.modLabel.obj.pal = getPalId(gfxText)
   result.modLabel.ink = 1 # set the ink colour index to use from the palette
   result.modLabel.shadow = 2 # set the shadow colour (only relevant if the font actually has more than 1 colour)
-
-
-
-#    let bulInstance = Entity(kind: ekBullet)
-#    bulInstance.entityLimit = 5
-#    let enmInstance = Entity(kind: ekEnemy)
-#    let modInstance = Entity(kind: ekModifier)
-#    modInstance.modLabel.init(vec2i(20, 10), s8x16, count = 22)
-#    modInstance.modLabel.obj.pal = getPalId(gfx)
-#    modInstance.modLabel.ink = 1 # set the ink colour index to use from the palette
-#    modInstance.modLabel.shadow = 2 # set the shadow colour (only relevant if the font actually has more than 1 colour)
