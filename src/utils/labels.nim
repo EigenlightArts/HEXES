@@ -3,6 +3,12 @@ import objs
 
 export tte
 
+# priorty values
+const prioGui* = 0
+const prioForeground* = 1
+const prioActor* = 2
+const prioBackground* = 3
+
 var tc: TextContextObj
 
 # init

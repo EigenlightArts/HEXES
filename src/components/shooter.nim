@@ -1,60 +1,43 @@
-import natu/[math, graphics, video]
+import natu/[math, graphics, video, oam, utils]
 import ../utils/[objs, labels]
-
-type
-  EntityKind = enum
-    ekBullet
-    ekEnemy
-    ekModifier
-  Entity = object
-    # fields that all have in common
-    pos: Vec2f
-    angle: Angle
-    index: int
-    finished: bool
-
-    case kind: EntityKind
-    of ekBullet:
-      # fields that only bullets have
-      damage: int
-    of ekEnemy:
-      # fields that only enemies have
-      health: int
-      doesItShoot: bool
-    of ekModifier:
-      # fields that only modifiers have
-      # modifier: Modifier
-      modLabel: Label
-      modType: string
+import entity
 
 type Shooter* = object
   entity: seq[Entity]
-  entityActive: int
-  entityLimit: int
   entityTileId: int
   entityPalId: int
 
-proc initShooter*(limit = 5, gfx = gfxBulletTemp, entityType: Entity): Shooter =
+proc initShooter*(limit = 5, gfx: Graphic = gfxBulletTemp,
+    entityKind: EntityKind): Shooter =
   result.entityTileId = allocObjTiles(gfx)
   copyFrame(addr objTileMem[result.entityTileId], gfx, 0)
   result.entityPalId = acquireObjPal(gfx)
-  result.entityLimit = limit
   result.entity.setLen(0)
 
-  # TODO(Kal): For Day 10, I feel awful today.
-  # case entityType
+  # let bulEnemyInstance = initBulletEntity() # NOTE(alt): Will be unused for a while
+
+
+  # case entityKind
+  # of ekBullet:
+  #   let bulInstance = Entity(kind: ekBullet)
+  #   bulInstance.entityLimit = 5
+  # of ekEnemy:
+  #   let enmInstance = Entity(kind: ekEnemy)
   # of ekModifier:
-  #   modLabel.init(vec2i(20, 10), s8x16, count=22)
-  #   modLabel.obj.pal = getPalId(gfxShield)
-  #   modLabel.ink = 1  # set the ink colour index to use from the palette
-  #   modLabel.shadow = 2  # set the shadow colour (only relevant if the font actually has more than 1 colour)
+  #   let modInstance = Entity(kind: ekModifier)
+  #   modInstance.modLabel.init(vec2i(20, 10), s8x16, count = 22)
+  #   modInstance.modLabel.obj.pal = getPalId(gfx)
+  #   modInstance.modLabel.ink = 1 # set the ink colour index to use from the palette
+  #   modInstance.modLabel.shadow = 2 # set the shadow colour (only relevant if the font actually has more than 1 colour)
 
 
-proc destroy*(self: var Shooter, gfx = gfxBulletTemp) =
+
+proc destroy*(self: var Shooter, gfx: Graphic = gfxBulletTemp) =
   freeObjTiles(self.entityTileId)
   releaseObjPal(gfx)
 
-proc draw*(entity: Entity, shooter: Shooter, gfx = gfxBulletTemp) =
+proc draw*(shooter: Shooter, entity: Entity,
+    gfx: Graphic = gfxBulletTemp) =
   withObjAndAff:
     # aff.setToScaleInv(fp 1, (fp entity.fadeTimer / entity.fadeTimerMax).clamp(fp 0, fp 1))
     obj.init(
@@ -67,9 +50,18 @@ proc draw*(entity: Entity, shooter: Shooter, gfx = gfxBulletTemp) =
       size = gfx.size
     )
   # printf("in bullet.nim proc draw: x = %l, y = %l", entity.pos.x.toInt(), entity.pos.y.toInt())
+  for entityInstance in sharedEntityInstances:
+    case entityInstance.kind
+    of ekBullet:
+      discard
+    of ekEnemy:
+      discard
+    of ekModifier:
+      entityInstance.modLabel.draw()
 
-proc fire*(self: var Shooter, pos: Vec2f = vec2f(0, 0), index = 0,
-    angle: Angle = 0) =
+
+proc fire*(self: var Shooter, pos: Vec2f = vec2f(0, 0),
+    index = 0, angle: Angle = 0) =
 
   var entity: Entity
 
@@ -81,9 +73,23 @@ proc fire*(self: var Shooter, pos: Vec2f = vec2f(0, 0), index = 0,
   # entity.fadeTimerMax = fadeTimer
   entity.finished = false
 
-  if self.entityActive < self.entityLimit:
-    self.entity.insert(entity)
-    self.entityActive += 1
+  let bulPlayerInstance: Entity = initBulletEntity(isPlayer = true)
+  # NOTE(Kal): this will be unused for a bit
+  # let enmInstace: Entity = initEnemyEntity()
+  let modInstance: Entity = initModifierEntity()
+
+
+  if bulPlayerInstance.entityActive < bulPlayerInstance.entityLimit:
+    self.entity.insert(bulPlayerInstance)
+    bulPlayerInstance.entityActive += 1
+    sharedEntityInstances.add(bulPlayerInstance)
+
+  if modInstance.entityActive < modInstance.entityLimit:
+    modInstance.modLabel("$100")
+    modInstance.entityActive += 1
+    sharedEntityInstances.add(modInstance)
+
+
   # TODO(Kal): if playership bullet else play sfx
 
 # Bullet spefific procedures
@@ -107,14 +113,14 @@ proc update*(bullet: var Entity) =
     bullet.finished = true
 
 
-proc update*(self: var Shooter) =
+proc update*(self: var Shooter, entity: Entity) =
   var i = 0
 
   while i < self.entity.len:
     self.entity[i].update()
     if self.entity[i].finished:
       self.entity.delete(i)
-      self.entityActive -= 1
+      entity.entityActive -= 1
     else:
       inc i
 
