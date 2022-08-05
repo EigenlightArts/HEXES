@@ -7,8 +7,7 @@ type Shooter* = object
   entityTileId: int
   entityPalId: int
 
-proc initShooter*(limit = 5, gfx: Graphic = gfxBulletTemp,
-    entityKind: EntityKind): Shooter =
+proc initShooter*(limit = 5, gfx: Graphic = gfxBulletTemp): Shooter =
   result.entityTileId = allocObjTiles(gfx)
   copyFrame(addr objTileMem[result.entityTileId], gfx, 0)
   result.entityPalId = acquireObjPal(gfx)
@@ -65,13 +64,13 @@ proc fire*(self: var Shooter, pos: Vec2f = vec2f(0, 0),
 
   if bulPlayerInstance.entityActive < bulPlayerInstance.entityLimit:
     self.entity.insert(bulPlayerInstance)
-    bulPlayerInstance.entityActive += 1
+    bulPlayerInstance.entityActive = bulPlayerInstance.entityActive + 1
     sharedEntityInstances.add(bulPlayerInstance)
   # TODO(Kal): else play sfx
 
   if modInstance.entityActive < modInstance.entityLimit:
     modInstance.modLabel.put("$100")
-    modInstance.entityActive += 1
+    modInstance.entityActive = modInstance.entityActive + 1
     sharedEntityInstances.add(modInstance)
 
 
@@ -96,18 +95,18 @@ proc update*(bullet: var Entity) =
     bullet.finished = true
 
 
-proc update*(self: var Shooter, entity: Entity) =
+proc update*(self: var Shooter, entity: var Entity) =
   var i = 0
 
   while i < self.entity.len:
     self.entity[i].update()
     if self.entity[i].finished:
       self.entity.delete(i)
-      entity.entityActive -= 1
+      entity.entityActive = entity.entityActive - 1
     else:
       inc i
 
 
 proc draw*(self: Shooter) =
   for entity in self.entity:
-    self.draw(entity)
+    entity.draw(self)

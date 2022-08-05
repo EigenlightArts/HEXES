@@ -69,10 +69,10 @@ proc controls*(self: var PlayerShip) =
 
 # calculate and update ship position
 proc updatePos*(self: var PlayerShip) =
-  # printf("in playership.nim proc updatePos 1 x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
+
   self.pos.x = self.centerPoint.x + fp(luCos(
       self.angle) * self.orbitXRadius)
   self.pos.y = self.centerPoint.y + fp(luSin(
       self.angle) * self.orbitYRadius)
-  # printf("in playership.nim proc updatePos 2 x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
+
   self.shooter.update()
