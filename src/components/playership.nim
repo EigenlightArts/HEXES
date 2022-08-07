@@ -1,6 +1,6 @@
-import natu/[math, graphics, video, bios, input]
+import natu/[math, graphics, video, bios, input, mgba]
 import ../utils/objs
-import shooter
+import shooter, entity
 
 #TODO(Kal): Use the `Graphics` enum instead of calling gfxShipTemp, etc directly
 
@@ -64,8 +64,9 @@ proc controls*(self: var PlayerShip) =
   if keyIsDown(kiRight):
     self.angle -= 350
   if keyHit(kiA):
-    # printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
-    self.shooter.fire(pos=self.pos, angle=self.angle)
+    printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
+    var bulPlayerInstance: Entity = initBulletEntity(isPlayer = true)
+    self.shooter.fire(entity=bulPlayerInstance, pos=self.pos, angle=self.angle)
 
 # calculate and update ship position
 proc updatePos*(self: var PlayerShip) =
