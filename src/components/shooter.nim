@@ -93,20 +93,19 @@ proc update*(bullet: var Entity) =
 
   if (not onscreen(bullet.rect())):
     bullet.finished = true
+    bullet.entityActive = bullet.entityActive - 1
 
-
-proc update*(self: var Shooter, entity: var Entity) =
+proc update*(self: var Shooter) =
   var i = 0
 
   while i < self.entity.len:
     self.entity[i].update()
     if self.entity[i].finished:
       self.entity.delete(i)
-      entity.entityActive = entity.entityActive - 1
     else:
       inc i
 
 
 proc draw*(self: Shooter) =
   for entity in self.entity:
-    entity.draw(self)
+    self.draw(entity)

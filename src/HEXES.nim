@@ -1,6 +1,6 @@
 import natu/[video, bios, irq, input, math, graphics]
 import utils/objs
-import components/[playership, centralhex]
+import components/[playership, evilhex]
 
 # TODO(Kal): change this to rgb8() later
 # background color, approximating eigengrau
@@ -13,7 +13,7 @@ dispcnt = initDispCnt(obj = true, obj1d = true, bg0 = true)
 
 irq.enable(iiVBlank)
 
-centralHex()
+evilHex()
 
 var playerShipInstance = initPlayerShip(vec2f(75, 0))
 
