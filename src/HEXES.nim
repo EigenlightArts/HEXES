@@ -13,8 +13,7 @@ dispcnt = initDispCnt(obj = true, obj1d = true, bg0 = true)
 
 irq.enable(iiVBlank)
 
-evilHex()
-
+var evilHexInstance = initEvilHex()
 var playerShipInstance = initPlayerShip(vec2f(75, 0))
 
 while true:

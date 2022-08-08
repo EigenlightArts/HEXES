@@ -7,7 +7,7 @@ type Shooter* = object
   entityTileId: int
   entityPalId: int
 
-proc initShooter*(limit = 5, gfx: Graphic = gfxBulletTemp): Shooter =
+proc initShooter*(gfx: Graphic = gfxBulletTemp): Shooter =
   result.entityTileId = allocObjTiles(gfx)
   copyFrame(addr objTileMem[result.entityTileId], gfx, 0)
   result.entityPalId = acquireObjPal(gfx)

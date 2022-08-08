@@ -16,11 +16,11 @@ type
     shooter: Shooter
 
 # constructor - create a ship object
-proc initPlayerShip*(p: Vec2f): PlayerShip =
+proc initPlayerShip*(pos: Vec2f): PlayerShip =
   result.initialised = true # you should add an extra field
   result.orbitXRadius = 90
   result.orbitYRadius = 60
-  result.pos = p
+  result.pos = pos
   result.angle = 0
   result.centerPoint = vec2i(120, 80)
   result.tileId = allocObjTiles(gfxShipTemp)
