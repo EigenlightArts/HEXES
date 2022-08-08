@@ -30,18 +30,12 @@ proc draw*(shooter: Shooter, entity: Entity,
       pal = shooter.entityPalId,
       size = gfx.size
     )
-  printf("in shooter.nim proc draw: x = %l, y = %l", entity.pos.x.toInt(),
-      entity.pos.y.toInt())
+  # printf("in shooter.nim proc draw: x = %l, y = %l", entity.pos.x.toInt(),
+  #    entity.pos.y.toInt())
 
-  # `mitems` makes `sharedEntityInstances` mutable
-  for entityInstance in mitems(sharedEntityInstances):
-    case entityInstance.kind
-    of ekBullet:
-      discard
-    of ekEnemy:
-      discard
-    of ekModifier:
-      entityInstance.modLabel.draw()
+  # `mitems` makes `modiferEntitiesInstances` mutable
+  for modifierInstance in mitems(modiferEntitiesInstances):
+    modifierInstance.modLabel.draw()
 
 
 proc fire*(self: var Shooter, entity: var Entity, pos: Vec2f = vec2f(0, 0),
@@ -49,12 +43,12 @@ proc fire*(self: var Shooter, entity: var Entity, pos: Vec2f = vec2f(0, 0),
 
   entity.index = index
 
-  printf("in shooter.nim proc fire1 x = %l, y = %l", pos.x.toInt(), pos.y.toInt())
+  # printf("in shooter.nim proc fire1 x = %l, y = %l", pos.x.toInt(), pos.y.toInt())
 
   entity.pos = pos
 
-  printf("in shooter.nim proc fire2 x = %l, y = %l", entity.pos.x.toInt(),
-      entity.pos.y.toInt())
+  # printf("in shooter.nim proc fire2 x = %l, y = %l", entity.pos.x.toInt(),
+  #    entity.pos.y.toInt())
 
   entity.angle = angle
   entity.finished = false
@@ -63,23 +57,21 @@ proc fire*(self: var Shooter, entity: var Entity, pos: Vec2f = vec2f(0, 0),
   # var enmInstace: Entity = initEnemyEntity()
   # var modInstance: Entity = initModifierEntity()
 
-  for entityInstance in sharedEntityInstances:
-    case entity.kind
-      of ekBullet:
-        if entityInstance.entityActive < entityInstance.entityLimit:
-          self.entity.insert(entity)
-          entity.entityActive = entity.entityActive + 1
-          sharedEntityInstances.add(entity)
-        # TODO(Kal): bullet else play sfx
-      of ekEnemy:
-        discard
-      of ekModifier:
-        if entityInstance.entityActive < entityInstance.entityLimit:
-          entity.modLabel.put("$100")
-          self.entity.insert(entity)
-          entity.entityActive = entity.entityActive + 1
-          sharedEntityInstances.add(entity)
-
+  case entity.kind:
+    of ekBulletPlayer:
+      if not bulletPlayerEntitiesInstances.isFull:
+        self.entity.insert(entity)
+        bulletPlayerEntitiesInstances.add(entity)
+      # TODO(Kal): bullet else play sfx
+    of ekBulletEnemy:
+      discard
+    of ekEnemy:
+      discard
+    of ekModifier:
+      if not modiferEntitiesInstances.isFull:
+        entity.modLabel.put("$100")
+        self.entity.insert(entity)
+        modiferEntitiesInstances.add(entity)
 
 
 proc update*(self: var Shooter) =
@@ -88,7 +80,16 @@ proc update*(self: var Shooter) =
   while i < self.entity.len:
     self.entity[i].update()
     if self.entity[i].finished:
-      sharedEntityInstances.del(i)
+      case self.entity[i].kind
+      of ekBulletPlayer:
+        bulletPlayerEntitiesInstances.del(i)
+      of ekBulletEnemy:
+        bulletEnemyEntitiesInstances.del(i)
+      of ekEnemy:
+        enemyEntitiesInstances.del(i)
+      of ekModifier:
+        modiferEntitiesInstances.del(i)
+      
       self.entity.delete(i)
     else:
       inc i

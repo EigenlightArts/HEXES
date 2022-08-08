@@ -55,7 +55,7 @@ proc draw*(self: PlayerShip) =
       tileId = self.tileId
       palId = self.paletteId
   
-  # printf("in playership.nim proc draw x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
+  # # printf("in playership.nim proc draw x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
 
 # ship controls
 proc controls*(self: var PlayerShip) =
@@ -64,8 +64,8 @@ proc controls*(self: var PlayerShip) =
   if keyIsDown(kiRight):
     self.angle -= 350
   if keyHit(kiA):
-    printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
-    var bulPlayerInstance: Entity = initBulletEntity(isPlayer = true)
+    # printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
+    var bulPlayerInstance: Entity = initBulletPlayerEntity()
     self.shooter.fire(entity=bulPlayerInstance, pos=self.pos, angle=self.angle)
 
 # calculate and update ship position

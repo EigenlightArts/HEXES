@@ -3,7 +3,8 @@ import ../utils/[objs, labels]
 
 type
   EntityKind* = enum
-    ekBullet
+    ekBulletPlayer
+    ekBulletEnemy
     ekEnemy
     ekModifier
   Entity* = object
@@ -11,12 +12,10 @@ type
     pos*: Vec2f
     angle*: Angle
     index*: int
-    entityActive*: int
-    entityLimit*: int
     finished*: bool
 
     case kind*: EntityKind
-    of ekBullet:
+    of ekBulletPlayer, ekBulletEnemy:
       # fields that only bullets have
       damage*: int
     of ekEnemy:
@@ -29,11 +28,16 @@ type
       modLabel*: Label
       modType*: string
 
-var sharedEntityInstances*: List[16, Entity]
+var bulletPlayerEntitiesInstances*: List[5, Entity]
+var bulletEnemyEntitiesInstances*: List[3, Entity]
+var enemyEntitiesInstances*: List[5, Entity]
+var modiferEntitiesInstances*: List[3, Entity]
 
-proc initBulletEntity*(isPlayer: bool = false): Entity =
-  result.kind = ekBullet
-  result.entityLimit = if isPlayer: 5 else: 2
+proc initBulletPlayerEntity*(): Entity =
+  result.kind = ekBulletPlayer
+
+proc initBulletEnemyEntity*(): Entity =
+  result.kind = ekBulletEnemy
 
 proc initEnemyEntity*(): Entity =
   result.kind = ekEnemy
@@ -49,25 +53,21 @@ proc initModifierEntity*(gfxText: Graphic = gfxShipTemp): Entity =
 # Bullet spefific procedures
 
 proc rect(bullet: Entity): Rect =
-  printf("in entity.nim proc rect1: x = %l, y = %l", bullet.pos.x.toInt(), bullet.pos.y.toInt())
+  # printf("in entity.nim proc rect1: x = %l, y = %l", bullet.pos.x.toInt(), bullet.pos.y.toInt())
   result.left = bullet.pos.x.toInt() - 5
   result.top = bullet.pos.y.toInt() - 5
   result.right = bullet.pos.x.toInt() + 5
   result.bottom = bullet.pos.y.toInt() + 5
-  printf("in entity.nim proc rect2: x = %l, y = %l", bullet.pos.x.toInt(), bullet.pos.y.toInt())
+  # printf("in entity.nim proc rect2: x = %l, y = %l", bullet.pos.x.toInt(), bullet.pos.y.toInt())
 
 proc update*(bullet: var Entity) =
 
-  printf("in entity.nim proc update: x = %l, y = %l", bullet.pos.x.toInt(), bullet.pos.y.toInt())
-
-
   # make sure the bullets go where they are supposed to go
   # the *2 is for speed reasons, without it, the bullets are very slow
-  # bullet.pos.x = bullet.pos.x - fp(luCos(
-  #     bullet.angle)) * 2
-  # bullet.pos.y = bullet.pos.y - fp(luSin(
-  #      bullet.angle)) * 2
+  bullet.pos.x = bullet.pos.x - fp(luCos(
+      bullet.angle)) * 2
+  bullet.pos.y = bullet.pos.y - fp(luSin(
+       bullet.angle)) * 2
 
   if (not onscreen(bullet.rect())):
     bullet.finished = true
-    bullet.entityActive = bullet.entityActive - 1
