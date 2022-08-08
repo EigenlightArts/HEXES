@@ -1,4 +1,4 @@
-import natu/[utils, oam, video, math, graphics, tte, surface]
+import natu/[utils, oam, video, math, graphics, tte, surfaces]
 import objs
 
 export tte
