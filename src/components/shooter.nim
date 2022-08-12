@@ -58,16 +58,16 @@ proc fire*(self: var Shooter, projectile: var Projectile, pos: Vec2f = vec2f(0, 
   # var modInstance: Projectile = initModifierProjectile()
 
   case projectile.kind:
-    of ekBulletPlayer:
+    of pkBulletPlayer:
       if not bulletPlayerEntitiesInstances.isFull:
         self.projectile.insert(projectile)
         bulletPlayerEntitiesInstances.add(projectile)
       # TODO(Kal): bullet else play sfx
-    of ekBulletEnemy:
+    of pkBulletEnemy:
       discard
-    of ekEnemy:
+    of pkEnemy:
       discard
-    of ekModifier:
+    of pkModifier:
       if not modiferEntitiesInstances.isFull:
         self.projectile.insert(projectile)
         modiferEntitiesInstances.add(projectile)
@@ -80,13 +80,13 @@ proc update*(self: var Shooter) =
     self.projectile[i].update()
     if self.projectile[i].finished:
       case self.projectile[i].kind
-      of ekBulletPlayer:
+      of pkBulletPlayer:
         bulletPlayerEntitiesInstances.del(i)
-      of ekBulletEnemy:
+      of pkBulletEnemy:
         bulletEnemyEntitiesInstances.del(i)
-      of ekEnemy:
+      of pkEnemy:
         enemyEntitiesInstances.del(i)
-      of ekModifier:
+      of pkModifier:
         modiferEntitiesInstances.del(i)
       
       self.projectile.delete(i)

@@ -3,10 +3,10 @@ import ../utils/[objs, labels]
 
 type
   ProjectileKind* = enum
-    ekBulletPlayer
-    ekBulletEnemy
-    ekEnemy
-    ekModifier
+    pkBulletPlayer
+    pkBulletEnemy
+    pkEnemy
+    pkModifier
   Projectile* = object
     # fields that all have in common
     pos*: Vec2f
@@ -15,14 +15,14 @@ type
     finished*: bool
 
     case kind*: ProjectileKind
-    of ekBulletPlayer, ekBulletEnemy:
+    of pkBulletPlayer, pkBulletEnemy:
       # fields that only bullets have
       damage*: int
-    of ekEnemy:
+    of pkEnemy:
       # fields that only enemies have
       health*: int
       doesItShoot*: bool
-    of ekModifier:
+    of pkModifier:
       # fields that only modifiers have
       # modifier: Modifier
       modLabel*: Label
@@ -34,16 +34,16 @@ var enemyEntitiesInstances*: List[5, Projectile]
 var modiferEntitiesInstances*: List[3, Projectile]
 
 proc initBulletPlayerProjectile*(): Projectile =
-  result.kind = ekBulletPlayer
+  result.kind = pkBulletPlayer
 
 proc initBulletEnemyProjectile*(): Projectile =
-  result.kind = ekBulletEnemy
+  result.kind = pkBulletEnemy
 
 proc initEnemyProjectile*(): Projectile =
-  result.kind = ekEnemy
+  result.kind = pkEnemy
 
 proc initModifierProjectile*(gfxText: Graphic = gfxShipTemp, pos: Vec2i, text: cstring): Projectile =
-  result.kind = ekModifier
+  result.kind = pkModifier
 
   result.modLabel.init(pos, s8x16, count = 22)
   result.modLabel.obj.pal = getPalId(gfxText)
