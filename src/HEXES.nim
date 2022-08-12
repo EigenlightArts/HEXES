@@ -1,6 +1,6 @@
 import natu/[video, bios, irq, input, math, graphics]
 import utils/objs
-import objects/[playership, evilhex]
+import entity/[playership, evilhex]
 
 # TODO(Kal): change this to rgb8() later
 # background color, approximating eigengrau

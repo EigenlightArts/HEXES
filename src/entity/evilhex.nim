@@ -1,6 +1,6 @@
 import natu/[math, graphics, video, tte, posprintf]
 import ../utils/labels
-import ../components/[shooter, entity]
+import ../components/[shooter, projectile]
 
 type
   EvilHex* = object
@@ -71,5 +71,5 @@ proc draw*(self: var EvilHex) =
   #     palId = self.paletteId
 
 proc hexLoop*(self: var EvilHex) = 
-  var modHexInstance: Entity = initModifierEntity(pos=self.labeledCHN.pos, text="oil")
-  self.shooter.fire(entity=modHexInstance, pos=self.pos, angle=self.angle)
+  var modHexInstance: Projectile = initModifierProjectile(pos=self.labeledCHN.pos, text="oil")
+  self.shooter.fire(projectile=modHexInstance, pos=self.pos, angle=self.angle)

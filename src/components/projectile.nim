@@ -2,19 +2,19 @@ import natu/[math, graphics, video, oam, utils, mgba]
 import ../utils/[objs, labels]
 
 type
-  EntityKind* = enum
+  ProjectileKind* = enum
     ekBulletPlayer
     ekBulletEnemy
     ekEnemy
     ekModifier
-  Entity* = object
+  Projectile* = object
     # fields that all have in common
     pos*: Vec2f
     angle*: Angle
     index*: int
     finished*: bool
 
-    case kind*: EntityKind
+    case kind*: ProjectileKind
     of ekBulletPlayer, ekBulletEnemy:
       # fields that only bullets have
       damage*: int
@@ -28,21 +28,21 @@ type
       modLabel*: Label
       modType*: string
 
-var bulletPlayerEntitiesInstances*: List[5, Entity]
-var bulletEnemyEntitiesInstances*: List[3, Entity]
-var enemyEntitiesInstances*: List[5, Entity]
-var modiferEntitiesInstances*: List[3, Entity]
+var bulletPlayerEntitiesInstances*: List[5, Projectile]
+var bulletEnemyEntitiesInstances*: List[3, Projectile]
+var enemyEntitiesInstances*: List[5, Projectile]
+var modiferEntitiesInstances*: List[3, Projectile]
 
-proc initBulletPlayerEntity*(): Entity =
+proc initBulletPlayerProjectile*(): Projectile =
   result.kind = ekBulletPlayer
 
-proc initBulletEnemyEntity*(): Entity =
+proc initBulletEnemyProjectile*(): Projectile =
   result.kind = ekBulletEnemy
 
-proc initEnemyEntity*(): Entity =
+proc initEnemyProjectile*(): Projectile =
   result.kind = ekEnemy
 
-proc initModifierEntity*(gfxText: Graphic = gfxShipTemp, pos: Vec2i, text: cstring): Entity =
+proc initModifierProjectile*(gfxText: Graphic = gfxShipTemp, pos: Vec2i, text: cstring): Projectile =
   result.kind = ekModifier
 
   result.modLabel.init(pos, s8x16, count = 22)
@@ -53,15 +53,15 @@ proc initModifierEntity*(gfxText: Graphic = gfxShipTemp, pos: Vec2i, text: cstri
   
 # Bullet spefific procedures
 
-proc rect(bullet: Entity): Rect =
-  # printf("in entity.nim proc rect1: x = %l, y = %l", bullet.pos.x.toInt(), bullet.pos.y.toInt())
+proc rect(bullet: Projectile): Rect =
+  # printf("in projectile.nim proc rect1: x = %l, y = %l", bullet.pos.x.toInt(), bullet.pos.y.toInt())
   result.left = bullet.pos.x.toInt() - 5
   result.top = bullet.pos.y.toInt() - 5
   result.right = bullet.pos.x.toInt() + 5
   result.bottom = bullet.pos.y.toInt() + 5
-  # printf("in entity.nim proc rect2: x = %l, y = %l", bullet.pos.x.toInt(), bullet.pos.y.toInt())
+  # printf("in projectile.nim proc rect2: x = %l, y = %l", bullet.pos.x.toInt(), bullet.pos.y.toInt())
 
-proc update*(bullet: var Entity) =
+proc update*(bullet: var Projectile) =
 
   # make sure the bullets go where they are supposed to go
   # the *2 is for speed reasons, without it, the bullets are very slow

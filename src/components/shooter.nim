@@ -1,67 +1,67 @@
 import natu/[math, graphics, video, oam, utils, mgba]
 import ../utils/[objs, labels]
-import entity
+import projectile
 
 type Shooter* = object
-  entity: seq[Entity]
-  entityTileId: int
-  entityPalId: int
+  projectile: seq[Projectile]
+  projectileTileId: int
+  projectilePalId: int
 
 proc initShooter*(gfx: Graphic = gfxBulletTemp): Shooter =
-  result.entityTileId = allocObjTiles(gfx)
-  copyFrame(addr objTileMem[result.entityTileId], gfx, 0)
-  result.entityPalId = acquireObjPal(gfx)
-  result.entity.setLen(0)
+  result.projectileTileId = allocObjTiles(gfx)
+  copyFrame(addr objTileMem[result.projectileTileId], gfx, 0)
+  result.projectilePalId = acquireObjPal(gfx)
+  result.projectile.setLen(0)
 
 proc destroy*(self: var Shooter, gfx: Graphic = gfxBulletTemp) =
-  freeObjTiles(self.entityTileId)
+  freeObjTiles(self.projectileTileId)
   releaseObjPal(gfx)
 
-proc draw*(shooter: Shooter, entity: Entity,
+proc draw*(shooter: Shooter, projectile: Projectile,
     gfx: Graphic = gfxBulletTemp) =
   withObjAndAff:
-    aff.setToRotationInv(entity.angle.uint16)
+    aff.setToRotationInv(projectile.angle.uint16)
     obj.init(
       mode = omAff,
       aff = affId,
-      pos = vec2i(entity.pos) - vec2i(gfx.width div 2,
+      pos = vec2i(projectile.pos) - vec2i(gfx.width div 2,
           gfx.height div 2),
-      tid = shooter.entityTileId + (entity.index),
-      pal = shooter.entityPalId,
+      tid = shooter.projectileTileId + (projectile.index),
+      pal = shooter.projectilePalId,
       size = gfx.size
     )
-  # printf("in shooter.nim proc draw: x = %l, y = %l", entity.pos.x.toInt(),
-  #    entity.pos.y.toInt())
+  # printf("in shooter.nim proc draw: x = %l, y = %l", projectile.pos.x.toInt(),
+  #    projectile.pos.y.toInt())
 
   # `mitems` makes `modiferEntitiesInstances` mutable
   for modifierInstance in mitems(modiferEntitiesInstances):
     modifierInstance.modLabel.draw()
 
 
-proc fire*(self: var Shooter, entity: var Entity, pos: Vec2f = vec2f(0, 0),
+proc fire*(self: var Shooter, projectile: var Projectile, pos: Vec2f = vec2f(0, 0),
     index = 0, angle: Angle = 0) =
 
-  entity.index = index
+  projectile.index = index
 
   # printf("in shooter.nim proc fire1 x = %l, y = %l", pos.x.toInt(), pos.y.toInt())
 
-  entity.pos = pos
+  projectile.pos = pos
 
-  # printf("in shooter.nim proc fire2 x = %l, y = %l", entity.pos.x.toInt(),
-  #    entity.pos.y.toInt())
+  # printf("in shooter.nim proc fire2 x = %l, y = %l", projectile.pos.x.toInt(),
+  #    projectile.pos.y.toInt())
 
-  entity.angle = angle
-  entity.finished = false
+  projectile.angle = angle
+  projectile.finished = false
 
-  # var bulPlayerInstance: Entity = initBulletEntity(isPlayer = true)
-  # var enmInstace: Entity = initEnemyEntity()
-  # var modInstance: Entity = initModifierEntity()
+  # var bulPlayerInstance: Projectile = initBulletProjectile(isPlayer = true)
+  # var enmInstace: Projectile = initEnemyProjectile()
+  # var modInstance: Projectile = initModifierProjectile()
 
-  case entity.kind:
+  case projectile.kind:
     of ekBulletPlayer:
       if not bulletPlayerEntitiesInstances.isFull:
-        self.entity.insert(entity)
-        bulletPlayerEntitiesInstances.add(entity)
+        self.projectile.insert(projectile)
+        bulletPlayerEntitiesInstances.add(projectile)
       # TODO(Kal): bullet else play sfx
     of ekBulletEnemy:
       discard
@@ -69,18 +69,17 @@ proc fire*(self: var Shooter, entity: var Entity, pos: Vec2f = vec2f(0, 0),
       discard
     of ekModifier:
       if not modiferEntitiesInstances.isFull:
-        entity.modLabel.put("$100")
-        self.entity.insert(entity)
-        modiferEntitiesInstances.add(entity)
+        self.projectile.insert(projectile)
+        modiferEntitiesInstances.add(projectile)
 
 
 proc update*(self: var Shooter) =
   var i = 0
 
-  while i < self.entity.len:
-    self.entity[i].update()
-    if self.entity[i].finished:
-      case self.entity[i].kind
+  while i < self.projectile.len:
+    self.projectile[i].update()
+    if self.projectile[i].finished:
+      case self.projectile[i].kind
       of ekBulletPlayer:
         bulletPlayerEntitiesInstances.del(i)
       of ekBulletEnemy:
@@ -90,11 +89,11 @@ proc update*(self: var Shooter) =
       of ekModifier:
         modiferEntitiesInstances.del(i)
       
-      self.entity.delete(i)
+      self.projectile.delete(i)
     else:
       inc i
 
 
 proc draw*(self: Shooter) =
-  for entity in self.entity:
-    self.draw(entity)
+  for projectile in self.projectile:
+    self.draw(projectile)
