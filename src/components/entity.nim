@@ -42,14 +42,15 @@ proc initBulletEnemyEntity*(): Entity =
 proc initEnemyEntity*(): Entity =
   result.kind = ekEnemy
 
-proc initModifierEntity*(gfxText: Graphic = gfxShipTemp): Entity =
+proc initModifierEntity*(gfxText: Graphic = gfxShipTemp, pos: Vec2i, text: cstring): Entity =
   result.kind = ekModifier
 
-  result.modLabel.init(vec2i(20, 10), s8x16, count = 22)
+  result.modLabel.init(pos, s8x16, count = 22)
   result.modLabel.obj.pal = getPalId(gfxText)
   result.modLabel.ink = 1 # set the ink colour index to use from the palette
   result.modLabel.shadow = 2 # set the shadow colour (only relevant if the font actually has more than 1 colour)
-
+  result.modLabel.put(text)
+  
 # Bullet spefific procedures
 
 proc rect(bullet: Entity): Rect =

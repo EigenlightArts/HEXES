@@ -1,6 +1,7 @@
 import natu/[math, graphics, video, bios, input, mgba]
 import ../utils/objs
-import shooter, entity
+import ../components/[shooter, entity]
+
 
 #TODO(Kal): Use the `Graphics` enum instead of calling gfxShipTemp, etc directly
 
@@ -22,7 +23,7 @@ proc initPlayerShip*(pos: Vec2f): PlayerShip =
   result.orbitYRadius = 60
   result.pos = pos
   result.angle = 0
-  result.centerPoint = vec2i(120, 80)
+  result.centerPoint = vec2i(ScreenWidth div 2, ScreenHeight div 2)
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
 
