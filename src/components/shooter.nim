@@ -7,18 +7,18 @@ type Shooter* = object
   projectileTileId: int
   projectilePalId: int
 
-proc initShooter*(gfx: Graphic = gfxBulletTemp): Shooter =
+proc initShooter*(gfx: Graphic): Shooter =
   result.projectileTileId = allocObjTiles(gfx)
   copyFrame(addr objTileMem[result.projectileTileId], gfx, 0)
   result.projectilePalId = acquireObjPal(gfx)
   result.projectile.setLen(0)
 
-proc destroy*(self: var Shooter, gfx: Graphic = gfxBulletTemp) =
+proc destroy*(self: var Shooter, gfx: Graphic) =
   freeObjTiles(self.projectileTileId)
   releaseObjPal(gfx)
 
 proc draw*(shooter: Shooter, projectile: Projectile,
-    gfx: Graphic = gfxBulletTemp) =
+    gfx: Graphic) =
   withObjAndAff:
     aff.setToRotationInv(projectile.angle.uint16)
     obj.init(

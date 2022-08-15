@@ -42,7 +42,7 @@ proc initBulletEnemyProjectile*(): Projectile =
 proc initEnemyProjectile*(): Projectile =
   result.kind = pkEnemy
 
-proc initModifierProjectile*(gfxText: Graphic = gfxShipTemp, pos: Vec2i, text: cstring): Projectile =
+proc initModifierProjectile*(gfxText: Graphic, pos: Vec2i, text: cstring): Projectile =
   result.kind = pkModifier
 
   result.modLabel.init(pos, s8x16, count = 22)
