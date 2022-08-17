@@ -23,7 +23,7 @@ proc initEvilHex*(centerHexNumber: uint8): EvilHex =
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
 
-  result.shooter = initShooter()
+  result.shooter = initShooter(gfxBulletTemp)
   posprintf(addr result.hexBuffer, "$%X", centerHexNumber)
 
   result.labeledCHN.init(vec2i(ScreenWidth div 2, ScreenHeight div 2), s8x16, count = 22)
@@ -71,5 +71,5 @@ proc draw*(self: var EvilHex) =
   #     palId = self.paletteId
 
 proc hexLoop*(self: var EvilHex) = 
-  var modHexInstance: Projectile = initModifierProjectile(pos=self.labeledCHN.pos, text="oil")
+  var modHexInstance: Projectile = initModifierProjectile(gfxPal=self.shooter.graphicProjectile, pos=self.labeledCHN.pos, text="oil")
   self.shooter.fire(projectile=modHexInstance, pos=self.pos, angle=self.angle)

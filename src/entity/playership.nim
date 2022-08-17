@@ -27,7 +27,7 @@ proc initPlayerShip*(pos: Vec2f): PlayerShip =
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
 
-  result.shooter = initShooter()
+  result.shooter = initShooter(gfxBulletTemp)
   
 
 # destructor - free the resources used by a ship object

@@ -3,32 +3,36 @@ import ../utils/[objs, labels]
 import projectile
 
 type Shooter* = object
+  graphicProjectile*: Graphic
+  
   projectile: seq[Projectile]
   projectileTileId: int
   projectilePalId: int
 
 proc initShooter*(gfx: Graphic): Shooter =
-  result.projectileTileId = allocObjTiles(gfx)
-  copyFrame(addr objTileMem[result.projectileTileId], gfx, 0)
-  result.projectilePalId = acquireObjPal(gfx)
+  result.graphicProjectile = gfx
+
+  result.projectileTileId = allocObjTiles(result.graphicProjectile)
+  copyFrame(addr objTileMem[result.projectileTileId], result.graphicProjectile, 0)
+  result.projectilePalId = acquireObjPal(result.graphicProjectile)
   result.projectile.setLen(0)
 
-proc destroy*(self: var Shooter, gfx: Graphic) =
-  freeObjTiles(self.projectileTileId)
-  releaseObjPal(gfx)
 
-proc draw*(shooter: Shooter, projectile: Projectile,
-    gfx: Graphic) =
+proc destroy*(self: var Shooter) =
+  freeObjTiles(self.projectileTileId)
+  releaseObjPal(self.graphicProjectile)
+
+proc draw*(shooter: Shooter, projectile: Projectile) =
   withObjAndAff:
     aff.setToRotationInv(projectile.angle.uint16)
     obj.init(
       mode = omAff,
       aff = affId,
-      pos = vec2i(projectile.pos) - vec2i(gfx.width div 2,
-          gfx.height div 2),
+      pos = vec2i(projectile.pos) - vec2i(shooter.graphicProjectile.width div 2,
+          shooter.graphicProjectile.height div 2),
       tid = shooter.projectileTileId + (projectile.index),
       pal = shooter.projectilePalId,
-      size = gfx.size
+      size = shooter.graphicProjectile.size
     )
   # printf("in shooter.nim proc draw: x = %l, y = %l", projectile.pos.x.toInt(),
   #    projectile.pos.y.toInt())
