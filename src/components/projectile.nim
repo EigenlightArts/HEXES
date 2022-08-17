@@ -1,5 +1,6 @@
 import natu/[math, graphics, video, oam, utils, mgba]
-import ../utils/[objs, labels]
+import ../utils/[objs]
+
 
 type
   ProjectileKind* = enum
@@ -7,6 +8,9 @@ type
     pkBulletEnemy
     pkEnemy
     pkModifier
+  ModifierKind = enum
+    mkNumber
+    mkOperator
   Projectile* = object
     # fields that all have in common
     pos*: Vec2f
@@ -17,16 +21,16 @@ type
     case kind*: ProjectileKind
     of pkBulletPlayer, pkBulletEnemy:
       # fields that only bullets have
-      damage*: int
+      blDamage*: int
     of pkEnemy:
       # fields that only enemies have
-      health*: int
-      doesItShoot*: bool
+      emHealth*: int
+      emShooter*: bool
     of pkModifier:
       # fields that only modifiers have
       # modifier: Modifier
-      modLabel*: Label
-      modType*: string
+      mkLength*: int 
+      mkKind*: ModifierKind
 
 var bulletPlayerEntitiesInstances*: List[5, Projectile]
 var bulletEnemyEntitiesInstances*: List[3, Projectile]
@@ -42,15 +46,15 @@ proc initBulletEnemyProjectile*(): Projectile =
 proc initEnemyProjectile*(): Projectile =
   result.kind = pkEnemy
 
-proc initModifierProjectile*(gfxText: Graphic, pos: Vec2i, text: cstring): Projectile =
+proc initModifierProjectile*(): Projectile =
   result.kind = pkModifier
-
-  result.modLabel.init(pos, s8x16, count = 22)
-  result.modLabel.obj.pal = getPalId(gfxText)
-  result.modLabel.ink = 1 # set the ink colour index to use from the palette
-  result.modLabel.shadow = 2 # set the shadow colour (only relevant if the font actually has more than 1 colour)
-  result.modLabel.put(text)
+  # result.modLabel.init(pos, s8x16, count = 22)
+  # result.modLabel.obj.pal = getPalId(gfxPal)
+  # result.modLabel.ink = 1 # set the ink colour index to use from the palette
+  # result.modLabel.shadow = 2 # set the shadow colour (only relevant if the font actually has more than 1 colour)
+  # result.modLabel.put(text)
   
+
 # Bullet spefific procedures
 
 proc rect(bullet: Projectile): Rect =
@@ -72,3 +76,25 @@ proc update*(bullet: var Projectile) =
 
   if (not onscreen(bullet.rect())):
     bullet.finished = true
+
+
+# Modifier spefific procedures
+
+proc draw*(modifier: var Projectile) =
+  if not modifier.finished:
+    
+    # if modifier.dirty:
+    #   modifier.render()
+    
+    withObjs(modifier.mkLength):
+      let w = getWidth(modifier.obj)
+      let tilesPerObj = modifier.tilesPerObj.int
+      var x = modifier.obj.x
+      for i in 0..<spriteCount:
+        let tid = modifier.obj.tid + (modifier.digits[i]*tilesPerObj)
+        objs[i] = modifier.obj.dup(x = x, tid = tid)
+        x += w
+
+proc update*(modifier: var Projectile) =
+  # TODO(Kal): Implement Blue Noise RNG to select the modifier type
+  modifier.mkKind = mkNumber # or mkOperator
