@@ -83,9 +83,6 @@ proc update*(bullet: var Projectile) =
 proc draw*(modifier: var Projectile) =
   if not modifier.finished:
     
-    # if modifier.dirty:
-    #   modifier.render()
-    
     withObjs(modifier.mkLength):
       let w = getWidth(modifier.obj)
       let tilesPerObj = modifier.tilesPerObj.int
