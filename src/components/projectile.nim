@@ -8,9 +8,9 @@ type
     pkBulletEnemy
     pkEnemy
     pkModifier
-  ModifierKind = enum
-    mkNumber
-    mkOperator
+  # ModifierKind = enum
+  #   mkNumber
+  #   mkOperator
   Projectile* = object
     # fields that all have in common
     pos*: Vec2f
@@ -30,11 +30,12 @@ type
       # fields that only modifiers have
       # modifier: Modifier
       # mkCharLength*: int 
-      case mkKind*: ModifierKind
-      of mkNumber:
-        mkNumberChars: array[2, int]
-      of mkOperator:
-        mkOperatorChar: int
+      # case mkKind*: ModifierKind
+      # of mkNumber:
+      #   mkNumberChars: array[2, int]
+      # of mkOperator:
+      #   mkOperatorChar: int
+      mdIndex: int
 
 var bulletPlayerEntitiesInstances*: List[5, Projectile]
 var bulletEnemyEntitiesInstances*: List[3, Projectile]
@@ -50,14 +51,9 @@ proc initBulletEnemyProjectile*(): Projectile =
 proc initEnemyProjectile*(): Projectile =
   result.kind = pkEnemy
 
-proc initModifierProjectile*(pos: Vec2f, chars: array[2, int]): Projectile =
+proc initModifierProjectile*(pos: Vec2f, index: int): Projectile =
   result.kind = pkModifier
-  result.mkKind = mkNumber
-  result.pos = pos
-
-proc initModifierProjectile*(pos: Vec2f, chars: int): Projectile =
-  result.kind = pkModifier
-  result.mkKind = mkOperator
+  result.mdIndex = index
   result.pos = pos
   
 
@@ -71,6 +67,7 @@ proc rect(bullet: Projectile): Rect =
   result.bottom = bullet.pos.y.toInt() + 5
   # printf("in projectile.nim proc rect2: x = %l, y = %l", bullet.pos.x.toInt(), bullet.pos.y.toInt())
 
+# TODO(Kal): This seems to be applicable to all Projectiles, should be rewritten to reflect that
 proc update*(bullet: var Projectile) =
 
   # make sure the bullets go where they are supposed to go
@@ -88,16 +85,9 @@ proc update*(bullet: var Projectile) =
 
 proc draw*(modifier: var Projectile) =
   if not modifier.finished:
-   if modifier.mkKind == ModifierKind.mkNumber:
-    
-      withObjs(modifier.mkNumberChars.len):
-        let w = getWidth(modifier.obj)
-        let tilesPerObj = modifier.tilesPerObj.int
-        var x = modifier.obj.x
-        for i in 0..<spriteCount:
-          let tid = modifier.obj.tid + (modifier.mkNumberChars[i]*tilesPerObj)
-          objs[i] = modifier.obj.dup(x = x, tid = tid)
-          x += w
+   if modifier.mdIndex == 1..9:
+      
+      # TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
 
 proc update*(modifier: var Projectile) =
   modifier.mkKind = mkNumber # or mkOperator
