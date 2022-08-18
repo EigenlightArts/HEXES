@@ -70,6 +70,7 @@ proc draw*(self: var EvilHex) =
   #     tileId = self.tileId
   #     palId = self.paletteId
 
-proc hexLoop*(self: var EvilHex) = 
-  var modHexInstance: Projectile = initModifierProjectile(gfxPal=self.shooter.graphicProjectile, pos=self.labeledCHN.pos, text="oil")
+proc update*(self: var EvilHex) = 
+  # TODO(Kal): Implement Blue Noise RNG to select the modifier type
+  var modHexInstance: Projectile = initModifierProjectile(gfxPal=self.shooter.graphicProjectile, pos=self.labeledCHN.pos, chars=[15, 4])
   self.shooter.fire(projectile=modHexInstance, pos=self.pos, angle=self.angle)

@@ -29,8 +29,12 @@ type
     of pkModifier:
       # fields that only modifiers have
       # modifier: Modifier
-      mkLength*: int 
-      mkKind*: ModifierKind
+      # mkCharLength*: int 
+      case mkKind*: ModifierKind
+      of mkNumber:
+        mkNumberChars: array[2, int]
+      of mkOperator:
+        mkOperatorChar: int
 
 var bulletPlayerEntitiesInstances*: List[5, Projectile]
 var bulletEnemyEntitiesInstances*: List[3, Projectile]
@@ -46,13 +50,15 @@ proc initBulletEnemyProjectile*(): Projectile =
 proc initEnemyProjectile*(): Projectile =
   result.kind = pkEnemy
 
-proc initModifierProjectile*(): Projectile =
+proc initModifierProjectile*(pos: Vec2f, chars: array[2, int]): Projectile =
   result.kind = pkModifier
-  # result.modLabel.init(pos, s8x16, count = 22)
-  # result.modLabel.obj.pal = getPalId(gfxPal)
-  # result.modLabel.ink = 1 # set the ink colour index to use from the palette
-  # result.modLabel.shadow = 2 # set the shadow colour (only relevant if the font actually has more than 1 colour)
-  # result.modLabel.put(text)
+  result.mkKind = mkNumber
+  result.pos = pos
+
+proc initModifierProjectile*(pos: Vec2f, chars: int): Projectile =
+  result.kind = pkModifier
+  result.mkKind = mkOperator
+  result.pos = pos
   
 
 # Bullet spefific procedures
@@ -82,16 +88,16 @@ proc update*(bullet: var Projectile) =
 
 proc draw*(modifier: var Projectile) =
   if not modifier.finished:
+   if modifier.mkKind == ModifierKind.mkNumber:
     
-    withObjs(modifier.mkLength):
-      let w = getWidth(modifier.obj)
-      let tilesPerObj = modifier.tilesPerObj.int
-      var x = modifier.obj.x
-      for i in 0..<spriteCount:
-        let tid = modifier.obj.tid + (modifier.digits[i]*tilesPerObj)
-        objs[i] = modifier.obj.dup(x = x, tid = tid)
-        x += w
+      withObjs(modifier.mkNumberChars.len):
+        let w = getWidth(modifier.obj)
+        let tilesPerObj = modifier.tilesPerObj.int
+        var x = modifier.obj.x
+        for i in 0..<spriteCount:
+          let tid = modifier.obj.tid + (modifier.mkNumberChars[i]*tilesPerObj)
+          objs[i] = modifier.obj.dup(x = x, tid = tid)
+          x += w
 
 proc update*(modifier: var Projectile) =
-  # TODO(Kal): Implement Blue Noise RNG to select the modifier type
   modifier.mkKind = mkNumber # or mkOperator
