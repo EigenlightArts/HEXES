@@ -16,8 +16,6 @@ irq.enable(iiVBlank)
 var evilHexInstance = initEvilHex(255)
 var playerShipInstance = initPlayerShip(vec2f(75, 0))
 
-var testHexLoop = true
-
 while true:
   # update key states
   keyPoll()
@@ -25,9 +23,8 @@ while true:
   # ship controls
   playerShipInstance.controls()
 
-  if testHexLoop:
-    evilHexInstance.hexLoop()
-    testHexLoop = false
+  # update the EvilHex
+  evilHexInstance.update()
 
   # wait for the end of the frame
   VBlankIntrWait()

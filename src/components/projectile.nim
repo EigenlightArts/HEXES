@@ -56,15 +56,14 @@ proc initBulletEnemyProjectile*(): Projectile =
 proc initEnemyProjectile*(): Projectile =
   result.kind = pkEnemy
 
-proc initModifierProjectile*(obj: ObjAttr, orckIndex: int): Projectile =
+proc initModifierProjectile*(gfx: Graphic, obj: ObjAttr, orckIndex: int): Projectile =
   result.kind = pkModifier
-  result.mdOrckIndex = orckIndex
+  result.graphic = gfx
   result.mdObj = obj
+  result.mdObj.tileId = result.mdObj.tileId + orckIndex * result.graphic.frameTiles
 
-  result.tileId = allocObjTiles(result.mdObj[result.mdOrckIndex])
-  copyFrame(addr objTileMem[result.tileId], result.mdObj[result.mdOrckIndex], 0)
-  
-  result.palId = acquireObjPal(result.mdObj[result.mdOrckIndex])
+  # result.tileId = result.mdObj.tileId  
+  # result.palId = result.mdObj.palId
 
 # General projectile procedures
 
@@ -91,9 +90,10 @@ proc update*(projectile: var Projectile) =
 
 # Modifier spefific procedures
 
+#[ 
 proc draw*(modifier: var Projectile) =
   if not modifier.finished:
     # TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
     for modifier.mdIndex in 1 .. 9:
       break
-
+ ]#
