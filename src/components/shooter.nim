@@ -2,21 +2,11 @@ import natu/[math, graphics, video, oam, utils, mgba]
 import ../utils/[objs, labels]
 import projectile
 
-type Shooter* = object
-  graphicProjectile*: Graphic
-  
+type Shooter* = object  
   projectile: seq[Projectile]
-  projectileTileId: int
-  projectilePalId: int
 
-proc initShooter*(gfx: Graphic): Shooter =
-  result.graphicProjectile = gfx
-
-  result.projectileTileId = allocObjTiles(result.graphicProjectile)
-  copyFrame(addr objTileMem[result.projectileTileId], result.graphicProjectile, 0)
-  result.projectilePalId = acquireObjPal(result.graphicProjectile)
+proc initShooter*(): Shooter =
   result.projectile.setLen(0)
-
 
 proc destroy*(self: var Shooter) =
   freeObjTiles(self.projectileTileId)

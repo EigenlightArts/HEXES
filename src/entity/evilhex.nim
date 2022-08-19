@@ -1,6 +1,6 @@
 import natu/[math, graphics, video, tte, posprintf]
 import ../utils/labels
-import ../components/[shooter, projectile]
+import ../components/[shooter, projectile, shared]
 
 type
   EvilHex* = object
@@ -23,7 +23,7 @@ proc initEvilHex*(centerHexNumber: uint8): EvilHex =
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
 
-  result.shooter = initShooter(gfxBulletTemp)
+  result.shooter = initShooter()
   posprintf(addr result.hexBuffer, "$%X", centerHexNumber)
 
   result.labeledCHN.init(vec2i(ScreenWidth div 2, ScreenHeight div 2), s8x16, count = 22)
@@ -72,5 +72,5 @@ proc draw*(self: var EvilHex) =
 
 proc update*(self: var EvilHex) = 
   # TODO(Kal): Implement Blue Noise RNG to select the modifier type
-  var modHexInstance: Projectile = initModifierProjectile(gfxPal=self.shooter.graphicProjectile, pos=self.labeledCHN.pos, chars=[15, 4])
-  self.shooter.fire(projectile=modHexInstance, pos=self.pos, angle=self.angle)
+  var modHexInstance: Projectile = initModifierProjectile(gfx=orckFont, orckIndex=4)
+  self.shooter.fire(projectile=modHexInstance, pos=self.labeledCHN.pos, angle=self.angle)

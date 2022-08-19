@@ -27,7 +27,7 @@ proc initPlayerShip*(pos: Vec2f): PlayerShip =
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
 
-  result.shooter = initShooter(gfxBulletTemp)
+  result.shooter = initShooter()
   
 
 # destructor - free the resources used by a ship object
@@ -66,7 +66,7 @@ proc controls*(self: var PlayerShip) =
     self.angle -= 350
   if keyHit(kiA):
     # printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
-    var bulPlayerInstance: Projectile = initBulletPlayerProjectile()
+    var bulPlayerInstance: Projectile = initBulletPlayerProjectile(gfxBulletTemp)
     self.shooter.fire(projectile=bulPlayerInstance, pos=self.pos, angle=self.angle)
 
 # calculate and update ship position
