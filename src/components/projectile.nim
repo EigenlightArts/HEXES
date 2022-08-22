@@ -60,7 +60,7 @@ proc initModifierProjectile*(gfx: Graphic, obj: ObjAttr, orckIndex: int): Projec
   result.kind = pkModifier
   result.graphic = gfx
   result.mdObj = obj
-  result.mdObj.tileId = result.mdObj.tileId + orckIndex * result.graphic.frameTiles
+  result.mdObj.tileId = obj.tileId + orckIndex * result.graphic.frameTiles
 
   # result.tileId = result.mdObj.tileId  
   # result.palId = result.mdObj.palId

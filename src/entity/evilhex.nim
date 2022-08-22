@@ -73,5 +73,5 @@ proc draw*(self: var EvilHex) =
 proc update*(self: var EvilHex) = 
   # TODO(Kal): Implement Blue Noise RNG to select the modifier type
   var modHexInstance: Projectile = initModifierProjectile(gfx=gfxOrckFont, obj=objOrckFont, orckIndex=4)
-  printf(gfx)
-  self.shooter.fire(projectile=modHexInstance, pos=vec2f(100, 50), angle=self.angle)
+  printf("labeledCHN.pos is X:%d Y:%d", self.labeledCHN.pos.x, self.labeledCHN.pos.y)
+  self.shooter.fire(projectile=modHexInstance, pos=vec2f(self.labeledCHN.pos), angle=self.angle)
