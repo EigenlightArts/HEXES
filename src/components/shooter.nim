@@ -10,13 +10,8 @@ proc initShooter*(): Shooter =
 
 proc destroy*(self: var Shooter) =
   for projectileShooter in self.projectilesSeq:
-    case projectileShooter.kind:
-    of pkBulletPlayer, pkBulletEnemy:
-      freeObjTiles(projectileShooter.tileId)
-      releaseObjPal(projectileShooter.graphic)
-    else:
-      discard
-  
+    freeObjTiles(projectileShooter.tileId)
+    releaseObjPal(projectileShooter.graphic)
 
 proc draw*(self: Shooter, projectile: Projectile) =
   for projectileShooter in self.projectilesSeq:
@@ -54,7 +49,9 @@ proc fire*(self: var Shooter, projectile: var Projectile, pos: Vec2f = vec2f(0, 
         bulletPlayerEntitiesInstances.add(projectile)
       # TODO(Kal): bullet else play sfx
     of pkBulletEnemy:
-      discard
+      if not bulletEnemyEntitiesInstances.isFull:
+        self.projectilesSeq.insert(projectile)
+        bulletEnemyEntitiesInstances.add(projectile)
     of pkEnemy:
       discard
     of pkModifier:

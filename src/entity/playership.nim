@@ -70,7 +70,7 @@ proc controls*(self: var PlayerShip) =
     self.shooter.fire(projectile=bulPlayerInstance, pos=self.pos, angle=self.angle)
 
 # calculate and update ship position
-proc updatePos*(self: var PlayerShip) =
+proc update*(self: var PlayerShip) =
 
   self.pos.x = self.centerPoint.x + fp(luCos(
       self.angle) * self.orbitXRadius)

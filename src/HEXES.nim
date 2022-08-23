@@ -16,6 +16,8 @@ irq.enable(iiVBlank)
 var evilHexInstance = initEvilHex(255)
 var playerShipInstance = initPlayerShip(vec2f(75, 0))
 
+var flag = true
+
 while true:
   # update key states
   keyPoll()
@@ -23,14 +25,20 @@ while true:
   # ship controls
   playerShipInstance.controls()
 
-  # update the EvilHex
+  # update ship position
+  playerShipInstance.update()
+
+  # fire the EvilHex projectile
+  if flag:  
+    evilHexInstance.fire()
+    flag = false
+
   evilHexInstance.update()
+
 
   # wait for the end of the frame
   VBlankIntrWait()
 
-  # update ship position
-  playerShipInstance.updatePos()
   # draw the ship
   playerShipInstance.draw()
 

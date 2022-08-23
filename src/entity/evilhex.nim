@@ -18,7 +18,7 @@ type
 proc initEvilHex*(centerHexNumber: uint8): EvilHex =
   result.initialised = true
   result.updateCHN = true
-  result.angle = 20
+  result.angle = 30
   result.centerHexNumber = centerHexNumber
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
@@ -48,6 +48,9 @@ proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}
 
 # draw evilhex and related parts
 proc draw*(self: var EvilHex) =
+  self.shooter.draw()
+  self.labeledCHN.draw()
+
   if self.updateCHN:
     var size = tte.getTextSize(addr self.hexBuffer)
     self.labeledCHN.pos = vec2i(ScreenWidth div 2 - size.x div 2, ScreenHeight div 2 - size.y div 2)
@@ -55,23 +58,12 @@ proc draw*(self: var EvilHex) =
     self.labeledCHN.put(addr self.hexBuffer)
     self.updateCHN = false
 
-  self.shooter.draw()
-  self.labeledCHN.draw()
-
-  # copyFrame(addr objTileMem[self.tileId], gfxShipTemp, 0)
-  # withObjAndAff:
-  #   let delta = self.centerPoint - self.pos
-  #   aff.setToRotationInv(ArcTan2(int16(delta.x), int16(delta.y)))
-  #   obj.init:
-  #     mode = omAff
-  #     affId = affId
-  #     pos = vec2i(self.pos) - vec2i(gfxShipTemp.width div 2, gfxShipTemp.height div 2)
-  #     size = gfxShipTemp.size
-  #     tileId = self.tileId
-  #     palId = self.paletteId
-
-proc update*(self: var EvilHex) = 
+proc fire*(self: var EvilHex) = 
   # TODO(Kal): Implement Blue Noise RNG to select the modifier type
   var modHexInstance: Projectile = initModifierProjectile(gfx=gfxOrckFont, obj=objOrckFont, orckIndex=4)
+  # var modHexInstance: Projectile = initBulletEnemyProjectile(gfxBulletTemp)
   printf("labeledCHN.pos is X:%d Y:%d", self.labeledCHN.pos.x, self.labeledCHN.pos.y)
   self.shooter.fire(projectile=modHexInstance, pos=vec2f(self.labeledCHN.pos), angle=self.angle)
+
+proc update*(self: var EvilHex) =
+  self.shooter.update()

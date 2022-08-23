@@ -1,7 +1,6 @@
 import natu/[math, graphics, video, oam, utils, mgba]
 import ../utils/[objs]
 
-
 type
   ProjectileKind* = enum
     pkBulletPlayer
@@ -50,8 +49,14 @@ proc initBulletPlayerProjectile*(gfx: Graphic): Projectile =
   
   result.palId = acquireObjPal(result.graphic)
 
-proc initBulletEnemyProjectile*(): Projectile =
+proc initBulletEnemyProjectile*(gfx: Graphic): Projectile =
   result.kind = pkBulletEnemy
+  result.graphic = gfx
+
+  result.tileId = allocObjTiles(result.graphic)
+  copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
+  
+  result.palId = acquireObjPal(result.graphic)
 
 proc initEnemyProjectile*(): Projectile =
   result.kind = pkEnemy
