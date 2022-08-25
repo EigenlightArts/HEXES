@@ -31,7 +31,7 @@ type
       emShooter*: bool
     of pkModifier:
       # fields that only modifiers have
-      mdOrckIndex: int
+      mdFontIndex: int
       mdObj: ObjAttr
 
 var bulletPlayerEntitiesInstances*: List[5, Projectile]
@@ -61,11 +61,11 @@ proc initBulletEnemyProjectile*(gfx: Graphic): Projectile =
 proc initEnemyProjectile*(): Projectile =
   result.kind = pkEnemy
 
-proc initModifierProjectile*(gfx: Graphic, obj: ObjAttr, orckIndex: int): Projectile =
+proc initModifierProjectile*(gfx: Graphic, obj: ObjAttr, fontIndex: int): Projectile =
   result.kind = pkModifier
   result.graphic = gfx
   result.mdObj = obj
-  result.mdObj.tileId = obj.tileId + orckIndex * result.graphic.frameTiles
+  result.mdObj.tileId = obj.tileId + fontIndex * result.graphic.frameTiles
 
   # result.tileId = result.mdObj.tileId  
   # result.palId = result.mdObj.palId

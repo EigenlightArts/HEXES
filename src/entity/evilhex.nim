@@ -88,7 +88,7 @@ proc fire*(self: var EvilHex) =
   self.pos.y = self.centerPoint.y - fp(luSin(
       self.angle) * self.orbitRadius.y)
   
-  var modHexInstance: Projectile = initModifierProjectile(gfx=gfxOrckFont, obj=objOrckFont, orckIndex=4)
+  var modHexInstance: Projectile = initModifierProjectile(gfx=gfxHwaveFont, obj=objHwaveFont, fontIndex=4)
   # var modHexInstance: Projectile = initBulletEnemyProjectile(gfxBulletTemp) # this is done for debugging purposes
   printf("in evilhex.nim proc fire x = %l, y = %l, angle = %l", self.pos.x.toInt(), self.pos.y.toInt(), self.angle.uint16)
   self.shooter.fire(projectile=modHexInstance, pos=self.pos, angle=self.angle)
