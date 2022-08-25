@@ -1,25 +1,35 @@
-import natu/[math, graphics, video, tte, posprintf, mgba]
-import ../utils/labels
+import natu/[math, graphics, video, bios, tte, utils, posprintf, mgba]
+import ../utils/[labels, objs]
 import ../components/[shooter, projectile, shared]
+
+# TODO(Kal): Split CenterHexNumber into new type
 
 type
   EvilHex* = object
     initialised: bool
-    centerHexNumber: uint8
-    updateCHN: bool
-    labeledCHN: Label
+
     tileId, paletteId: int
     hexBuffer: array[9, char]
-    angle: Angle
+    
+    centerHexNumber: uint8
+    updateCHN: bool
+    labeledCHN: Label  
+    
+    orbitRadius: Vec2i
+    centerPoint: Vec2i
     pos: Vec2f
-
+    angle: Angle
     shooter: Shooter
 
 proc initEvilHex*(centerHexNumber: uint8): EvilHex =
   result.initialised = true
-  result.updateCHN = true
-  result.angle = 30
+  result.orbitRadius = vec2i(30, 20)
+  result.centerPoint = vec2i(ScreenWidth div 2, ScreenHeight div 2)
+  # result.angle = 0
+  # result.pos = vec2f(70, 70)
+  
   result.centerHexNumber = centerHexNumber
+  result.updateCHN = true
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
 
@@ -58,12 +68,31 @@ proc draw*(self: var EvilHex) =
     self.labeledCHN.put(addr self.hexBuffer)
     self.updateCHN = false
 
+  #[ withObjAndAff:
+    let delta = self.centerPoint - self.pos
+    aff.setToRotationInv(ArcTan2(int16(delta.x), int16(delta.y)))
+    obj.init:
+      mode = omAff
+      affId = affId
+      pos = vec2i(self.pos) - vec2i(gfxShipTemp.width div 2, gfxShipTemp.height div 2)
+      size = gfxShipTemp.size
+      tileId = self.tileId
+      palId = self.paletteId ]#
+
 proc fire*(self: var EvilHex) = 
-  # TODO(Kal): Implement Blue Noise RNG to select the modifier type
-  var modHexInstance: Projectile = initModifierProjectile(gfx=gfxOrckFont, obj=objOrckFont, orckIndex=4)
-  # var modHexInstance: Projectile = initBulletEnemyProjectile(gfxBulletTemp)
-  printf("labeledCHN.pos is X:%d Y:%d", self.labeledCHN.pos.x, self.labeledCHN.pos.y)
-  self.shooter.fire(projectile=modHexInstance, pos=vec2f(self.labeledCHN.pos), angle=self.angle)
+  # TODO(Kal): Implement Blue Noise RNG to select the modifier type and angle+position of bullets
+  self.angle = rand(uint16) 
+  
+  # var modHexInstance: Projectile = initModifierProjectile(gfx=gfxOrckFont, obj=objOrckFont, orckIndex=4)
+  var modHexInstance: Projectile = initBulletEnemyProjectile(gfxBulletTemp)
+  printf("in evilhex.nim proc fire x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
+  self.shooter.fire(projectile=modHexInstance, pos=self.pos, angle=self.angle)
 
 proc update*(self: var EvilHex) =
+
+  self.pos.x = self.centerPoint.x + fp(luCos(
+      self.angle) * self.orbitRadius.x)
+  self.pos.y = self.centerPoint.y + fp(luSin(
+      self.angle) * self.orbitRadius.y)
+
   self.shooter.update()
