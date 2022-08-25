@@ -23,7 +23,7 @@ type
 
 proc initEvilHex*(centerHexNumber: uint8): EvilHex =
   result.initialised = true
-  result.orbitRadius = vec2i(30, 20)
+  result.orbitRadius = vec2i(15, 10)
   result.centerPoint = vec2i(ScreenWidth div 2, ScreenHeight div 2)
   # result.angle = 0
   # result.pos = vec2f(70, 70)
@@ -81,18 +81,23 @@ proc draw*(self: var EvilHex) =
 
 proc fire*(self: var EvilHex) = 
   # TODO(Kal): Implement Blue Noise RNG to select the modifier type and angle+position of bullets
-  self.angle = rand(uint16) 
+  self.angle = rand(uint16)
+
+  self.pos.x = self.centerPoint.x - fp(luCos(
+      self.angle) * self.orbitRadius.x)
+  self.pos.y = self.centerPoint.y - fp(luSin(
+      self.angle) * self.orbitRadius.y)
   
-  # var modHexInstance: Projectile = initModifierProjectile(gfx=gfxOrckFont, obj=objOrckFont, orckIndex=4)
-  var modHexInstance: Projectile = initBulletEnemyProjectile(gfxBulletTemp)
-  printf("in evilhex.nim proc fire x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
+  var modHexInstance: Projectile = initModifierProjectile(gfx=gfxOrckFont, obj=objOrckFont, orckIndex=4)
+  # var modHexInstance: Projectile = initBulletEnemyProjectile(gfxBulletTemp) # this is done for debugging purposes
+  printf("in evilhex.nim proc fire x = %l, y = %l, angle = %l", self.pos.x.toInt(), self.pos.y.toInt(), self.angle.uint16)
   self.shooter.fire(projectile=modHexInstance, pos=self.pos, angle=self.angle)
 
 proc update*(self: var EvilHex) =
 
-  self.pos.x = self.centerPoint.x + fp(luCos(
-      self.angle) * self.orbitRadius.x)
-  self.pos.y = self.centerPoint.y + fp(luSin(
-      self.angle) * self.orbitRadius.y)
+  # self.pos.x = self.centerPoint.x + fp(luCos(
+  #     self.angle) * self.orbitRadius.x)
+  # self.pos.y = self.centerPoint.y + fp(luSin(
+  #     self.angle) * self.orbitRadius.y)
 
   self.shooter.update()
