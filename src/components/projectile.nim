@@ -64,8 +64,9 @@ proc initEnemyProjectile*(): Projectile =
 proc initModifierProjectile*(gfx: Graphic, obj: ObjAttr, fontIndex: int): Projectile =
   result.kind = pkModifier
   result.graphic = gfx
+  result.mdFontIndex = fontIndex
   result.mdObj = obj
-  result.mdObj.tileId = obj.tileId + fontIndex * result.graphic.frameTiles
+  result.mdObj.tileId = obj.tileId * result.graphic.frameTiles
 
   # result.tileId = result.mdObj.tileId  
   # result.palId = result.mdObj.palId
@@ -82,6 +83,8 @@ proc rect(projectile: Projectile): Rect =
 
 proc update*(projectile: var Projectile) =
 
+  printf("POS 1: %d,%d", projectile.pos.x.toInt(), projectile.pos.y.toInt())
+
   # make sure the projectiles go where they are supposed to go
   # the *2 is for speed reasons, without it, the projectiles are very slow
   projectile.pos.x = projectile.pos.x - fp(luCos(
@@ -89,16 +92,37 @@ proc update*(projectile: var Projectile) =
   projectile.pos.y = projectile.pos.y - fp(luSin(
        projectile.angle)) * 2
 
+  printf("POS 2: %d,%d", projectile.pos.x.toInt(), projectile.pos.y.toInt())
+
   if (not onscreen(projectile.rect())):
     projectile.finished = true
 
 
 # Modifier spefific procedures
 
-#[ 
+# TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
 proc draw*(modifier: var Projectile) =
-  if not modifier.finished:
-    # TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
-    for modifier.mdIndex in 1 .. 9:
-      break
- ]#
+  # if not modifier.finished:
+    
+    # withObj:
+    #   printf("Projectile Palette: %d", modifier.mdObj.pal)
+    #   # let w = getWidth(modifier.mdObj)
+    #   let x = modifier.mdObj.x
+    #   let y = modifier.mdObj.y
+
+    #   let tid = modifier.mdObj.tid + (modifier.mdFontIndex * 4)
+    #   obj = modifier.mdObj.dup(x = x, tid = tid)
+
+  withObjAndAff:
+    aff.setToRotationInv(modifier.angle.uint16)
+    obj.init(
+      mode = omAff,
+      aff = affId,
+      pos = vec2i(modifier.pos) - vec2i(
+          modifier.graphic.width div 2, modifier.graphic.height div 2),
+      tid = modifier.mdObj.tid + (modifier.mdFontIndex *
+          4),
+      pal = modifier.mdObj.palId,
+      size = modifier.graphic.size
+    )
+    # printf("Projectile Palette: %d", modifier.mdObj.pal)

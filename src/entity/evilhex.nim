@@ -68,16 +68,6 @@ proc draw*(self: var EvilHex) =
     self.labeledCHN.put(addr self.hexBuffer)
     self.updateCHN = false
 
-  #[ withObjAndAff:
-    let delta = self.centerPoint - self.pos
-    aff.setToRotationInv(ArcTan2(int16(delta.x), int16(delta.y)))
-    obj.init:
-      mode = omAff
-      affId = affId
-      pos = vec2i(self.pos) - vec2i(gfxShipTemp.width div 2, gfxShipTemp.height div 2)
-      size = gfxShipTemp.size
-      tileId = self.tileId
-      palId = self.paletteId ]#
 
 proc fire*(self: var EvilHex) = 
   # TODO(Kal): Implement Blue Noise RNG to select the modifier type and angle+position of bullets
@@ -88,7 +78,7 @@ proc fire*(self: var EvilHex) =
   self.pos.y = self.centerPoint.y - fp(luSin(
       self.angle) * self.orbitRadius.y)
   
-  var modHexInstance: Projectile = initModifierProjectile(gfx=gfxHwaveFont, obj=objHwaveFont, fontIndex=4)
+  var modHexInstance: Projectile = initModifierProjectile(gfx=gfxHwaveFont, obj=objHwaveFont, fontIndex=5)
   # var modHexInstance: Projectile = initBulletEnemyProjectile(gfxBulletTemp) # this is done for debugging purposes
   printf("in evilhex.nim proc fire x = %l, y = %l, angle = %l", self.pos.x.toInt(), self.pos.y.toInt(), self.angle.uint16)
   self.shooter.fire(projectile=modHexInstance, pos=self.pos, angle=self.angle)

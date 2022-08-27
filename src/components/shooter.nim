@@ -2,40 +2,58 @@ import natu/[math, graphics, video, oam, utils, mgba]
 import ../utils/[objs, labels]
 import projectile
 
-type Shooter* = object  
+type Shooter* = object
   projectilesSeq: seq[Projectile]
 
 proc initShooter*(): Shooter =
   result.projectilesSeq.setLen(0)
 
 proc destroy*(self: var Shooter) =
-  for projectileShooter in self.projectilesSeq:
-    freeObjTiles(projectileShooter.tileId)
-    releaseObjPal(projectileShooter.graphic)
+  for shooterProjectile in self.projectilesSeq:
+    freeObjTiles(shooterProjectile.tileId)
+    releaseObjPal(shooterProjectile.graphic)
 
 proc draw*(self: Shooter, projectile: Projectile) =
-  for projectileShooter in self.projectilesSeq:
-    withObjAndAff:
-      aff.setToRotationInv(projectile.angle.uint16)
-      obj.init(
-        mode = omAff,
-        aff = affId,
-        pos = vec2i(projectile.pos) - vec2i(projectileShooter.graphic.width div 2,
-            projectileShooter.graphic.height div 2),
-        tid = projectileShooter.tileId + (projectile.index),
-        pal = projectileShooter.palId,
-        size = projectileShooter.graphic.size
-      )
-  # printf("in self.nim proc draw: x = %l, y = %l", projectile.pos.x.toInt(),
-  #    projectile.pos.y.toInt())
+  for shooterProjectile in self.projectilesSeq:
+    case shooterProjectile.kind:
+    of pkBulletEnemy, pkBulletPlayer, pkEnemy:
+      withObjAndAff:
+        aff.setToRotationInv(projectile.angle.uint16)
+        obj.init(
+          mode = omAff,
+          aff = affId,
+          pos = vec2i(projectile.pos) - vec2i(
+              shooterProjectile.graphic.width div 2,
+              shooterProjectile.graphic.height div 2),
+          tid = shooterProjectile.tileId + (projectile.index),
+          pal = shooterProjectile.palId,
+          size = shooterProjectile.graphic.size
+        )
+    of pkModifier:
+      for modifierInstance in mitems(modiferEntitiesInstances):
+        modifierInstance.draw()
+        # withObjAndAff:
+        #   aff.setToRotationInv(projectile.angle.uint16)
+        #   obj.init(
+        #     mode = omAff,
+        #     aff = affId,
+        #     pos = vec2i(projectile.pos) - vec2i(
+        #         shooterProjectile.graphic.width div 2, shooterProjectile.graphic.height div 2),
+        #     tid = modifierInstance.mdObj + (modifierInstance.mdFontIndex *
+        #         4),
+        #     pal = shooterProjectile.palId,
+        #     size = shooterProjectile.graphic.size
+        #   )
+      # printf("in self.nim proc draw: x = %l, y = %l", projectile.pos.x.toInt(),
+      #    projectile.pos.y.toInt())
 
-  # `mitems` makes `modiferEntitiesInstances` mutable
-  # for modifierInstance in mitems(modiferEntitiesInstances):
-  #   modifierInstance.modLabel.draw()
+        # `mitems` makes `modiferEntitiesInstances` mutable
+        # for modifierInstance in mitems(modiferEntitiesInstances):
+        #   modifierInstance.draw()
 
 
-proc fire*(self: var Shooter, projectile: var Projectile, pos: Vec2f = vec2f(0, 0),
-    index = 0, angle: Angle = 0) =
+proc fire*(self: var Shooter, projectile: var Projectile, pos: Vec2f = vec2f(0,
+    0), index = 0, angle: Angle = 0) =
 
   projectile.index = index
   projectile.pos = pos
@@ -75,7 +93,7 @@ proc update*(self: var Shooter) =
         enemyEntitiesInstances.del(i)
       of pkModifier:
         modiferEntitiesInstances.del(i)
-      
+
       self.projectilesSeq.delete(i)
     else:
       inc i
