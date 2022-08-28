@@ -13,13 +13,15 @@ type
     
     centerHexNumber: uint8
     updateCHN: bool
-    labeledCHN: Label  
+    labelCHN: Label  
     
     orbitRadius: Vec2i
     centerPoint: Vec2i
     pos: Vec2f
     angle: Angle
+
     shooter: Shooter
+    modifierProj: Projectile
 
 proc initEvilHex*(centerHexNumber: uint8): EvilHex =
   result.initialised = true
@@ -36,12 +38,12 @@ proc initEvilHex*(centerHexNumber: uint8): EvilHex =
   result.shooter = initShooter()
   posprintf(addr result.hexBuffer, "$%X", centerHexNumber)
 
-  result.labeledCHN.init(vec2i(ScreenWidth div 2, ScreenHeight div 2), s8x16, count = 22)
-  result.labeledCHN.obj.pal = getPalId(gfxShipTemp)
-  result.labeledCHN.ink = 1 # set the ink colour index to use from the palette
-  result.labeledCHN.shadow = 2 # set the shadow colour (only relevant if the font actually has more than 1 colour)
+  result.labelCHN.init(vec2i(ScreenWidth div 2, ScreenHeight div 2), s8x16, count = 22)
+  result.labelCHN.obj.pal = getPalId(gfxShipTemp)
+  result.labelCHN.ink = 1 # set the ink colour index to use from the palette
+  result.labelCHN.shadow = 2 # set the shadow colour (only relevant if the font actually has more than 1 colour)
 
-  result.labeledCHN.put(addr result.hexBuffer)
+  result.labelCHN.put(addr result.hexBuffer)
 
 
 # destructor - free the resources used by the hex object
@@ -51,7 +53,7 @@ proc `=destroy`*(self: var EvilHex) =
     freeObjTiles(self.tileId)
     releaseObjPal(gfxShipTemp)
     self.shooter.destroy()
-    self.labeledCHN.destroy()
+    self.labelCHN.destroy()
 
 proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}
 
@@ -59,13 +61,13 @@ proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}
 # draw evilhex and related parts
 proc draw*(self: var EvilHex) =
   self.shooter.draw()
-  self.labeledCHN.draw()
+  self.labelCHN.draw()
 
   if self.updateCHN:
     var size = tte.getTextSize(addr self.hexBuffer)
-    self.labeledCHN.pos = vec2i(ScreenWidth div 2 - size.x div 2, ScreenHeight div 2 - size.y div 2)
+    self.labelCHN.pos = vec2i(ScreenWidth div 2 - size.x div 2, ScreenHeight div 2 - size.y div 2)
 
-    self.labeledCHN.put(addr self.hexBuffer)
+    self.labelCHN.put(addr self.hexBuffer)
     self.updateCHN = false
 
 
@@ -78,16 +80,17 @@ proc fire*(self: var EvilHex) =
   self.pos.y = self.centerPoint.y - fp(luSin(
       self.angle) * self.orbitRadius.y)
   
-  var modHexInstance: Projectile = initModifierProjectile(gfx=gfxHwaveFont, obj=objHwaveFont, fontIndex=5)
+  self.modifierProj = initModifierProjectile(gfx=gfxHwaveFont, obj=objHwaveFont, fontIndex=5)
   # var modHexInstance: Projectile = initBulletEnemyProjectile(gfxBulletTemp) # this is done for debugging purposes
   printf("in evilhex.nim proc fire x = %l, y = %l, angle = %l", self.pos.x.toInt(), self.pos.y.toInt(), self.angle.uint16)
-  self.shooter.fire(projectile=modHexInstance, pos=self.pos, angle=self.angle)
+  self.shooter.fire(projectile=self.modifierProj, pos=self.pos, angle=self.angle)
 
 proc update*(self: var EvilHex) =
 
-  # self.pos.x = self.centerPoint.x + fp(luCos(
-  #     self.angle) * self.orbitRadius.x)
-  # self.pos.y = self.centerPoint.y + fp(luSin(
-  #     self.angle) * self.orbitRadius.y)
+  # self.pos.x = self.pos.x - fp(luCos(
+  #     self.angle)) * 2
+  # self.pos.y = self.pos.y - fp(luSin(
+  #      self.angle)) * 2
 
   self.shooter.update()
+  self.modifierProj.update()

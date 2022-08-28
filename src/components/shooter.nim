@@ -17,6 +17,7 @@ proc draw*(self: Shooter, projectile: Projectile) =
   for shooterProjectile in self.projectilesSeq:
     case shooterProjectile.kind:
     of pkBulletEnemy, pkBulletPlayer, pkEnemy:
+      printf("in shooter.nim 1 (be) proc draw x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
       withObjAndAff:
         aff.setToRotationInv(projectile.angle.uint16)
         obj.init(
@@ -29,6 +30,8 @@ proc draw*(self: Shooter, projectile: Projectile) =
           pal = shooterProjectile.palId,
           size = shooterProjectile.graphic.size
         )
+        printf("in shooter.nim 2 (be) proc draw x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
+        printf("in shooter.nim 3 (obj) proc draw x = %l, y = %l", obj.pos.x, obj.pos.y)
     of pkModifier:
       for modifierInstance in mitems(modiferEntitiesInstances):
         modifierInstance.draw()
@@ -74,6 +77,7 @@ proc fire*(self: var Shooter, projectile: var Projectile, pos: Vec2f = vec2f(0,
       discard
     of pkModifier:
       if not modiferEntitiesInstances.isFull:
+        printf("in shooter.nim proc fire x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
         self.projectilesSeq.insert(projectile)
         modiferEntitiesInstances.add(projectile)
 
