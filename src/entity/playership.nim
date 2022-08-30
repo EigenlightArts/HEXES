@@ -12,7 +12,7 @@ type
     tileId, paletteId: int
     angle: Angle
     centerPoint: Vec2i
-    pos: Vec2f
+    pos*: Vec2f
 
     shooter: Shooter
 
@@ -55,7 +55,7 @@ proc draw*(self: PlayerShip) =
       tileId = self.tileId
       palId = self.paletteId
   
-  # # printf("in playership.nim proc draw x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
+  # printf("in playership.nim proc draw x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
 
 # ship controls
 proc controls*(self: var PlayerShip) =

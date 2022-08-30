@@ -2,7 +2,7 @@ import natu/[math, graphics, video, bios, tte, utils, posprintf, mgba]
 import ../utils/[labels, objs]
 import ../components/[shooter, projectile, shared]
 
-# TODO(Kal): Split CenterHexNumber into new type
+# TODO(Kal): Split CenterHexNumber into component
 
 type
   EvilHex* = object
@@ -72,16 +72,21 @@ proc draw*(self: var EvilHex) =
     self.updateCHN = false
 
 
-proc fire*(self: var EvilHex) = 
+proc fire*(self: var EvilHex, modifierIndex: int, playerShipPos: Vec2f) = 
   # TODO(Kal): Implement Blue Noise RNG to select the modifier type and angle+position of bullets
-  self.angle = rand(uint16)
+  let anglePlayer = ArcTan2(int16(playerShipPos.x.toInt()), int16(playerShipPos.y.toInt()))
+  let anglePlayerInt = int(anglePlayer)
+  let anglePlayerRange = rand(-anglePlayerInt..anglePlayerInt)
+  let angleFinal = uint32(int(rand(uint16)) + anglePlayerRange)
+
+  self.angle = rand(angleFinal)
 
   self.pos.x = self.centerPoint.x - fp(luCos(
       self.angle) * self.orbitRadius.x)
   self.pos.y = self.centerPoint.y - fp(luSin(
       self.angle) * self.orbitRadius.y)
   
-  self.modifierProj = initModifierProjectile(gfx=gfxHwaveFont, obj=objHwaveFont, fontIndex=5)
+  self.modifierProj = initModifierProjectile(gfx=gfxHwaveFont, obj=objHwaveFont, fontIndex=modifierIndex)
   # var modHexInstance: Projectile = initBulletEnemyProjectile(gfxBulletTemp) # this is done for debugging purposes
   printf("in evilhex.nim proc fire x = %l, y = %l, angle = %l", self.pos.x.toInt(), self.pos.y.toInt(), self.angle.uint16)
   self.shooter.fire(projectile=self.modifierProj, pos=self.pos, angle=self.angle)

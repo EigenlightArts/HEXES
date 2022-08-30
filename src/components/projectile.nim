@@ -83,7 +83,7 @@ proc rect(projectile: Projectile): Rect =
 
 proc update*(projectile: var Projectile) =
 
-  printf("POS 1: %d,%d", projectile.pos.x.toInt(), projectile.pos.y.toInt())
+  # printf("POS 1: %d,%d", projectile.pos.x.toInt(), projectile.pos.y.toInt())
 
   # make sure the projectiles go where they are supposed to go
   # the *2 is for speed reasons, without it, the projectiles are very slow
@@ -92,7 +92,7 @@ proc update*(projectile: var Projectile) =
   projectile.pos.y = projectile.pos.y - fp(luSin(
        projectile.angle)) * 2
 
-  printf("POS 2: %d,%d", projectile.pos.x.toInt(), projectile.pos.y.toInt())
+  # printf("POS 2: %d,%d", projectile.pos.x.toInt(), projectile.pos.y.toInt())
 
   if (not onscreen(projectile.rect())):
     projectile.finished = true
@@ -103,19 +103,19 @@ proc update*(projectile: var Projectile) =
 # TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
 proc draw*(modifier: var Projectile) =
   # printf("in projectile.nim 1 (mdfy) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
-
-  withObjAndAff:
-    aff.setToRotationInv(modifier.angle.uint16)
-    obj.init(
-      mode = omAff,
-      aff = affId,
-      pos = vec2i(modifier.pos) - vec2i(
-          modifier.graphic.width div 2, modifier.graphic.height div 2),
-      tid = modifier.mdObj.tid + (modifier.mdFontIndex *
-          4),
-      pal = modifier.mdObj.palId,
-      size = modifier.graphic.size
-    )
+  if not modifier.finished:
+    withObjAndAff:
+      aff.setToRotationInv(modifier.angle.uint16)
+      obj.init(
+        mode = omAff,
+        aff = affId,
+        pos = vec2i(modifier.pos) - vec2i(
+            modifier.graphic.width div 2, modifier.graphic.height div 2),
+        tid = modifier.mdObj.tid + (modifier.mdFontIndex *
+            4),
+        pal = modifier.mdObj.palId,
+        size = modifier.graphic.size
+      )
     # printf("Projectile Palette: %d", modifier.mdObj.pal)
     # printf("in projectile.nim 2 (mdfy) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
     # printf("in projectile.nim 3 (obj) proc draw x = %l, y = %l", obj.pos.x, obj.pos.y)

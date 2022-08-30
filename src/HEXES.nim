@@ -1,4 +1,4 @@
-import natu/[video, bios, irq, input, math, graphics]
+import natu/[video, bios, irq, input, math, graphics, utils]
 import utils/objs
 import entity/[playership, evilhex]
 
@@ -13,12 +13,26 @@ dispcnt = initDispCnt(obj = true, obj1d = true, bg0 = true)
 
 irq.enable(iiVBlank)
 
-var evilHexInstance = initEvilHex(255)
+var valueCHN: uint8 = 255
+var eventLoopTimer: int
+var eventModifierShoot: int
+var eventModifierIndex: int
+
+proc startEventLoop() =
+  eventLoopTimer = 0
+  eventModifierShoot = rand(40..90)
+  eventModifierIndex = rand(0..21) # excludes $
+
+var evilHexInstance = initEvilHex(valueCHN)
 var playerShipInstance = initPlayerShip(vec2f(75, 0))
 
-var flag = true
+startEventLoop()
 
 while true:
+  # after 100 vblank units? restart event loop
+  if eventLoopTimer == 100:
+    startEventLoop()
+
   # update key states
   keyPoll()
 
@@ -29,15 +43,15 @@ while true:
   playerShipInstance.update()
 
   # fire the EvilHex projectile
-  if flag:  
-    evilHexInstance.fire()
-    flag = false
+  if eventLoopTimer == eventModifierShoot:
+    evilHexInstance.fire(eventModifierIndex, playerShipInstance.pos)
 
   evilHexInstance.update()
 
-
   # wait for the end of the frame
   VBlankIntrWait()
+
+  eventLoopTimer += 1
 
   # draw the ship
   playerShipInstance.draw()
