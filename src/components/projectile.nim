@@ -102,18 +102,7 @@ proc update*(projectile: var Projectile) =
 
 # TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
 proc draw*(modifier: var Projectile) =
-  # if not modifier.finished:
-    
-    # withObj:
-    #   printf("Projectile Palette: %d", modifier.mdObj.pal)
-    #   # let w = getWidth(modifier.mdObj)
-    #   let x = modifier.mdObj.x
-    #   let y = modifier.mdObj.y
-
-    #   let tid = modifier.mdObj.tid + (modifier.mdFontIndex * 4)
-    #   obj = modifier.mdObj.dup(x = x, tid = tid)
-
-  printf("in projectile.nim 1 (mdfy) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
+  # printf("in projectile.nim 1 (mdfy) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
 
   withObjAndAff:
     aff.setToRotationInv(modifier.angle.uint16)
@@ -128,5 +117,5 @@ proc draw*(modifier: var Projectile) =
       size = modifier.graphic.size
     )
     # printf("Projectile Palette: %d", modifier.mdObj.pal)
-    printf("in projectile.nim 2 (mdfy) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
-    printf("in projectile.nim 3 (obj) proc draw x = %l, y = %l", obj.pos.x, obj.pos.y)
+    # printf("in projectile.nim 2 (mdfy) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
+    # printf("in projectile.nim 3 (obj) proc draw x = %l, y = %l", obj.pos.x, obj.pos.y)

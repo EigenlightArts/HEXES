@@ -62,6 +62,7 @@ proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}
 proc draw*(self: var EvilHex) =
   self.shooter.draw()
   self.labelCHN.draw()
+  self.modifierProj.draw()
 
   if self.updateCHN:
     var size = tte.getTextSize(addr self.hexBuffer)
