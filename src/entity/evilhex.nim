@@ -17,8 +17,8 @@ type
     
     orbitRadius: Vec2i
     centerPoint: Vec2i
-    pos: Vec2f
-    angle: Angle
+    # pos: Vec2f
+    # angle: Angle
 
     shooter: Shooter
     modifierProj: Projectile
@@ -74,28 +74,29 @@ proc draw*(self: var EvilHex) =
 
 proc fire*(self: var EvilHex, modifierIndex: int, playerShipPos: Vec2f) = 
   # TODO(Kal): Implement Blue Noise RNG to select the modifier type and angle+position of bullets
-  let anglePlayer = ArcTan2(int16(playerShipPos.x.toInt()), int16(playerShipPos.y.toInt()))
-  let anglePlayerInt = int(anglePlayer)
-  let anglePlayerRange = rand(-anglePlayerInt..anglePlayerInt)
-  let angleFinal = uint32(int(rand(uint16)) + anglePlayerRange)
+  let angleVariance = 10000
+  let anglePlayer = ArcTan2(int16(-playerShipPos.x.toInt()), int16(-playerShipPos.y.toInt()))
+  let angle = uint32(int(anglePlayer) + rand(-angleVariance..angleVariance)) 
+  printf("in evilhex.nim proc fire anglePlayer = %l, playerShipPos.x = %l, playerShipPos.y = %l, angle = %l", anglePlayer, -playerShipPos.x.toInt(), -playerShipPos.y.toInt(), angle.uint16)
+  printf("in evilhex.nim proc fire rand = %l", rand(-angleVariance..angleVariance))
 
-  self.angle = rand(angleFinal)
+  var pos: Vec2f
 
-  self.pos.x = self.centerPoint.x - fp(luCos(
-      self.angle) * self.orbitRadius.x)
-  self.pos.y = self.centerPoint.y - fp(luSin(
-      self.angle) * self.orbitRadius.y)
+  pos.x = self.centerPoint.x - fp(luCos(
+      angle) * self.orbitRadius.x)
+  pos.y = self.centerPoint.y - fp(luSin(
+      angle) * self.orbitRadius.y)
   
   self.modifierProj = initModifierProjectile(gfx=gfxHwaveFont, obj=objHwaveFont, fontIndex=modifierIndex)
   # var modHexInstance: Projectile = initBulletEnemyProjectile(gfxBulletTemp) # this is done for debugging purposes
-  printf("in evilhex.nim proc fire x = %l, y = %l, angle = %l", self.pos.x.toInt(), self.pos.y.toInt(), self.angle.uint16)
-  self.shooter.fire(projectile=self.modifierProj, pos=self.pos, angle=self.angle)
+  printf("in evilhex.nim proc fire x = %l, y = %l, angle = %l", pos.x.toInt(), pos.y.toInt(), angle.uint16)
+  self.shooter.fire(projectile=self.modifierProj, pos=pos, angle=angle)
 
 proc update*(self: var EvilHex) =
 
-  # self.pos.x = self.pos.x - fp(luCos(
+  # pos.x = pos.x - fp(luCos(
   #     self.angle)) * 2
-  # self.pos.y = self.pos.y - fp(luSin(
+  # pos.y = pos.y - fp(luSin(
   #      self.angle)) * 2
 
   self.shooter.update()
