@@ -5,16 +5,16 @@ import ../components/[shooter, projectile]
 
 #TODO(Kal): Use the `Graphics` enum instead of calling gfxShipTemp, etc directly
 
-type
-  PlayerShip* = object
-    initialised: bool
-    orbitRadius: Vec2i
-    tileId, paletteId: int
-    angle: Angle
-    centerPoint: Vec2i
-    pos*: Vec2f
+type PlayerShip* = object
+  initialised: bool
+  tileId, paletteId: int
+  orbitRadius: Vec2i
+  centerPoint: Vec2i
+  pos*: Vec2f
+  angle: Angle
 
-    shooter: Shooter
+  shooter: Shooter
+  bulPlayerProj*: Projectile
 
 # constructor - create a ship object
 proc initPlayerShip*(pos: Vec2f): PlayerShip =
@@ -27,7 +27,7 @@ proc initPlayerShip*(pos: Vec2f): PlayerShip =
   result.paletteId = acquireObjPal(gfxShipTemp)
 
   result.shooter = initShooter()
-  
+
 
 # destructor - free the resources used by a ship object
 proc `=destroy`*(self: var PlayerShip) =
@@ -50,11 +50,12 @@ proc draw*(self: PlayerShip) =
     obj.init:
       mode = omAff
       affId = affId
-      pos = vec2i(self.pos) - vec2i(gfxShipTemp.width div 2, gfxShipTemp.height div 2)
+      pos = vec2i(self.pos) - vec2i(gfxShipTemp.width div 2,
+          gfxShipTemp.height div 2)
       size = gfxShipTemp.size
       tileId = self.tileId
       palId = self.paletteId
-  
+
   # printf("in playership.nim proc draw x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
 
 # ship controls
@@ -64,9 +65,12 @@ proc controls*(self: var PlayerShip) =
   if keyIsDown(kiRight):
     self.angle -= 350
   if keyHit(kiA):
-    var bulPlayerInstance: Projectile = initBulletPlayerProjectile(gfxBulletTemp)
-    self.shooter.fire(projectile=bulPlayerInstance, pos=self.pos, angle=self.angle)
-    printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
+    self.bulPlayerProj = initBulletPlayerProjectile(gfxBulletTemp)
+    self.shooter.fire(
+      projectile = self.bulPlayerProj, pos = self.pos, angle = self.angle)
+    
+    # printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(),
+    #     self.pos.y.toInt())
 
 # calculate and update ship position
 proc update*(self: var PlayerShip) =

@@ -12,14 +12,13 @@ type
   #   mkOperator
   Projectile* = object
     # fields that all have in common
+    finished*: bool
+    tileId*, palId*: int
     graphic*: Graphic
-    tileId*: int
-    palId*: int
 
+    index*: int
     pos*: Vec2f
     angle*: Angle
-    index*: int
-    finished*: bool
 
     case kind*: ProjectileKind
     of pkBulletPlayer, pkBulletEnemy:
@@ -46,7 +45,7 @@ proc initBulletPlayerProjectile*(gfx: Graphic): Projectile =
 
   result.tileId = allocObjTiles(result.graphic)
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
-  
+
   result.palId = acquireObjPal(result.graphic)
 
 proc initBulletEnemyProjectile*(gfx: Graphic): Projectile =
@@ -55,31 +54,48 @@ proc initBulletEnemyProjectile*(gfx: Graphic): Projectile =
 
   result.tileId = allocObjTiles(result.graphic)
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
-  
+
   result.palId = acquireObjPal(result.graphic)
 
 proc initEnemyProjectile*(): Projectile =
   result.kind = pkEnemy
 
-proc initModifierProjectile*(gfx: Graphic, obj: ObjAttr, fontIndex: int): Projectile =
+proc initModifierProjectile*(gfx: Graphic, obj: ObjAttr,
+    fontIndex: int): Projectile =
   result.kind = pkModifier
   result.graphic = gfx
   result.mdFontIndex = fontIndex
   result.mdObj = obj
   result.mdObj.tileId = obj.tileId * result.graphic.frameTiles
 
-  # result.tileId = result.mdObj.tileId  
+  # result.tileId = result.mdObj.tileId
   # result.palId = result.mdObj.palId
 
 # General projectile procedures
 
 proc rect(projectile: Projectile): Rect =
   # printf("in projectile.nim proc rect1: x = %l, y = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt())
-  result.left = projectile.pos.x.toInt() - 5
-  result.top = projectile.pos.y.toInt() - 5
-  result.right = projectile.pos.x.toInt() + 5
-  result.bottom = projectile.pos.y.toInt() + 5
+  result.left = projectile.pos.x.toInt() - projectile.pos.x.toInt() div 2
+  result.top = projectile.pos.y.toInt() - projectile.pos.x.toInt() div 2
+  result.right = projectile.pos.x.toInt() + projectile.pos.x.toInt() div 2
+  result.bottom = projectile.pos.y.toInt() + projectile.pos.x.toInt() div 2
   # printf("in projectile.nim proc rect2: x = %l, y = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt())
+
+# NOTE(Kal): Resources about AABB
+# - https://www.amanotes.com/post/using-swept-aabb-to-detect-and-process-collision
+# - https://tutorialedge.net/gamedev/aabb-collision-detection-tutorial/
+# - https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection#circle_collision
+proc isCollidingAABB(projectileA: Projectile, projectileB: Projectile): bool =
+  var left = projectileB.pos.x - (projectileA.pos.x + projectileA.graphic.width)
+  var top = (projectileB.pos.y + projectileB.graphic.height) - projectileA.pos.y
+  var right = (projectileB.pos.x + projectileB.graphic.width) -
+      projectileA.pos.x
+  var bottom = projectileB.pos.y - (projectileA.pos.y +
+      projectileA.graphic.height)
+
+  # inverting conditions to check faster
+  return not (left > 0 or right < 0 or top < 0 or bottom > 0)
+
 
 proc update*(projectile: var Projectile) =
 
@@ -97,8 +113,26 @@ proc update*(projectile: var Projectile) =
   if (not onscreen(projectile.rect())):
     projectile.finished = true
 
-
 # Modifier spefific procedures
+
+proc update*(modifier: var Projectile, bulletPlayer: var Projectile) =
+
+  # make sure the modifiers go where they are supposed to go
+  # the *2 is for speed reasons, without it, the modifiers are very slow
+  modifier.pos.x = modifier.pos.x - fp(luCos(
+      modifier.angle))
+  modifier.pos.y = modifier.pos.y - fp(luSin(
+       modifier.angle))
+
+  # call the generic update procedure
+  bulletPlayer.update()
+
+  if not onscreen(modifier.rect()):
+    modifier.finished = true
+  elif isCollidingAABB(modifier, bulletPlayer) and not bulletPlayer.finished:
+    modifier.finished = true
+    # FIXME(Kal): BulletPlayer is still not being killed by `bulletPlayer.finished = true`
+    bulletPlayer.finished = true
 
 # TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
 proc draw*(modifier: var Projectile) =

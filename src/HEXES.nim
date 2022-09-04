@@ -28,6 +28,10 @@ var playerShipInstance = initPlayerShip(vec2f(75, 0))
 
 startEventLoop()
 
+# NOTE(Kal): Resources about Game Engine Development:
+# - https://gameprogrammingpatterns.com/
+# - https://www.gameenginebook.com/
+
 while true:
   # after 100 vblank units? restart event loop
   if eventLoopTimer == 100:
@@ -46,7 +50,7 @@ while true:
   if eventLoopTimer == eventModifierShoot:
     evilHexInstance.fire(eventModifierIndex, playerShipInstance.pos)
 
-  evilHexInstance.update()
+  evilHexInstance.update(playerShipInstance.bulPlayerProj)
 
   # wait for the end of the frame
   VBlankIntrWait()
