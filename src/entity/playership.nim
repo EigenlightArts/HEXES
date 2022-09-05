@@ -14,7 +14,7 @@ type PlayerShip* = object
   angle: Angle
 
   shooter: Shooter
-  bulPlayerProj*: Projectile
+  bulPlayerProj: Projectile
 
 # constructor - create a ship object
 proc initPlayerShip*(pos: Vec2f): PlayerShip =
@@ -40,7 +40,7 @@ proc `=destroy`*(self: var PlayerShip) =
 proc `=copy`*(dest: var PlayerShip; source: PlayerShip) {.error: "Not implemented".}
 
 # draw ship sprite and all the affine snazziness
-proc draw*(self: PlayerShip) =
+proc draw*(self: var PlayerShip) =
   self.shooter.draw()
 
   copyFrame(addr objTileMem[self.tileId], gfxShipTemp, 0)

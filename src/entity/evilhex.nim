@@ -57,7 +57,6 @@ proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}
 proc draw*(self: var EvilHex) =
   self.shooter.draw()
   self.labelCHN.draw()
-  self.modifierProj.draw()
 
   if self.updateCHN:
     var size = tte.getTextSize(addr self.hexBuffer)
@@ -94,7 +93,6 @@ proc fire*(self: var EvilHex; modifierIndex: int; playerShipPos: Vec2f) =
 
   self.shooter.fire(projectile = self.modifierProj, pos = pos, angle = angle)
 
-proc update*(self: var EvilHex; bulletPlayer: var Projectile) =
+proc update*(self: var EvilHex) =
 
-  self.modifierProj.update(bulletPlayer)
   self.shooter.update()

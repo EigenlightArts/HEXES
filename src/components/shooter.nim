@@ -9,35 +9,29 @@ proc initShooter*(): Shooter =
   result.projectilesSeq.setLen(0)
 
 proc destroy*(self: var Shooter) =
-  for shooterProjectile in self.projectilesSeq:
-    freeObjTiles(shooterProjectile.tileId)
-    releaseObjPal(shooterProjectile.graphic)
+  for projectile in self.projectilesSeq:
+    freeObjTiles(projectile.tileId)
+    releaseObjPal(projectile.graphic)
 
-proc draw*(self: Shooter, projectile: Projectile) =
-  for shooterProjectile in self.projectilesSeq:
-    case shooterProjectile.kind:
-    of pkBulletEnemy, pkBulletPlayer, pkEnemy:
-      # printf("in shooter.nim 1 (be) proc draw x = %l, y = %l, angle = %l",
-      #     projectile.pos.x.toInt(), projectile.pos.y.toInt(),
-      #     projectile.angle.uint16)
-      withObjAndAff:
-        aff.setToRotationInv(projectile.angle.uint16)
-        obj.init(
-          mode = omAff,
-          aff = affId,
-          pos = vec2i(projectile.pos) - vec2i(
-              shooterProjectile.graphic.width div 2,
-              shooterProjectile.graphic.height div 2),
-          tid = shooterProjectile.tileId + (projectile.index),
-          pal = shooterProjectile.palId,
-          size = shooterProjectile.graphic.size
-        )
-        # printf("in shooter.nim 2 (be) proc draw x = %l, y = %l, angle = %l",
-        #     projectile.pos.x.toInt(), projectile.pos.y.toInt(),
-        #     projectile.angle.uint16)
-        # printf("in shooter.nim 3 (obj) proc draw x = %l, y = %l", obj.pos.x, obj.pos.y)
-    of pkModifier:
-      discard
+proc draw*(self: Shooter) =
+  for projectile in self.projectilesSeq:
+    if not projectile.finished:
+      var projectileMut = projectile
+      case projectile.kind:
+      of pkBulletEnemy, pkBulletPlayer, pkEnemy:
+        projectileMut.draw()
+      of pkModifier:
+        projectileMut.drawMod()
+
+  # var i = 0
+
+  # while i < self.projectilesSeq.len:
+  #   if not self.projectilesSeq[i].finished:
+  #     for bulletPlayer in mitems(bulletPlayerEntitiesInstances):
+  #       bulletPlayer.draw()
+  #     for modifier in mitems(modiferEntitiesInstances):
+  #       modifier.drawMod()
+  #   inc i
 
 
 proc fire*(self: var Shooter, projectile: var Projectile, pos: Vec2f = vec2f(0,
@@ -71,6 +65,19 @@ proc update*(self: var Shooter) =
 
   while i < self.projectilesSeq.len:
     self.projectilesSeq[i].update()
+
+    for projectile in self.projectilesSeq:
+      var projectileMut = projectile
+      
+      case projectile.kind:
+      of pkBulletEnemy, pkBulletPlayer, pkEnemy:
+        projectileMut.update()
+      of pkModifier:
+        projectileMut.update(bulletPlayerEntitiesInstances[i])
+    
+    # bulletPlayerEntitiesInstances[i].update()
+    # modiferEntitiesInstances[i].update(bulletPlayerEntitiesInstances[i])
+
     if self.projectilesSeq[i].finished:
       case self.projectilesSeq[i].kind
       of pkBulletPlayer:
@@ -86,7 +93,3 @@ proc update*(self: var Shooter) =
     else:
       inc i
 
-
-proc draw*(self: Shooter) =
-  for projectile in self.projectilesSeq:
-    self.draw(projectile)

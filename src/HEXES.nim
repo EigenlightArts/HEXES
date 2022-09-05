@@ -50,7 +50,7 @@ while true:
   if eventLoopTimer == eventModifierShoot:
     evilHexInstance.fire(eventModifierIndex, playerShipInstance.pos)
 
-  evilHexInstance.update(playerShipInstance.bulPlayerProj)
+  evilHexInstance.update()
 
   # wait for the end of the frame
   VBlankIntrWait()

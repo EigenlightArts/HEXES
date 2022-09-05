@@ -81,6 +81,33 @@ proc rect(projectile: Projectile): Rect =
   result.bottom = projectile.pos.y.toInt() + projectile.pos.x.toInt() div 2
   # printf("in projectile.nim proc rect2: x = %l, y = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt())
 
+proc update*(projectile: var Projectile) =
+
+  # make sure the projectiles go where they are supposed to go
+  # the *2 is for speed reasons, without it, the projectiles are very slow
+  projectile.pos.x = projectile.pos.x - fp(luCos(
+      projectile.angle)) * 2
+  projectile.pos.y = projectile.pos.y - fp(luSin(
+       projectile.angle)) * 2
+
+  if (not onscreen(projectile.rect())):
+    projectile.finished = true
+
+proc draw*(projectile: var Projectile) =
+  # if not projectile.finished:
+  withObjAndAff:
+    aff.setToRotationInv(projectile.angle.uint16)
+    obj.init(
+      mode = omAff,
+      aff = affId,
+      pos = vec2i(projectile.pos) - vec2i(
+          projectile.graphic.width div 2,
+          projectile.graphic.height div 2),
+      tid = projectile.tileId + (projectile.index),
+      pal = projectile.palId,
+      size = projectile.graphic.size
+    )
+
 # NOTE(Kal): Resources about AABB
 # - https://www.amanotes.com/post/using-swept-aabb-to-detect-and-process-collision
 # - https://tutorialedge.net/gamedev/aabb-collision-detection-tutorial/
@@ -96,23 +123,6 @@ proc isCollidingAABB(projectileA: Projectile, projectileB: Projectile): bool =
   # inverting conditions to check faster
   return not (left > 0 or right < 0 or top < 0 or bottom > 0)
 
-
-proc update*(projectile: var Projectile) =
-
-  # printf("POS 1: %d,%d", projectile.pos.x.toInt(), projectile.pos.y.toInt())
-
-  # make sure the projectiles go where they are supposed to go
-  # the *2 is for speed reasons, without it, the projectiles are very slow
-  projectile.pos.x = projectile.pos.x - fp(luCos(
-      projectile.angle)) * 2
-  projectile.pos.y = projectile.pos.y - fp(luSin(
-       projectile.angle)) * 2
-
-  # printf("POS 2: %d,%d", projectile.pos.x.toInt(), projectile.pos.y.toInt())
-
-  if (not onscreen(projectile.rect())):
-    projectile.finished = true
-
 # Modifier spefific procedures
 
 proc update*(modifier: var Projectile, bulletPlayer: var Projectile) =
@@ -125,31 +135,32 @@ proc update*(modifier: var Projectile, bulletPlayer: var Projectile) =
        modifier.angle))
 
   # call the generic update procedure
-  bulletPlayer.update()
+  # if not bulletPlayer.finished:  
+  #   bulletPlayer.update()
 
   if not onscreen(modifier.rect()):
     modifier.finished = true
   elif isCollidingAABB(modifier, bulletPlayer) and not bulletPlayer.finished:
     modifier.finished = true
-    # FIXME(Kal): BulletPlayer is still not being killed by `bulletPlayer.finished = true`
     bulletPlayer.finished = true
+  # printf("proc update modifier 2: %d,%d", modifier.finished, bulletPlayer.finished)
 
 # TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
-proc draw*(modifier: var Projectile) =
+proc drawMod*(modifier: var Projectile) =
   # printf("in projectile.nim 1 (mdfy) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
-  if not modifier.finished:
-    withObjAndAff:
-      aff.setToRotationInv(modifier.angle.uint16)
-      obj.init(
-        mode = omAff,
-        aff = affId,
-        pos = vec2i(modifier.pos) - vec2i(
-            modifier.graphic.width div 2, modifier.graphic.height div 2),
-        tid = modifier.mdObj.tid + (modifier.mdFontIndex *
-            4),
-        pal = modifier.mdObj.palId,
-        size = modifier.graphic.size
-      )
-    # printf("Projectile Palette: %d", modifier.mdObj.pal)
-    # printf("in projectile.nim 2 (mdfy) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
-    # printf("in projectile.nim 3 (obj) proc draw x = %l, y = %l", obj.pos.x, obj.pos.y)
+  # if not modifier.finished:
+  withObjAndAff:
+    aff.setToRotationInv(modifier.angle.uint16)
+    obj.init(
+      mode = omAff,
+      aff = affId,
+      pos = vec2i(modifier.pos) - vec2i(
+          modifier.graphic.width div 2, modifier.graphic.height div 2),
+      tid = modifier.mdObj.tid + (modifier.mdFontIndex *
+          4),
+      pal = modifier.mdObj.palId,
+      size = modifier.graphic.size
+    )
+  # printf("Projectile Palette: %d", modifier.mdObj.pal)
+  # printf("in projectile.nim 2 (mdfy) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
+  # printf("in projectile.nim 3 (obj) proc draw x = %l, y = %l", obj.pos.x, obj.pos.y)
