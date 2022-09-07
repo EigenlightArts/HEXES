@@ -33,7 +33,7 @@ startEventLoop()
 # - https://www.gameenginebook.com/
 
 while true:
-  # after 100 vblank units? restart event loop
+  # after 100 vblank units, restart event loop
   if eventLoopTimer == 100:
     startEventLoop()
 
@@ -50,6 +50,7 @@ while true:
   if eventLoopTimer == eventModifierShoot:
     evilHexInstance.fire(eventModifierIndex, playerShipInstance.pos)
 
+  # update EvilHex subroutines
   evilHexInstance.update()
 
   # wait for the end of the frame
@@ -60,7 +61,7 @@ while true:
   # draw the ship
   playerShipInstance.draw()
 
-  # draw the evil hex
+  # draw the EvilHex
   evilHexInstance.draw()
 
   # copy the PAL RAM buffer into the real PAL RAM.
