@@ -8,5 +8,6 @@
 *.sav
 *.h
 *.bin
+*.7z
 NOTES.md
 logs.txt

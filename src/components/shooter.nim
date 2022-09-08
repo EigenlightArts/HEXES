@@ -3,26 +3,39 @@ import natu/[math, graphics, video, utils, mgba]
 import projectile
 
 type Shooter* = object
-  projectilesSeq: seq[Projectile]
+  initialised: bool
+
+  bulletPlayerEntitiesInstances*: List[5, Projectile]
+  bulletEnemyEntitiesInstances*: List[3, Projectile]
+  enemyEntitiesInstances*: List[5, Projectile]
+  modiferEntitiesInstances*: List[3, Projectile]
 
 proc initShooter*(): Shooter =
-  result.projectilesSeq.setLen(0)
+  result.initialised = true
 
 proc destroy*(self: var Shooter) =
-  for projectile in self.projectilesSeq:
-    freeObjTiles(projectile.tileId)
-    releaseObjPal(projectile.graphic)
+  for bulletPlayer in self.bulletPlayerEntitiesInstances:
+    freeObjTiles(bulletPlayer.tileId)
+    releaseObjPal(bulletPlayer.graphic)
+  for bulletEnemy in self.bulletEnemyEntitiesInstances:
+    freeObjTiles(bulletEnemy.tileId)
+    releaseObjPal(bulletEnemy.graphic)
+  for enemy in self.enemyEntitiesInstances:
+    freeObjTiles(enemy.tileId)
+    releaseObjPal(enemy.graphic)
+  for modifier in self.modiferEntitiesInstances:
+    freeObjTiles(modifier.tileId)
+    releaseObjPal(modifier.graphic)
 
 proc draw*(self: var Shooter) =
-  for projectile in mitems(self.projectilesSeq):
-    if not projectile.finished:
-      case projectile.kind:
-      of pkBulletEnemy, pkBulletPlayer, pkEnemy:
-        projectile.draw()
-      of pkModifier:
-        # printf("in shooter.nim 1, before drawMod projectile")
-        projectile.drawMod()
-        printf("in shooter.nim 2, after drawMod projectile")
+  for bulletPlayer in mitems(self.bulletPlayerEntitiesInstances):
+    bulletPlayer.draw()
+  for bulletEnemy in mitems(self.bulletEnemyEntitiesInstances):
+    bulletEnemy.draw()
+  for enemy in mitems(self.enemyEntitiesInstances):
+    enemy.draw()
+  for modifier in mitems(self.modiferEntitiesInstances):
+    modifier.drawModifier()
 
 
 proc fire*(self: var Shooter, projectile: var Projectile, pos: Vec2f = vec2f(0,
@@ -34,69 +47,102 @@ proc fire*(self: var Shooter, projectile: var Projectile, pos: Vec2f = vec2f(0,
 
   case projectile.kind:
     of pkBulletPlayer:
-      if not bulletPlayerEntitiesInstances.isFull:
-        self.projectilesSeq.insert(projectile)
-        bulletPlayerEntitiesInstances.add(projectile)
+      if not self.bulletPlayerEntitiesInstances.isFull:
+        self.bulletPlayerEntitiesInstances.add(projectile)
       # TODO(Kal): bullet else play sfx
     of pkBulletEnemy:
-      if not bulletEnemyEntitiesInstances.isFull:
-        self.projectilesSeq.insert(projectile)
-        bulletEnemyEntitiesInstances.add(projectile)
+      if not self.bulletEnemyEntitiesInstances.isFull:
+        self.bulletEnemyEntitiesInstances.add(projectile)
     of pkEnemy:
       discard
     of pkModifier:
-      if not modiferEntitiesInstances.isFull:
-        self.projectilesSeq.insert(projectile)
-        modiferEntitiesInstances.add(projectile)
+      if not self.modiferEntitiesInstances.isFull:
+        self.modiferEntitiesInstances.add(projectile)
 
 
 proc update*(self: var Shooter) =
-  # for projectile in mitems(self.projectilesSeq):
-  #   case projectile.kind:
-  #   of pkBulletEnemy, pkBulletPlayer, pkEnemy:
-  #     projectile.update()
-  #   of pkModifier:
-  #     projectile.update(bulletPlayerEntitiesInstances[projectile.index])
-  #   if projectile.finished:
-  #     case projectile.kind:
-  #     of pkBulletPlayer:
-  #       # printf("in shooter.nim 1, before del bulletPlayerEntitiesInstances")
-  #       bulletPlayerEntitiesInstances.del(projectile.index)
-  #       printf("in shooter.nim 2, after del bulletPlayerEntitiesInstances")
-  #     of pkBulletEnemy:
-  #       bulletEnemyEntitiesInstances.del(projectile.index)
-  #     of pkEnemy:
-  #       enemyEntitiesInstances.del(projectile.index)
-  #     of pkModifier:
-  #       modiferEntitiesInstances.del(projectile.index)
+  var indexBulletPlayer = 0
+  var indexBulletEnemy = 0
+  var indexEnemy = 0
+  var indexModifier = 0
 
+  while indexBulletPlayer < (self.bulletPlayerEntitiesInstances.len):
+    if not self.bulletPlayerEntitiesInstances[indexBulletPlayer].finished:
+      self.bulletPlayerEntitiesInstances[indexBulletPlayer].update()
+      printf("if not self.bulletPlayerEntitiesInstances[indexBulletPlayer].finished: ASSERT")
 
-  var i = 0
-
-  while i < self.projectilesSeq.len:
-    case self.projectilesSeq[i].kind:
-    of pkBulletEnemy, pkBulletPlayer, pkEnemy:
-      if not self.projectilesSeq[i].finished:
-        self.projectilesSeq[i].update()
-    of pkModifier:
-      if not self.projectilesSeq[i].finished: 
-        # printf("in shooter.nim 1, before update bulletPlayerEntitiesInstances")
-        self.projectilesSeq[i].update(bulletPlayerEntitiesInstances[i])
-        printf("in shooter.nim 2, after update bulletPlayerEntitiesInstances")
-
-    if self.projectilesSeq[i].finished:
-      case self.projectilesSeq[i].kind:
-      of pkBulletPlayer:
-        # printf("in shooter.nim 1, before del bulletPlayerEntitiesInstances")
-        bulletPlayerEntitiesInstances.del(i)
-        printf("in shooter.nim 2, after del bulletPlayerEntitiesInstances")
-      of pkBulletEnemy:
-        bulletEnemyEntitiesInstances.del(i)
-      of pkEnemy:
-        enemyEntitiesInstances.del(i)
-      of pkModifier:
-        modiferEntitiesInstances.del(i)
-
-      self.projectilesSeq.delete(i)
+    if self.bulletPlayerEntitiesInstances[indexBulletPlayer].finished:
+      self.bulletPlayerEntitiesInstances.del(indexBulletPlayer)
+      printf("if self.bulletPlayerEntitiesInstances[indexBulletPlayer].finished: ASSERT")
     else:
-      inc i
+      inc indexBulletPlayer
+      printf("else: inc indexBulletPlayer ASSERT")
+
+  while indexBulletEnemy < (self.bulletEnemyEntitiesInstances.len):
+    if not self.bulletEnemyEntitiesInstances[indexBulletEnemy].finished:
+      self.bulletEnemyEntitiesInstances[indexBulletEnemy].update()
+      printf("if not self.bulletEnemyEntitiesInstances[indexBulletEnemy].finished: ASSERT")
+
+    if self.bulletEnemyEntitiesInstances[indexBulletEnemy].finished:
+      self.bulletEnemyEntitiesInstances.del(indexBulletEnemy)
+      printf("if self.bulletEnemyEntitiesInstances[indexBulletEnemy].finished: ASSERT")
+    else:
+      inc indexBulletEnemy
+      printf("else: inc indexBulletEnemy ASSERT")
+
+  while indexEnemy < (self.enemyEntitiesInstances.len):
+    if not self.enemyEntitiesInstances[indexEnemy].finished:
+      self.enemyEntitiesInstances[indexEnemy].update()
+      printf("if not self.enemyEntitiesInstances[indexEnemy].finished: ASSERT")
+
+    if self.enemyEntitiesInstances[indexEnemy].finished:
+      self.enemyEntitiesInstances.del(indexEnemy)
+      printf("if self.enemyEntitiesInstances[indexEnemy].finished: ASSERT")
+    else:
+      inc indexEnemy
+      printf("else: inc indexEnemy ASSERT")
+
+  while indexModifier < (self.modiferEntitiesInstances.len):
+    if not self.modiferEntitiesInstances[indexModifier].finished:
+      self.modiferEntitiesInstances[indexModifier].update(
+          self.bulletPlayerEntitiesInstances[indexBulletPlayer])
+      printf("if not self.modiferEntitiesInstances[indexModifier].finished: ASSERT")
+
+    if self.modiferEntitiesInstances[indexModifier].finished:
+      self.modiferEntitiesInstances.del(indexModifier)
+      printf("if self.modiferEntitiesInstances[indexModifier].finished: ASSERT")
+    else:
+      inc indexModifier
+      printf("else: inc indexModifier ASSERT")
+
+  #[
+    while i < (self.bulletPlayerEntitiesInstances.len + self.bulletEnemyEntitiesInstances.len + self.enemyEntitiesInstances.len + self.modiferEntitiesInstances.len):
+      if not self.bulletPlayerEntitiesInstances[i].finished:
+        self.bulletPlayerEntitiesInstances[i].update()
+        printf("if not self.bulletPlayerEntitiesInstances[i].finished: ASSERT")
+      if not self.bulletEnemyEntitiesInstances[i].finished:
+        self.bulletEnemyEntitiesInstances[i].update()
+        printf("if not self.bulletEnemyEntitiesInstances[i].finished: ASSERT")
+      if not self.enemyEntitiesInstances[i].finished:
+        self.enemyEntitiesInstances[i].update()
+        printf("if not self.enemyEntitiesInstances[i].finished: ASSERT")
+      if not self.modiferEntitiesInstances[i].finished:
+        self.modiferEntitiesInstances[i].update(self.bulletPlayerEntitiesInstances[i])
+        printf("if not self.modiferEntitiesInstances[i].finished: ASSERT")
+
+      if self.bulletPlayerEntitiesInstances[i].finished:
+        self.bulletPlayerEntitiesInstances.del(i)
+        printf("if self.bulletPlayerEntitiesInstances[i].finished: ASSERT")
+      elif self.bulletEnemyEntitiesInstances[i].finished:
+        self.bulletEnemyEntitiesInstances.del(i)
+        printf("elif self.bulletEnemyEntitiesInstances[i].finished: ASSERT")
+      elif self.enemyEntitiesInstances[i].finished:
+        self.enemyEntitiesInstances.del(i)
+        printf("elif self.enemyEntitiesInstances[i].finished: ASSERT")
+      elif self.modiferEntitiesInstances[i].finished:
+        self.modiferEntitiesInstances.del(i)
+        printf("elif self.modiferEntitiesInstances[i].finished: ASSERT")
+      else:
+        inc i
+        printf("else: inc i ASSERT")
+      ]#

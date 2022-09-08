@@ -69,9 +69,10 @@ proc controls*(self: var PlayerShip) =
     self.shooter.fire(
       projectile = self.bulPlayerProj, pos = self.pos, angle = self.angle)
     printf("ASSERT KEYHIT")
-    
+
     # printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(),
     #     self.pos.y.toInt())
+
 
 # calculate and update ship position
 proc update*(self: var PlayerShip) =

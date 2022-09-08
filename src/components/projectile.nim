@@ -33,11 +33,6 @@ type
       mdFontIndex: int
       mdObj: ObjAttr
 
-var bulletPlayerEntitiesInstances*: List[5, Projectile]
-var bulletEnemyEntitiesInstances*: List[3, Projectile]
-var enemyEntitiesInstances*: List[5, Projectile]
-var modiferEntitiesInstances*: List[3, Projectile]
-
 # TODO(Kal): Have one initProjectile procedure?
 proc initBulletPlayerProjectile*(gfx: Graphic): Projectile =
   result.kind = pkBulletPlayer
@@ -93,6 +88,8 @@ proc update*(projectile: var Projectile) =
 
     if (not onscreen(projectile.rect())):
       projectile.finished = true
+  else:
+    printf("in projectile.nim, update ASSERT!")
 
 proc draw*(projectile: var Projectile) =
   if not projectile.finished:
@@ -108,6 +105,8 @@ proc draw*(projectile: var Projectile) =
         pal = projectile.palId,
         size = projectile.graphic.size
       )
+  else:
+    printf("in projectile.nim, draw ASSERT!")
 
 # NOTE(Kal): Resources about AABB
 # - https://www.amanotes.com/post/using-swept-aabb-to-detect-and-process-collision
@@ -136,7 +135,7 @@ proc update*(modifier: var Projectile, bulletPlayer: var Projectile) =
          modifier.angle))
 
     # call the generic update procedure
-    # if not bulletPlayer.finished:  
+    # if not bulletPlayer.finished:
     #   bulletPlayer.update()
 
     if not onscreen(modifier.rect()):
@@ -145,9 +144,11 @@ proc update*(modifier: var Projectile, bulletPlayer: var Projectile) =
       modifier.finished = true
       bulletPlayer.finished = true
     # printf("proc update modifier 2: %d,%d", modifier.finished, bulletPlayer.finished)
+  else:
+    printf("in projectile.nim, update mod ASSERT!")
 
 # TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
-proc drawMod*(modifier: var Projectile) =
+proc drawModifier*(modifier: var Projectile) =
   # printf("in projectile.nim 1 (mdfy) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
   if not modifier.finished:
     withObjAndAff:
@@ -162,6 +163,9 @@ proc drawMod*(modifier: var Projectile) =
         pal = modifier.mdObj.palId,
         size = modifier.graphic.size
       )
+  else:
+    printf("in projectile.nim, drawModifier ASSERT!")
+
   # printf("Projectile Palette: %d", modifier.mdObj.pal)
   # printf("in projectile.nim 2 (mdfy) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
   # printf("in projectile.nim 3 (obj) proc draw x = %l, y = %l", obj.pos.x, obj.pos.y)

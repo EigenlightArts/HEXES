@@ -14,7 +14,8 @@ if projectPath() == thisDir() / main:
   switch "gc", "arc"
   switch "define", "useMalloc"
   switch "define", "noSignalHandler"
-  switch "checks", "off"               # toggle assertions, bounds checking, etc.
+  switch "checks", "on"                # toggle assertions, bounds checking, etc.
+  switch "overflowChecks", "off"       # integer overflow (e.g. with a scrolling background)
   switch "path", projectDir()          # allow imports relative to the main file
   switch "header"                      # output "{project}.h"
   switch "nimcache", "nimcache"        # output C sources to local directory
