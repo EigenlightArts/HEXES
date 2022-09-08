@@ -78,8 +78,8 @@ proc fire*(self: var EvilHex; modifierIndex: int; playerShipPos: Vec2f) =
   # printf("in evilhex.nim proc fire anglePlayer = %l, playerShipPos.x = %l, playerShipPos.y = %l, angle = %l", anglePlayer, -playerShipPos.x.toInt(), -playerShipPos.y.toInt(), angle.uint16)
   # printf("in evilhex.nim proc fire rand = %l", rand(-angleVariance..angleVariance))
 
-  let angle: Angle = 45368
   # let angle: Angle = rand(uint16)
+  let angle: Angle = 45368 # for testing and debugging
   let pos: Vec2f = vec2f(
       self.centerPoint.x - fp(luCos(angle) * self.orbitRadius.x),
       self.centerPoint.y - fp(luSin(angle) * self.orbitRadius.y))
