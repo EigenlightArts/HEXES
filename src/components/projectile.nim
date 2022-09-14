@@ -68,7 +68,7 @@ proc initModifierProjectile*(gfx: Graphic, obj: ObjAttr,
 
 # General projectile procedures
 
-proc rect(projectile: Projectile): Rect =
+proc toRect*(projectile: Projectile): Rect =
   # printf("in projectile.nim proc rect1: x = %l, y = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt())
   result.left = projectile.pos.x.toInt() - projectile.pos.x.toInt() div 2
   result.top = projectile.pos.y.toInt() - projectile.pos.x.toInt() div 2
@@ -78,7 +78,7 @@ proc rect(projectile: Projectile): Rect =
 
 proc update*(projectile: var Projectile) =
   if not projectile.finished:
-    printf("in projectile.nim 1 (projectile) proc update x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
+  # printf("in projectile.nim 1 (projectile) proc update x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
 
     # make sure the projectiles go where they are supposed to go
     # the *2 is for speed reasons, without it, the projectiles are very slow
@@ -87,16 +87,16 @@ proc update*(projectile: var Projectile) =
     projectile.pos.y = projectile.pos.y - fp(luSin(
          projectile.angle)) * 2
 
-    printf("in projectile.nim 2 (projectile) proc update x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
+  # printf("in projectile.nim 2 (projectile) proc update x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
   
-    if (not onscreen(projectile.rect())):
+    if (not onscreen(projectile.toRect())):
       projectile.finished = true
-  else:
-    printf("in projectile.nim, update ASSERT!")
+  # else:
+  # printf("in projectile.nim, update ASSERT!")
 
 proc draw*(projectile: var Projectile) =
   if not projectile.finished:
-    printf("in projectile.nim 1 (projectile) proc draw x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
+  # printf("in projectile.nim 1 (projectile) proc draw x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
     withObjAndAff:
       aff.setToRotationInv(projectile.angle.uint16)
       obj.init(
@@ -109,76 +109,31 @@ proc draw*(projectile: var Projectile) =
         pal = projectile.palId,
         size = projectile.graphic.size
       )
-    printf("in projectile.nim 2 (projectile) proc draw x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
-  else:
-    printf("in projectile.nim, draw ASSERT!")
+  # printf("in projectile.nim 2 (projectile) proc draw x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
+  # else:
+  # printf("in projectile.nim, draw ASSERT!")
 
 # NOTE(Kal): Resources about AABB
 # - https://www.amanotes.com/post/using-swept-aabb-to-detect-and-process-collision
 # - https://tutorialedge.net/gamedev/aabb-collision-detection-tutorial/
 # - https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection#circle_collision
-proc isCollidingAABB(projectileA: Projectile, projectileB: Projectile): bool =
-  let left = projectileB.pos.x - (projectileA.pos.x + projectileA.graphic.width)
-  let top = (projectileB.pos.y + projectileB.graphic.height) - projectileA.pos.y
-  let right = (projectileB.pos.x + projectileB.graphic.width) -
-      projectileA.pos.x
-  let bottom = projectileB.pos.y - (projectileA.pos.y +
-      projectileA.graphic.height)
+proc isCollidingAABB*(projectileA: Rect, projectileB: Rect): bool =
+  let left = projectileB.x - (projectileA.x + projectileA.width)
+  let top = (projectileB.y + projectileB.height) - projectileA.y
+  let right = (projectileB.x + projectileB.width) -
+      projectileA.x
+  let bottom = projectileB.y - (projectileA.y +
+      projectileA.height)
 
   # inverting conditions to check faster
   return not (left > 0 or right < 0 or top < 0 or bottom > 0)
 
-# Modifier spefific procedures
-
-proc update*(modifier: var Projectile, bulletPlayer: var Projectile) =
-  if not modifier.finished:
-
-    printf("in projectile.nim 1 (modifier) proc update x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
-    printf("in projectile.nim 1 (bulletPlayer) proc update x = %l, y = %l, angle = %l", bulletPlayer.pos.x.toInt(), bulletPlayer.pos.y.toInt(), bulletPlayer.angle.uint16)
-
-    # make sure the modifiers go where they are supposed to go
-    modifier.pos.x = modifier.pos.x - fp(luCos(
-        modifier.angle))
-    modifier.pos.y = modifier.pos.y - fp(luSin(
-         modifier.angle))
-
-    # call the generic update procedure
-    # if not bulletPlayer.finished:
-    #   bulletPlayer.update()
-
-    printf("in projectile.nim 2 (modifier) proc update x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
-    printf("in projectile.nim 2 (bulletPlayer) proc update x = %l, y = %l, angle = %l", bulletPlayer.pos.x.toInt(), bulletPlayer.pos.y.toInt(), bulletPlayer.angle.uint16)
-
-    if not onscreen(modifier.rect()):
-      modifier.finished = true
-    elif isCollidingAABB(modifier, bulletPlayer) and not bulletPlayer.finished:
-      modifier.finished = true
-      bulletPlayer.finished = true
-  else:
-    printf("in projectile.nim, update mod ASSERT!")
-
-#[ proc updateMod_test*(projectile: var Projectile) =
-  if not projectile.finished:
-    printf("in projectile.nim 1 (projectile) proc update x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
-
-    # make sure the projectiles go where they are supposed to go
-    # the *2 is for speed reasons, without it, the projectiles are very slow
-    # projectile.pos.x = projectile.pos.x - fp(luCos(
-    #     projectile.angle)) * 2
-    # projectile.pos.y = projectile.pos.y - fp(luSin(
-    #      projectile.angle)) * 2
-
-    printf("in projectile.nim 2 (projectile) proc update x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
-  
-    if (not onscreen(projectile.rect())):
-      projectile.finished = true
-  else:
-    printf("in projectile.nim, update ASSERT!") ]#
+# Modifier specific procedures
 
 # TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
 proc drawModifier*(modifier: var Projectile) =
   if not modifier.finished:
-    printf("in projectile.nim 1 (modifier) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
+  # printf("in projectile.nim 1 (modifier) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
     withObjAndAff:
       aff.setToRotationInv(modifier.angle.uint16)
       obj.init(
@@ -191,9 +146,9 @@ proc drawModifier*(modifier: var Projectile) =
         pal = modifier.mdObj.palId,
         size = modifier.graphic.size
       )
-  else:
-    printf("in projectile.nim, drawModifier ASSERT!")
+  # else:
+  # printf("in projectile.nim, drawModifier ASSERT!")
 
   # printf("Projectile Palette: %d", modifier.mdObj.pal)
-  printf("in projectile.nim 2 (modifier) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
+# printf("in projectile.nim 2 (modifier) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
   # printf("in projectile.nim 3 (obj) proc draw x = %l, y = %l", obj.pos.x, obj.pos.y)

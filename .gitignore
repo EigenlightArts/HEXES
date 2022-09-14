@@ -1,6 +1,7 @@
 /natu
 /nimcache
 /output
+/mGBA-dev
 
 *.elf
 *.elf.map

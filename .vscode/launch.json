@@ -18,7 +18,7 @@
         "miDebuggerPath": "C:/devkitPro/devkitARM/bin/arm-none-eabi-gdb.exe",
         "setupCommands": [
           {
-            "text": "shell start /b \"\" \"C:/Program Files/mGBA/mGBA.exe\" -g \"${workspaceRoot}/HEXES.elf\""
+            "text": "shell start /b \"\" \"C:/Users/Kaleidosium/Code/HEXES/mGBA-dev/mGBA.exe\" -g \"${workspaceRoot}/HEXES.elf\""
           }
         ]
       }
