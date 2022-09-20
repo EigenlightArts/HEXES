@@ -1,6 +1,7 @@
 import natu/[math, graphics, video, bios, input, mgba]
 import ../utils/objs
-import ../components/[shooter, projectile]
+import ../components/projectile
+import ../modules/shooter
 
 
 #TODO(Kal): Use the `Graphics` enum instead of calling gfxShipTemp, etc directly
@@ -13,7 +14,6 @@ type PlayerShip* = object
   pos*: Vec2f
   angle: Angle
 
-  shooter: Shooter
   bulPlayerProj: Projectile
 
 # constructor - create a ship object
@@ -26,8 +26,6 @@ proc initPlayerShip*(pos: Vec2f): PlayerShip =
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
 
-  result.shooter = initShooter()
-
 
 # destructor - free the resources used by a ship object
 proc `=destroy`*(self: var PlayerShip) =
@@ -35,14 +33,11 @@ proc `=destroy`*(self: var PlayerShip) =
     self.initialised = false
     freeObjTiles(self.tileId)
     releaseObjPal(gfxShipTemp)
-    self.shooter.destroy()
 
 proc `=copy`*(dest: var PlayerShip; source: PlayerShip) {.error: "Not implemented".}
 
 # draw ship sprite and all the affine snazziness
 proc draw*(self: var PlayerShip) =
-  self.shooter.draw()
-
   copyFrame(addr objTileMem[self.tileId], gfxShipTemp, 0)
   withObjAndAff:
     let delta = self.centerPoint - self.pos
@@ -66,7 +61,7 @@ proc controls*(self: var PlayerShip) =
     self.angle -= 350
   if keyHit(kiA):
     self.bulPlayerProj = initBulletPlayerProjectile(gfxBulletTemp)
-    self.shooter.fire(
+    shooter.fire(
       projectile = self.bulPlayerProj, pos = self.pos, angle = self.angle)
     printf("ASSERT KEYHIT")
 
@@ -82,4 +77,3 @@ proc update*(self: var PlayerShip) =
   self.pos.y = self.centerPoint.y + fp(luSin(
       self.angle) * self.orbitRadius.y)
 
-  self.shooter.update()

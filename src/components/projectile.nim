@@ -12,6 +12,7 @@ type
   #   mkOperator
   Projectile* = object
     # fields that all have in common
+    initialised*: bool
     finished*: bool
     tileId*, palId*: int
     graphic*: Graphic
@@ -33,38 +34,49 @@ type
       mdFontIndex: int
       mdObj: ObjAttr
 
+proc `=destroy`(projectile: var Projectile) =
+  if projectile.initialised:
+    projectile.initialised = false
+    freeObjTiles(projectile.tileId)
+    releaseObjPal(projectile.graphic)
+
+
 # TODO(Kal): Have one initProjectile procedure?
 proc initBulletPlayerProjectile*(gfx: Graphic): Projectile =
-  result.kind = pkBulletPlayer
-  result.graphic = gfx
+  result = Projectile(
+    kind: pkBulletPlayer,
+    graphic: gfx,
 
-  result.tileId = allocObjTiles(result.graphic)
+    tileId: allocObjTiles(gfx),
+    palId: acquireObjPal(gfx),
+  )
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
-
-  result.palId = acquireObjPal(result.graphic)
 
 proc initBulletEnemyProjectile*(gfx: Graphic): Projectile =
-  result.kind = pkBulletEnemy
-  result.graphic = gfx
+  result = Projectile(
+    kind: pkBulletEnemy,
+    graphic: gfx,
 
-  result.tileId = allocObjTiles(result.graphic)
+    tileId: allocObjTiles(gfx),
+    palId: acquireObjPal(gfx),
+  )
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
 
-  result.palId = acquireObjPal(result.graphic)
-
 proc initEnemyProjectile*(): Projectile =
-  result.kind = pkEnemy
+  result = Projectile(
+    kind: pkEnemy,
+  )
 
 proc initModifierProjectile*(gfx: Graphic, obj: ObjAttr,
     fontIndex: int): Projectile =
-  result.kind = pkModifier
-  result.graphic = gfx
-  result.mdFontIndex = fontIndex
-  result.mdObj = obj
+  result = Projectile(
+    kind: pkModifier,
+    graphic: gfx,
+    mdFontIndex: fontIndex,
+    mdObj: obj,
+  )
   result.mdObj.tileId = obj.tileId * result.graphic.frameTiles
 
-  # result.tileId = result.mdObj.tileId
-  # result.palId = result.mdObj.palId
 
 # General projectile procedures
 
@@ -77,16 +89,16 @@ proc toRect*(projectile: Projectile): Rect =
   # printf("in projectile.nim proc rect2: x = %l, y = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt())
 
 # TODO(Kal): Add speed parameter
-proc update*(projectile: var Projectile) =
+proc update*(projectile: var Projectile, speed: int = 1) =
   if not projectile.finished:
   # printf("in projectile.nim 1 (projectile) proc update x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
 
     # make sure the projectiles go where they are supposed to go
     # the *2 is for speed reasons, without it, the projectiles are very slow
     projectile.pos.x = projectile.pos.x - fp(luCos(
-        projectile.angle))
+        projectile.angle)) * speed
     projectile.pos.y = projectile.pos.y - fp(luSin(
-         projectile.angle))
+         projectile.angle)) * speed
 
   # printf("in projectile.nim 2 (projectile) proc update x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
 
@@ -128,6 +140,7 @@ proc isCollidingAABB*(projectileA: Rect, projectileB: Rect): bool =
 
   # inverting conditions to check faster
   return not (left > 0 or right < 0 or top < 0 or bottom > 0)
+
 
 # Modifier specific procedures
 

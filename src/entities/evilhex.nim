@@ -1,6 +1,7 @@
 import natu/[math, graphics, video, bios, tte, utils, posprintf, mgba]
 import ../utils/[labels, objs]
-import ../components/[shooter, projectile, shared]
+import ../components/[projectile, shared]
+import ../modules/shooter
 
 # TODO(Kal): Split CenterHexNumber into component or new type
 
@@ -17,7 +18,6 @@ type EvilHex* = object
   orbitRadius: Vec2i
   centerPoint: Vec2i
 
-  shooter: Shooter
   modifierProj: Projectile
 
 proc initEvilHex*(centerHexNumber: uint8): EvilHex =
@@ -30,7 +30,6 @@ proc initEvilHex*(centerHexNumber: uint8): EvilHex =
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
 
-  result.shooter = initShooter()
   posprintf(addr result.hexBuffer, "$%X", centerHexNumber)
 
   result.labelCHN.init(vec2i(ScreenWidth div 2, ScreenHeight div 2), s8x16, count = 22)
@@ -47,7 +46,6 @@ proc `=destroy`*(self: var EvilHex) =
     self.initialised = false
     freeObjTiles(self.tileId)
     releaseObjPal(gfxShipTemp)
-    self.shooter.destroy()
     self.labelCHN.destroy()
 
 proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}
@@ -55,7 +53,6 @@ proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}
 
 # draw evilhex and related parts
 proc draw*(self: var EvilHex) =
-  self.shooter.draw()
   self.labelCHN.draw()
 
   if self.updateCHN:
@@ -91,8 +88,8 @@ proc fire*(self: var EvilHex; modifierIndex: int; playerShipPos: Vec2f) =
   # printf("in evilhex.nim proc fire x = %l, y = %l, angle = %l", pos.x.toInt(),
   #     pos.y.toInt(), angle.uint16)
 
-  self.shooter.fire(projectile = self.modifierProj, pos = pos, angle = angle)
+  shooter.fire(projectile = self.modifierProj, pos = pos, angle = angle)
 
 proc update*(self: var EvilHex) =
 
-  self.shooter.update()
+  shooter.update()

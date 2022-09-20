@@ -1,6 +1,7 @@
 import natu/[video, bios, irq, input, math, graphics, utils]
 import utils/objs
-import entity/[playership, evilhex]
+import entities/[playership, evilhex]
+import modules/shooter
 
 # TODO(Kal): change this to rgb8() later
 # background color, approximating eigengrau
@@ -51,7 +52,10 @@ while true:
     evilHexInstance.fire(eventModifierIndex, playerShipInstance.pos)
 
   # update EvilHex subroutines
-  evilHexInstance.update()
+  # evilHexInstance.update()
+
+  # update Shooter
+  shooter.update()
 
   # wait for the end of the frame
   VBlankIntrWait()
@@ -63,6 +67,9 @@ while true:
 
   # draw the EvilHex
   evilHexInstance.draw()
+
+  # draw the Shooter projectiles
+  shooter.draw()
 
   # copy the PAL RAM buffer into the real PAL RAM.
   flushPals()
