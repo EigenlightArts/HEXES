@@ -5,26 +5,25 @@ import projectile
 type Shooter* = object
   initialised: bool
 
-  bulletPlayerEntitiesInstances*: List[5, Projectile]
-  bulletEnemyEntitiesInstances*: List[3, Projectile]
-  enemyEntitiesInstances*: List[5, Projectile]
-  modiferEntitiesInstances*: List[3, Projectile]
-
+var bulletPlayerEntitiesInstances: List[5, Projectile]
+var bulletEnemyEntitiesInstances: List[3, Projectile]
+var enemyEntitiesInstances: List[5, Projectile]
+var modiferEntitiesInstances: List[3, Projectile]
 
 proc initShooter*(): Shooter =
   result.initialised = true
 
 proc destroy*(self: var Shooter) =
-  for bulletPlayer in self.bulletPlayerEntitiesInstances:
+  for bulletPlayer in bulletPlayerEntitiesInstances:
     freeObjTiles(bulletPlayer.tileId)
     releaseObjPal(bulletPlayer.graphic)
-  for bulletEnemy in self.bulletEnemyEntitiesInstances:
+  for bulletEnemy in bulletEnemyEntitiesInstances:
     freeObjTiles(bulletEnemy.tileId)
     releaseObjPal(bulletEnemy.graphic)
-  for enemy in self.enemyEntitiesInstances:
+  for enemy in enemyEntitiesInstances:
     freeObjTiles(enemy.tileId)
     releaseObjPal(enemy.graphic)
-  for modifier in self.modiferEntitiesInstances:
+  for modifier in modiferEntitiesInstances:
     freeObjTiles(modifier.tileId)
     releaseObjPal(modifier.graphic)
 
@@ -37,92 +36,116 @@ proc fire*(self: var Shooter, projectile: var Projectile, pos: Vec2f = vec2f(0,
 
   case projectile.kind:
     of pkBulletPlayer:
-      if not self.bulletPlayerEntitiesInstances.isFull:
-        self.bulletPlayerEntitiesInstances.add(projectile)
+      if not bulletPlayerEntitiesInstances.isFull:
+        bulletPlayerEntitiesInstances.add(projectile)
       # TODO(Kal): bullet else play sfx
     of pkBulletEnemy:
-      if not self.bulletEnemyEntitiesInstances.isFull:
-        self.bulletEnemyEntitiesInstances.add(projectile)
+      if not bulletEnemyEntitiesInstances.isFull:
+        bulletEnemyEntitiesInstances.add(projectile)
     of pkEnemy:
       discard
     of pkModifier:
-      if not self.modiferEntitiesInstances.isFull:
-        self.modiferEntitiesInstances.add(projectile)
+      if not modiferEntitiesInstances.isFull:
+        modiferEntitiesInstances.add(projectile)
 
 proc update*(self: var Shooter) =
-  var indexBulletPlayer = 0
-  var indexModifier = 0
-  var indexEnemy = 0
-  var indexBulletEnemy = 0
+  # var indexModifier = 0
+  # var indexEnemy = 0
+  # var indexBulletEnemy = 0
+  # var indexBulletPlayer = 0
 
-  while indexBulletPlayer < self.bulletPlayerEntitiesInstances.len and
-      indexBulletPlayer <= self.bulletPlayerEntitiesInstances.cap:
-    var indexBPModifier = 0
+  # while indexModifier < (modiferEntitiesInstances.len) and
+  #     indexModifier <= modiferEntitiesInstances.cap:
+  #   printf("while indexModifier modiferEntitiesInstances.len: %d",
+  #       modiferEntitiesInstances.len) #
 
-    while indexBPModifier < self.modiferEntitiesInstances.len:
-      self.bulletPlayerEntitiesInstances[indexBulletPlayer].update()
+  #   if not modiferEntitiesInstances[indexModifier].finished:
+  #     modiferEntitiesInstances[indexModifier].update()
 
-      if isCollidingAABB(
-          self.bulletPlayerEntitiesInstances[indexBulletPlayer].toRect(),
-          self.modiferEntitiesInstances[indexBPModifier].toRect()):
-        printf("ASSERT SHOOTER AFTER COLLIDER CHECK")
-        self.bulletPlayerEntitiesInstances[indexBulletPlayer].finished = true
-        self.modiferEntitiesInstances[indexBPModifier].finished = true
+  #   inc indexModifier
 
-      inc indexBPModifier
-
-    inc indexBulletPlayer
-
-  while indexModifier < (self.modiferEntitiesInstances.len) and
-      indexModifier <= self.modiferEntitiesInstances.cap:
-    if not self.modiferEntitiesInstances[indexModifier].finished:
-      self.modiferEntitiesInstances[indexModifier].update()
-
-    if indexModifier < self.modiferEntitiesInstances.len:
-      inc indexModifier
+  for modifer in mitems(modiferEntitiesInstances):
+    if not modifer.finished:
+      modifer.update()
+  
 
 #[
-  while indexEnemy < (self.enemyEntitiesInstances.len):
-    if not self.enemyEntitiesInstances[indexEnemy].finished:
-      self.enemyEntitiesInstances[indexEnemy].update()
+  while indexEnemy < (enemyEntitiesInstances.len):
+    if not enemyEntitiesInstances[indexEnemy].finished:
+      enemyEntitiesInstances[indexEnemy].update()
 
-    if self.enemyEntitiesInstances[indexEnemy].finished:
-      self.enemyEntitiesInstances.del(indexEnemy)
+    if enemyEntitiesInstances[indexEnemy].finished:
+      enemyEntitiesInstances.del(indexEnemy)
     else:
       inc indexEnemy
 
-    while indexBulletEnemy < (self.bulletEnemyEntitiesInstances.len):
-      if not self.bulletEnemyEntitiesInstances[indexBulletEnemy].finished:
-        self.bulletEnemyEntitiesInstances[indexBulletEnemy].update()
+    while indexBulletEnemy < (bulletEnemyEntitiesInstances.len):
+      if not bulletEnemyEntitiesInstances[indexBulletEnemy].finished:
+        bulletEnemyEntitiesInstances[indexBulletEnemy].update()
 
-      if self.bulletEnemyEntitiesInstances[indexBulletEnemy].finished:
-        self.bulletEnemyEntitiesInstances.del(indexBulletEnemy)
+      if bulletEnemyEntitiesInstances[indexBulletEnemy].finished:
+        bulletEnemyEntitiesInstances.del(indexBulletEnemy)
       else:
         inc indexBulletEnemy
 ]#
 
-  var indexBPFinished = 0
-  var indexMDFinished = 0
+  for bullet in mitems(bulletPlayerEntitiesInstances):
+    if not bullet.finished:
+      bullet.update()
+      for modifierBullet in mitems(modiferEntitiesInstances):
+        if not modifierBullet.finished:
+          if isCollidingAABB(bullet.toRect(), modifierBullet.toRect()):
+            bullet.finished = true
+            modifierBullet.finished = true
+          
+  #[ while indexBulletPlayer < bulletPlayerEntitiesInstances.len and
+      indexBulletPlayer <= bulletPlayerEntitiesInstances.cap:
+    var indexBPModifier = 0
 
-  while indexBPFinished < self.bulletPlayerEntitiesInstances.len:
-    if self.bulletPlayerEntitiesInstances[indexBPFinished].finished:
-      self.bulletPlayerEntitiesInstances.del(indexBPFinished)
-    else:
-      inc indexBPFinished
+    bulletPlayerEntitiesInstances[indexBulletPlayer].update()
 
-  while indexMDFinished < self.modiferEntitiesInstances.len:
-    if self.modiferEntitiesInstances[indexMDFinished].finished:
-      self.modiferEntitiesInstances.del(indexMDFinished)
+    printf("out while modiferEntitiesInstances.len: %d",
+        modiferEntitiesInstances.len) # Prints 0
+
+    while indexBPModifier < modiferEntitiesInstances.len:
+
+      printf("in while modiferEntitiesInstances.len: %d",
+          modiferEntitiesInstances.len) # Doesn't print anything
+
+
+      if isCollidingAABB(
+          bulletPlayerEntitiesInstances[indexBulletPlayer].toRect(),
+          modiferEntitiesInstances[indexBPModifier].toRect()):
+        printf("ASSERT SHOOTER AFTER COLLIDER CHECK")
+        bulletPlayerEntitiesInstances[indexBulletPlayer].finished = true
+        modiferEntitiesInstances[indexBPModifier].finished = true
+
+      inc indexBPModifier
+
+    inc indexBulletPlayer ]#
+
+  var indexFinishedBP = 0
+  var indexFinishedMD = 0
+
+  while indexFinishedBP < bulletPlayerEntitiesInstances.len:
+    if bulletPlayerEntitiesInstances[indexFinishedBP].finished:
+      bulletPlayerEntitiesInstances.del(indexFinishedBP)
     else:
-      inc indexMDFinished
+      inc indexFinishedBP
+
+  while indexFinishedMD < modiferEntitiesInstances.len:
+    if modiferEntitiesInstances[indexFinishedMD].finished:
+      modiferEntitiesInstances.del(indexFinishedMD)
+    else:
+      inc indexFinishedMD
 
 
 proc draw*(self: var Shooter) =
-  for bulletPlayer in mitems(self.bulletPlayerEntitiesInstances):
+  for bulletPlayer in mitems(bulletPlayerEntitiesInstances):
     bulletPlayer.draw()
-  for bulletEnemy in mitems(self.bulletEnemyEntitiesInstances):
+  for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
     bulletEnemy.draw()
-  for enemy in mitems(self.enemyEntitiesInstances):
+  for enemy in mitems(enemyEntitiesInstances):
     enemy.draw()
-  for modifier in mitems(self.modiferEntitiesInstances):
+  for modifier in mitems(modiferEntitiesInstances):
     modifier.drawModifier()

@@ -76,6 +76,7 @@ proc toRect*(projectile: Projectile): Rect =
   result.bottom = projectile.pos.y.toInt() + projectile.pos.x.toInt() div 2
   # printf("in projectile.nim proc rect2: x = %l, y = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt())
 
+# TODO(Kal): Add speed parameter
 proc update*(projectile: var Projectile) =
   if not projectile.finished:
   # printf("in projectile.nim 1 (projectile) proc update x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
@@ -83,12 +84,12 @@ proc update*(projectile: var Projectile) =
     # make sure the projectiles go where they are supposed to go
     # the *2 is for speed reasons, without it, the projectiles are very slow
     projectile.pos.x = projectile.pos.x - fp(luCos(
-        projectile.angle)) * 2
+        projectile.angle))
     projectile.pos.y = projectile.pos.y - fp(luSin(
-         projectile.angle)) * 2
+         projectile.angle))
 
   # printf("in projectile.nim 2 (projectile) proc update x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
-  
+
     if (not onscreen(projectile.toRect())):
       projectile.finished = true
   # else:
@@ -105,7 +106,7 @@ proc draw*(projectile: var Projectile) =
         pos = vec2i(projectile.pos) - vec2i(
             projectile.graphic.width div 2,
             projectile.graphic.height div 2),
-        tid = projectile.tileId #[ + (projectile.index) ]#,
+        tid = projectile.tileId,
         pal = projectile.palId,
         size = projectile.graphic.size
       )
