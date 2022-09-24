@@ -1,6 +1,8 @@
 import natu/[math, graphics, video, oam, utils, mgba]
 import ../utils/[objs]
 
+# TODO(Kal): Split this to multiple files based on Projectile Type
+
 type
   ProjectileKind* = enum
     pkBulletPlayer
@@ -37,11 +39,18 @@ type
       mdFontIndex: int
       mdObj: ObjAttr
 
-proc `=destroy`(projectile: var Projectile) =
+proc `=destroy`*(projectile: var Projectile) =
   if projectile.status != Uninitialised:
     projectile.status = Uninitialised
     freeObjTiles(projectile.tileId)
     releaseObjPal(projectile.graphic)
+
+proc `=copy`*(a: var Projectile; b: Projectile) {.error: "Not supported".}
+
+var bulletPlayerEntitiesInstances*: List[5, Projectile]
+var bulletEnemyEntitiesInstances*: List[3, Projectile]
+var enemyEntitiesInstances*: List[5, Projectile]
+var modiferEntitiesInstances*: List[3, Projectile]
 
 
 # TODO(Kal): Have one initProjectile procedure?
@@ -70,7 +79,7 @@ proc initEnemyProjectile*(): Projectile =
     kind: pkEnemy,
   )
 
-proc initModifierProjectile*(gfx: Graphic, obj: ObjAttr,
+proc initModifierProjectile*(gfx: Graphic; obj: ObjAttr;
     fontIndex: int): Projectile =
   result = Projectile(
     kind: pkModifier,
@@ -92,7 +101,7 @@ proc toRect*(projectile: Projectile): Rect =
   # printf("in projectile.nim proc rect2: x = %l, y = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt())
 
 # TODO(Kal): Add speed parameter
-proc update*(projectile: var Projectile, speed: int = 1) =
+proc update*(projectile: var Projectile; speed: int = 1) =
   if projectile.status == Active:
   # printf("in projectile.nim 1 (projectile) proc update x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
 
@@ -133,7 +142,7 @@ proc draw*(projectile: var Projectile) =
 # - https://www.amanotes.com/post/using-swept-aabb-to-detect-and-process-collision
 # - https://tutorialedge.net/gamedev/aabb-collision-detection-tutorial/
 # - https://developer.mozilla.org/en-US/docs/Games/Techniques/2D_collision_detection#circle_collision
-proc isCollidingAABB*(projectileA: Rect, projectileB: Rect): bool =
+proc isCollidingAABB*(projectileA: Rect; projectileB: Rect): bool =
   let left = projectileB.x - (projectileA.x + projectileA.width)
   let top = (projectileB.y + projectileB.height) - projectileA.y
   let right = (projectileB.x + projectileB.width) -
@@ -169,3 +178,43 @@ proc drawModifier*(modifier: var Projectile) =
   # printf("Projectile Palette: %d", modifier.mdObj.pal)
   # printf("in projectile.nim 2 (modifier) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
   # printf("in projectile.nim 3 (obj) proc draw x = %l, y = %l", obj.pos.x, obj.pos.y)
+
+proc fireModifier*(modifier: sink Projectile; pos: Vec2f = vec2f(0,
+    0); angle: Angle = 0) =
+
+  modifier.pos = pos
+  modifier.angle = angle
+  modifier.status = Active
+
+  if not modiferEntitiesInstances.isFull:
+    modiferEntitiesInstances.add(modifier)
+
+proc fireBulletPlayer*(bullet: sink Projectile; pos: Vec2f = vec2f(0,
+    0); angle: Angle = 0) =
+
+  bullet.pos = pos
+  bullet.angle = angle
+  bullet.status = Active
+
+  if not bulletPlayerEntitiesInstances.isFull:
+    bulletPlayerEntitiesInstances.add(bullet)
+
+proc fireBulletEnemy*(bullet: sink Projectile; pos: Vec2f = vec2f(0,
+    0); angle: Angle = 0) =
+
+  bullet.pos = pos
+  bullet.angle = angle
+  bullet.status = Active
+
+  if not bulletEnemyEntitiesInstances.isFull:
+    bulletEnemyEntitiesInstances.add(bullet)
+
+proc fireEnemy*(enemy: sink Projectile; pos: Vec2f = vec2f(0,
+    0); angle: Angle = 0) =
+
+  enemy.pos = pos
+  enemy.angle = angle
+  enemy.status = Active
+
+  if not enemyEntitiesInstances.isFull:
+    enemyEntitiesInstances.add(enemy)

@@ -1,6 +1,6 @@
 import natu/[math, graphics, video, bios, tte, utils, posprintf, mgba]
 import ../utils/[labels, objs]
-import ../components/[projectile, shared]
+import ../components/shared
 import ../modules/shooter
 
 # TODO(Kal): Split CenterHexNumber into component or new type
@@ -50,7 +50,6 @@ proc `=destroy`*(self: var EvilHex) =
 
 proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}
 
-
 # draw evilhex and related parts
 proc draw*(self: var EvilHex) =
   self.labelCHN.draw()
@@ -64,7 +63,7 @@ proc draw*(self: var EvilHex) =
     self.updateCHN = false
 
 
-proc fire*(self: var EvilHex; modifierIndex: int; playerShipPos: Vec2f) =
+proc fireModifierHex*(self: var EvilHex; modifierIndex: int; playerShipPos: Vec2f) =
   # TODO(Kal): Implement Blue Noise RNG to select the modifier type and angle+position of bullets
 
   # FIXME(Kal): Fix the broken ranged shoot
@@ -88,7 +87,7 @@ proc fire*(self: var EvilHex; modifierIndex: int; playerShipPos: Vec2f) =
   # printf("in evilhex.nim proc fire x = %l, y = %l, angle = %l", pos.x.toInt(),
   #     pos.y.toInt(), angle.uint16)
 
-  shooter.fire(projectile = self.modifierProj, pos = pos, angle = angle)
+  shooter.fireModifier(modifier = self.modifierProj, pos = pos, angle = angle)
 
 proc update*(self: var EvilHex) =
 

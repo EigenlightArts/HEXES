@@ -1,37 +1,13 @@
 import natu/[math, graphics, video, utils, mgba]
 import ../components/projectile
 
-var bulletPlayerEntitiesInstances: List[5, Projectile]
-var bulletEnemyEntitiesInstances: List[3, Projectile]
-var enemyEntitiesInstances: List[5, Projectile]
-var modiferEntitiesInstances: List[3, Projectile]
+export projectile
 
 proc destroy*() =
   bulletPlayerEntitiesInstances.clear()
   bulletEnemyEntitiesInstances.clear()
   enemyEntitiesInstances.clear()
   modiferEntitiesInstances.clear()
-
-proc fire*(projectile: var Projectile, pos: Vec2f = vec2f(0,
-    0), angle: Angle = 0) =
-
-  projectile.pos = pos
-  projectile.angle = angle
-  projectile.status = Active
-
-  case projectile.kind:
-    of pkBulletPlayer:
-      if not bulletPlayerEntitiesInstances.isFull:
-        bulletPlayerEntitiesInstances.add(projectile)
-      # TODO(Kal): bullet else play sfx
-    of pkBulletEnemy:
-      if not bulletEnemyEntitiesInstances.isFull:
-        bulletEnemyEntitiesInstances.add(projectile)
-    of pkEnemy:
-      discard
-    of pkModifier:
-      if not modiferEntitiesInstances.isFull:
-        modiferEntitiesInstances.add(projectile)
 
 proc update*() =
 
