@@ -10,12 +10,15 @@ type
   # ModifierKind = enum
   #   mkNumber
   #   mkOperator
+  ProjectileStatus* = enum
+    Uninitialised
+    Active
+    Finished
   Projectile* = object
     # fields that all have in common
-    initialised*: bool
-    finished*: bool
-    tileId*, palId*: int
+    status*: ProjectileStatus
     graphic*: Graphic
+    tileId*, palId*: int
 
     # index*: int
     pos*: Vec2f
@@ -35,8 +38,8 @@ type
       mdObj: ObjAttr
 
 proc `=destroy`(projectile: var Projectile) =
-  if projectile.initialised:
-    projectile.initialised = false
+  if projectile.status == Active:
+    projectile.status = Finished
     freeObjTiles(projectile.tileId)
     releaseObjPal(projectile.graphic)
 
@@ -90,7 +93,7 @@ proc toRect*(projectile: Projectile): Rect =
 
 # TODO(Kal): Add speed parameter
 proc update*(projectile: var Projectile, speed: int = 1) =
-  if not projectile.finished:
+  if projectile.status == Active:
   # printf("in projectile.nim 1 (projectile) proc update x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
 
     # make sure the projectiles go where they are supposed to go
@@ -103,12 +106,12 @@ proc update*(projectile: var Projectile, speed: int = 1) =
   # printf("in projectile.nim 2 (projectile) proc update x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
 
     if (not onscreen(projectile.toRect())):
-      projectile.finished = true
+      projectile.status = Finished
   # else:
   # printf("in projectile.nim, update ASSERT!")
 
 proc draw*(projectile: var Projectile) =
-  if not projectile.finished:
+  if projectile.status == Active:
   # printf("in projectile.nim 1 (projectile) proc draw x = %l, y = %l, angle = %l", projectile.pos.x.toInt(), projectile.pos.y.toInt(), projectile.angle.uint16)
     withObjAndAff:
       aff.setToRotationInv(projectile.angle.uint16)
@@ -146,7 +149,7 @@ proc isCollidingAABB*(projectileA: Rect, projectileB: Rect): bool =
 
 # TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
 proc drawModifier*(modifier: var Projectile) =
-  if not modifier.finished:
+  if modifier.status == Active:
   # printf("in projectile.nim 1 (modifier) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
     withObjAndAff:
       aff.setToRotationInv(modifier.angle.uint16)

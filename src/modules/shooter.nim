@@ -17,7 +17,7 @@ proc fire*(projectile: var Projectile, pos: Vec2f = vec2f(0,
 
   projectile.pos = pos
   projectile.angle = angle
-  projectile.finished = false
+  projectile.status = Active
 
   case projectile.kind:
     of pkBulletPlayer:
@@ -36,30 +36,30 @@ proc fire*(projectile: var Projectile, pos: Vec2f = vec2f(0,
 proc update*() =
 
   for modifer in mitems(modiferEntitiesInstances):
-    if not modifer.finished:
+    if modifer.status == Active:
       modifer.update()
 
   for bullet in mitems(bulletPlayerEntitiesInstances):
-    if not bullet.finished:
+    if bullet.status == Active:
       bullet.update(speed=2)
       for modifierBullet in mitems(modiferEntitiesInstances):
-        if not modifierBullet.finished:
+        if modifierBullet.status == Active:
           if isCollidingAABB(bullet.toRect(), modifierBullet.toRect()):
-            bullet.finished = true
-            modifierBullet.finished = true
+            modifierBullet.status = Finished
+            modifierBullet.status = Finished
 
 
   var indexFinishedBP = 0
   var indexFinishedMD = 0
 
   while indexFinishedBP < bulletPlayerEntitiesInstances.len:
-    if bulletPlayerEntitiesInstances[indexFinishedBP].finished:
+    if bulletPlayerEntitiesInstances[indexFinishedBP].status == Finished:
       bulletPlayerEntitiesInstances.del(indexFinishedBP)
     else:
       inc indexFinishedBP
 
   while indexFinishedMD < modiferEntitiesInstances.len:
-    if modiferEntitiesInstances[indexFinishedMD].finished:
+    if modiferEntitiesInstances[indexFinishedMD].status == Finished:
       modiferEntitiesInstances.del(indexFinishedMD)
     else:
       inc indexFinishedMD
