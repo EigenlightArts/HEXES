@@ -7,13 +7,13 @@ type
     pkBulletEnemy
     pkEnemy
     pkModifier
-  # ModifierKind = enum
-  #   mkNumber
-  #   mkOperator
   ProjectileStatus* = enum
     Uninitialised
     Active
     Finished
+  # ModifierKind = enum
+  #   mkNumber
+  #   mkOperator
   Projectile* = object
     # fields that all have in common
     status*: ProjectileStatus
