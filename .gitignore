@@ -3,6 +3,7 @@
 /output
 /mGBA-dev
 
+# Development Junk
 *.elf
 *.elf.map
 *.gba
@@ -10,7 +11,8 @@
 *.h
 *.bin
 *.7z
+
 NOTES.md
 logs.txt
 logs_old.txt
-src/gdb.txt
+gdb.txt

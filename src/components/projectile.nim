@@ -38,8 +38,8 @@ type
       mdObj: ObjAttr
 
 proc `=destroy`(projectile: var Projectile) =
-  if projectile.status == Active:
-    projectile.status = Finished
+  if projectile.status != Uninitialised:
+    projectile.status = Uninitialised
     freeObjTiles(projectile.tileId)
     releaseObjPal(projectile.graphic)
 
@@ -167,5 +167,5 @@ proc drawModifier*(modifier: var Projectile) =
   # printf("in projectile.nim, drawModifier ASSERT!")
 
   # printf("Projectile Palette: %d", modifier.mdObj.pal)
-# printf("in projectile.nim 2 (modifier) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
+  # printf("in projectile.nim 2 (modifier) proc draw x = %l, y = %l, angle = %l", modifier.pos.x.toInt(), modifier.pos.y.toInt(), modifier.angle.uint16)
   # printf("in projectile.nim 3 (obj) proc draw x = %l, y = %l", obj.pos.x, obj.pos.y)
