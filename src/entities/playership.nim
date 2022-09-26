@@ -14,7 +14,6 @@ type PlayerShip* = object
   pos*: Vec2f
   angle: Angle
 
-  bulPlayerProj: Projectile
 
 # constructor - create a ship object
 proc initPlayerShip*(pos: Vec2f): PlayerShip =
@@ -60,9 +59,9 @@ proc controls*(self: var PlayerShip) =
   if keyIsDown(kiRight):
     self.angle -= 350
   if keyHit(kiA):
-    self.bulPlayerProj = initBulletPlayerProjectile(gfxBulletTemp)
+    let bulPlayerProj = initBulletPlayerProjectile(gfxBulletTemp)
     shooter.fireBulletPlayer(
-      bullet = self.bulPlayerProj, pos = self.pos, angle = self.angle)
+      bullet = bulPlayerProj, pos = self.pos, angle = self.angle)
     printf("ASSERT KEYHIT")
 
     # printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(),

@@ -21,8 +21,10 @@ proc update*() =
       for modifierBullet in mitems(modiferEntitiesInstances):
         if modifierBullet.status == Active:
           if isCollidingAABB(bullet.toRect(), modifierBullet.toRect()):
-            modifierBullet.status = Finished
-            modifierBullet.status = Finished
+            printf("bullet.status = %d", bullet.status)
+            printf("modifierBullet.status = %d", modifierBullet.status)
+            # bullet.status = Finished
+            # modifierBullet.status = Finished
 
 
   var indexFinishedBP = 0
