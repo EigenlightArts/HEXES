@@ -1,6 +1,6 @@
 import natu/[math, graphics, video, bios, input, mgba]
 import ../utils/objs
-import ../components/projectile
+import ../components/projectile/bulletplayer
 import ../modules/shooter
 
 
@@ -59,10 +59,9 @@ proc controls*(self: var PlayerShip) =
   if keyIsDown(kiRight):
     self.angle -= 350
   if keyHit(kiA):
-    let bulPlayerProj = initBulletPlayerProjectile(gfxBulletTemp)
-    shooter.fireBulletPlayer(
-      bullet = bulPlayerProj, pos = self.pos, angle = self.angle)
-    printf("ASSERT KEYHIT")
+    let bulPlayerProj = initProjectileBulletPlayer(gfxBulletTemp)
+    shooter.fireBulletPlayer(bulPlayerProj, self.pos, self.angle)
+    printf("ASSERT KEYHIT SHOOT")
 
     # printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(),
     #     self.pos.y.toInt())

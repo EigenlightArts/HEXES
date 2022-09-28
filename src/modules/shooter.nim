@@ -1,24 +1,25 @@
 import natu/[math, graphics, video, utils, mgba]
-import ../components/projectile
+import ../components/projectile/[bulletplayer, bulletenemy, enemy, modifier]
+import ../components/shared
 
-export projectile
+export bulletplayer, bulletenemy, enemy, modifier
 
 proc destroy*() =
   bulletPlayerEntitiesInstances.clear()
   bulletEnemyEntitiesInstances.clear()
   enemyEntitiesInstances.clear()
-  modiferEntitiesInstances.clear()
+  modifierEntitiesInstances.clear()
 
 proc update*() =
 
-  for modifer in mitems(modiferEntitiesInstances):
-    if modifer.status == Active:
-      modifer.update()
+  for modifier in mitems(modifierEntitiesInstances):
+    if modifier.status == Active:
+      modifier.update()
 
   for bullet in mitems(bulletPlayerEntitiesInstances):
     if bullet.status == Active:
-      bullet.update(speed=2)
-      for modifierBullet in mitems(modiferEntitiesInstances):
+      bullet.update(speed = 2)
+      for modifierBullet in mitems(modifierEntitiesInstances):
         if modifierBullet.status == Active:
           if isCollidingAABB(bullet.toRect(), modifierBullet.toRect()):
             printf("bullet.status = %d", bullet.status)
@@ -36,9 +37,9 @@ proc update*() =
     else:
       inc indexFinishedBP
 
-  while indexFinishedMD < modiferEntitiesInstances.len:
-    if modiferEntitiesInstances[indexFinishedMD].status == Finished:
-      modiferEntitiesInstances.del(indexFinishedMD)
+  while indexFinishedMD < modifierEntitiesInstances.len:
+    if modifierEntitiesInstances[indexFinishedMD].status == Finished:
+      modifierEntitiesInstances.delete(indexFinishedMD)
     else:
       inc indexFinishedMD
 
@@ -48,7 +49,8 @@ proc draw*() =
     bulletPlayer.draw()
   for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
     bulletEnemy.draw()
-  for enemy in mitems(enemyEntitiesInstances):
-    enemy.draw()
-  for modifier in mitems(modiferEntitiesInstances):
+  # FIXME(Kal): Uncomment when Enemies get implemented 
+  # for enemy in mitems(enemyEntitiesInstances):
+  #   enemy.draw()
+  for modifier in mitems(modifierEntitiesInstances):
     modifier.drawModifier()
