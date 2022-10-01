@@ -1,5 +1,5 @@
 import natu/[math, graphics, video, oam, utils, mgba]
-import ../../utils/[objs]
+import ../../utils/[objs, body]
 import ../shared
 
 type
@@ -12,6 +12,7 @@ type
     # tileId*, palId*: int
     pos*: Vec2f
     angle*: Angle
+    body*: Body
 
     modifierFontIndex: int
     modifierObj: ObjAttr
@@ -33,6 +34,7 @@ proc initProjectileModifier*(gfx: Graphic; obj: ObjAttr;
     graphic: gfx,
     modifierFontIndex: fontIndex,
     modifierObj: obj,
+    body: initBody(0, 0, 16, 16)
   )
   result.modifierObj.tileId = obj.tileId * result.graphic.frameTiles
 

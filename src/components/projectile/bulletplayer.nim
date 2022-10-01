@@ -1,5 +1,5 @@
 import natu/[math, graphics, video, oam, utils, mgba]
-import ../../utils/[objs]
+import ../../utils/[objs, body]
 import ../shared
 
 type BulletPlayer* = object
@@ -8,6 +8,7 @@ type BulletPlayer* = object
   tileId*, palId*: int
   pos*: Vec2f
   angle*: Angle
+  body*: Body
   
   bpDamage*: int
 
@@ -27,6 +28,7 @@ proc initProjectileBulletPlayer*(gfx: Graphic): BulletPlayer =
     graphic: gfx,
     tileId: allocObjTiles(gfx),
     palId: acquireObjPal(gfx),
+    body: initBody(0, 0, 10, 6),
   )
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
 

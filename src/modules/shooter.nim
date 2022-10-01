@@ -1,6 +1,7 @@
 import natu/[math, graphics, video, utils, mgba]
 import ../components/projectile/[bulletplayer, bulletenemy, enemy, modifier]
 import ../components/shared
+import ../utils/body
 
 export bulletplayer, bulletenemy, enemy, modifier
 
@@ -21,11 +22,9 @@ proc update*() =
       bullet.update(speed = 2)
       for modifierBullet in mitems(modifierEntitiesInstances):
         if modifierBullet.status == Active:
-          if isCollidingAABB(bullet.toRect(), modifierBullet.toRect()):
-            printf("bullet.status = %d", bullet.status)
-            printf("modifierBullet.status = %d", modifierBullet.status)
-            # bullet.status = Finished
-            # modifierBullet.status = Finished
+          if collide(modifierBullet.body, bullet.body):
+            bullet.status = Finished
+            modifierBullet.status = Finished
 
 
   var indexFinishedBP = 0

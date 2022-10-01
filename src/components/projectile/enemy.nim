@@ -1,5 +1,5 @@
 import natu/[math, graphics, video, oam, utils, mgba]
-import ../../utils/[objs]
+import ../../utils/[objs, body]
 import ../shared
 
 # FIXME(Kal): Actually implement this lol
@@ -10,6 +10,7 @@ type Enemy* = object
   tileId*, palId*: int
   pos*: Vec2f
   angle*: Angle
+  body*: Body
 
   enemyHealth*: int
   enemyShooter*: bool
