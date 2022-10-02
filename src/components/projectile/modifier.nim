@@ -10,7 +10,6 @@ type
     status*: ProjectileStatus
     graphic*: Graphic
     # tileId*, palId*: int
-    pos*: Vec2f
     angle*: Angle
     body*: Body
 
@@ -29,27 +28,27 @@ proc `=copy`*(a: var Modifier; b: Modifier) {.error: "Not supported".}
 var modifierEntitiesInstances*: List[3, Modifier]
 
 proc initProjectileModifier*(gfx: Graphic; obj: ObjAttr;
-    fontIndex: int): Modifier =
+    fontIndex: int, pos: Vec2f): Modifier =
   result = Modifier(
     graphic: gfx,
     modifierFontIndex: fontIndex,
     modifierObj: obj,
-    body: initBody(0, 0, 16, 16)
+    body: initBody(pos, 16, 16)
   )
   result.modifierObj.tileId = obj.tileId * result.graphic.frameTiles
 
 proc toRect*(modifier: Modifier): Rect =
-  result.left = modifier.pos.x.toInt() - modifier.pos.x.toInt() div 2
-  result.top = modifier.pos.y.toInt() - modifier.pos.x.toInt() div 2
-  result.right = modifier.pos.x.toInt() + modifier.pos.x.toInt() div 2
-  result.bottom = modifier.pos.y.toInt() + modifier.pos.x.toInt() div 2
+  result.left = modifier.body.pos.x.toInt() - modifier.body.pos.x.toInt() div 2
+  result.top = modifier.body.pos.y.toInt() - modifier.body.pos.x.toInt() div 2
+  result.right = modifier.body.pos.x.toInt() + modifier.body.pos.x.toInt() div 2
+  result.bottom = modifier.body.pos.y.toInt() + modifier.body.pos.x.toInt() div 2
 
 proc update*(modifier: var Modifier; speed: int = 1) =
   if modifier.status == Active:
     # make sure the modifiers go where they are supposed to go
-    modifier.pos.x = modifier.pos.x - fp(luCos(
+    modifier.body.pos.x = modifier.body.pos.x - fp(luCos(
         modifier.angle)) * speed
-    modifier.pos.y = modifier.pos.y - fp(luSin(
+    modifier.body.pos.y = modifier.body.pos.y - fp(luSin(
          modifier.angle)) * speed
 
     if (not onscreen(modifier.toRect())):
@@ -63,7 +62,7 @@ proc drawModifier*(modifier: var Modifier) =
       obj.init(
         mode = omAff,
         aff = affId,
-        pos = vec2i(modifier.pos) - vec2i(
+        pos = vec2i(modifier.body.pos) - vec2i(
             modifier.graphic.width div 2, modifier.graphic.height div 2),
         tid = modifier.modifierObj.tid + (modifier.modifierFontIndex *
             4),
@@ -71,10 +70,8 @@ proc drawModifier*(modifier: var Modifier) =
         size = modifier.graphic.size
       )
 
-proc fireModifier*(modifier: sink Modifier; pos: Vec2f = vec2f(0,
-    0); angle: Angle = 0) =
+proc fireModifier*(modifier: sink Modifier; angle: Angle = 0) =
 
-  modifier.pos = pos
   modifier.angle = angle
   modifier.status = Active
 

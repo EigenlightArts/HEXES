@@ -8,7 +8,6 @@ type Enemy* = object
   status*: ProjectileStatus
   graphic*: Graphic
   tileId*, palId*: int
-  pos*: Vec2f
   angle*: Angle
   body*: Body
 
@@ -26,7 +25,7 @@ proc `=copy`*(a: var Enemy; b: Enemy) {.error: "Not supported".}
 var enemyEntitiesInstances*: List[3, Enemy]
 
 
-#[ 
+#[
 proc initProjectileEnemy*(): Projectile =
   result = Projectile(
   ,

@@ -6,7 +6,6 @@ type BulletEnemy* = object
   status*: ProjectileStatus
   graphic*: Graphic
   tileId*, palId*: int
-  pos*: Vec2f
   angle*: Angle
   body*: Body
 
@@ -22,27 +21,27 @@ proc `=copy`*(a: var BulletEnemy; b: BulletEnemy) {.error: "Not supported".}
 
 var bulletEnemyEntitiesInstances*: List[3, BulletEnemy]
 
-proc initProjectileBulletEnemy*(gfx: Graphic): BulletEnemy =
+proc initProjectileBulletEnemy*(gfx: Graphic, pos: Vec2f): BulletEnemy =
   result = BulletEnemy(
     graphic: gfx,
     tileId: allocObjTiles(gfx),
     palId: acquireObjPal(gfx),
-    body: initBody(0, 0, 8, 2),
+    body: initBody(pos, 8, 2),
   )
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
 
 proc toRect*(be: BulletEnemy): Rect =
-  result.left = be.pos.x.toInt() - be.pos.x.toInt() div 2
-  result.top = be.pos.y.toInt() - be.pos.x.toInt() div 2
-  result.right = be.pos.x.toInt() + be.pos.x.toInt() div 2
-  result.bottom = be.pos.y.toInt() + be.pos.x.toInt() div 2
+  result.left = be.body.pos.x.toInt() - be.body.pos.x.toInt() div 2
+  result.top = be.body.pos.y.toInt() - be.body.pos.x.toInt() div 2
+  result.right = be.body.pos.x.toInt() + be.body.pos.x.toInt() div 2
+  result.bottom = be.body.pos.y.toInt() + be.body.pos.x.toInt() div 2
 
 proc update*(be: var BulletEnemy; speed: int = 1) =
   if be.status == Active:
     # make sure the bullet enemies go where they are supposed to go
-    be.pos.x = be.pos.x - fp(luCos(
+    be.body.pos.x = be.body.pos.x - fp(luCos(
         be.angle)) * speed
-    be.pos.y = be.pos.y - fp(luSin(
+    be.body.pos.y = be.body.pos.y - fp(luSin(
          be.angle)) * speed
 
     if (not onscreen(be.toRect())):
@@ -55,7 +54,7 @@ proc draw*(be: var BulletEnemy) =
       obj.init(
         mode = omAff,
         aff = affId,
-        pos = vec2i(be.pos) - vec2i(
+        pos = vec2i(be.body.pos) - vec2i(
             be.graphic.width div 2,
             be.graphic.height div 2),
         tid = be.tileId,
@@ -66,7 +65,7 @@ proc draw*(be: var BulletEnemy) =
 proc fireBulletEnemy*(be: sink BulletEnemy; pos: Vec2f = vec2f(0,
     0); angle: Angle = 0) =
 
-  be.pos = pos
+  be.body.pos = pos
   be.angle = angle
   be.status = Active
 

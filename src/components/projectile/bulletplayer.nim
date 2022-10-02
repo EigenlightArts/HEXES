@@ -6,10 +6,9 @@ type BulletPlayer* = object
   status*: ProjectileStatus
   graphic*: Graphic
   tileId*, palId*: int
-  pos*: Vec2f
   angle*: Angle
   body*: Body
-  
+
   bpDamage*: int
 
 proc `=destroy`*(bp: var BulletPlayer) =
@@ -23,27 +22,27 @@ proc `=copy`*(a: var BulletPlayer; b: BulletPlayer) {.error: "Not supported".}
 var bulletPlayerEntitiesInstances*: List[5, BulletPlayer]
 
 
-proc initProjectileBulletPlayer*(gfx: Graphic): BulletPlayer =
+proc initProjectileBulletPlayer*(gfx: Graphic; pos: Vec2f): BulletPlayer =
   result = BulletPlayer(
     graphic: gfx,
     tileId: allocObjTiles(gfx),
     palId: acquireObjPal(gfx),
-    body: initBody(0, 0, 10, 6),
+    body: initBody(pos, 10, 6)
   )
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
 
 proc toRect*(bp: BulletPlayer): Rect =
-  result.left = bp.pos.x.toInt() - bp.pos.x.toInt() div 2
-  result.top = bp.pos.y.toInt() - bp.pos.x.toInt() div 2
-  result.right = bp.pos.x.toInt() + bp.pos.x.toInt() div 2
-  result.bottom = bp.pos.y.toInt() + bp.pos.x.toInt() div 2
+  result.left = bp.body.pos.x.toInt() - bp.body.pos.x.toInt() div 2
+  result.top = bp.body.pos.y.toInt() - bp.body.pos.x.toInt() div 2
+  result.right = bp.body.pos.x.toInt() + bp.body.pos.x.toInt() div 2
+  result.bottom = bp.body.pos.y.toInt() + bp.body.pos.x.toInt() div 2
 
 proc update*(bp: var BulletPlayer; speed: int = 1) =
   if bp.status == Active:
     # make sure the bp players go where they are supposed to go
-    bp.pos.x = bp.pos.x - fp(luCos(
+    bp.body.pos.x = bp.body.pos.x - fp(luCos(
         bp.angle)) * speed
-    bp.pos.y = bp.pos.y - fp(luSin(
+    bp.body.pos.y = bp.body.pos.y - fp(luSin(
          bp.angle)) * speed
 
     if (not onscreen(bp.toRect())):
@@ -56,7 +55,7 @@ proc draw*(bp: var BulletPlayer) =
       obj.init(
         mode = omAff,
         aff = affId,
-        pos = vec2i(bp.pos) - vec2i(
+        pos = vec2i(bp.body.pos) - vec2i(
             bp.graphic.width div 2,
             bp.graphic.height div 2),
         tid = bp.tileId,
@@ -64,10 +63,8 @@ proc draw*(bp: var BulletPlayer) =
         size = bp.graphic.size
       )
 
-proc fireBulletPlayer*(bp: sink BulletPlayer; pos: Vec2f = vec2f(0,
-    0); angle: Angle = 0) =
+proc fireBulletPlayer*(bp: sink BulletPlayer; angle: Angle = 0) =
 
-  bp.pos = pos
   bp.angle = angle
   bp.status = Active
 

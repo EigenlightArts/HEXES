@@ -80,13 +80,13 @@ proc fireModifierHex*(self: var EvilHex; modifierIndex: int; playerShipPos: Vec2
       self.centerPoint.y - fp(luSin(angle) * self.orbitRadius.y))
 
   let modifierProj = initProjectileModifier(gfxHwaveFont,
-      objHwaveFont, modifierIndex)
+      objHwaveFont, modifierIndex, pos)
   # var modHexInstance: Projectile = initBulletEnemyProjectile(gfxBulletTemp) # this was done for debugging purposes
 
   # printf("in evilhex.nim proc fire x = %l, y = %l, angle = %l", pos.x.toInt(),
   #     pos.y.toInt(), angle.uint16)
 
-  shooter.fireModifier(modifierProj, pos, angle)
+  shooter.fireModifier(modifierProj, angle)
 
 proc update*(self: var EvilHex) =
 

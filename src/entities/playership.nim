@@ -59,8 +59,8 @@ proc controls*(self: var PlayerShip) =
   if keyIsDown(kiRight):
     self.angle -= 350
   if keyHit(kiA):
-    let bulPlayerProj = initProjectileBulletPlayer(gfxBulletTemp)
-    shooter.fireBulletPlayer(bulPlayerProj, self.pos, self.angle)
+    let bulPlayerProj = initProjectileBulletPlayer(gfxBulletTemp, self.pos)
+    shooter.fireBulletPlayer(bulPlayerProj, self.angle)
     printf("ASSERT KEYHIT SHOOT")
 
     # printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(),
