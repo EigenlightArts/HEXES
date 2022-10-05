@@ -1,6 +1,6 @@
 import natu/[video, bios, irq, input, math, graphics, utils]
 import utils/objs
-import entities/[playership, evilhex]
+import entities/[playership, evilhex, ecn]
 import modules/shooter
 
 # TODO(Kal): change this to rgb8() later
@@ -14,7 +14,7 @@ dispcnt = initDispCnt(obj = true, obj1d = true, bg0 = true)
 
 irq.enable(iiVBlank)
 
-var valueCHN: uint8 = 255
+var ecnValue: uint8 = 255
 var eventLoopTimer: int
 var eventModifierShoot: int
 var eventModifierIndex: int
@@ -24,7 +24,7 @@ proc startEventLoop() =
   eventModifierShoot = rand(40..90)
   eventModifierIndex = rand(0..21) # excludes $
 
-var evilHexInstance = initEvilHex(valueCHN)
+var evilHexInstance = initEvilHex(initEvilHexCenterNumber(ecnValue))
 var playerShipInstance = initPlayerShip(vec2f(75, 0))
 
 startEventLoop()

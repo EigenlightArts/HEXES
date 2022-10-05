@@ -13,17 +13,9 @@ let objHwaveFont* = initObj(
 
 copyAllFrames(addr objTileMem[objHwaveFont.tileId], gfxHwaveFont)
 
-# Shared Procedures
-#[ proc isCollidingAABB*(projectileA: Rect; projectileB: Rect): bool =
-  let left = projectileB.x - (projectileA.x + projectileA.width)
-  let top = (projectileB.y + projectileB.height) - projectileA.y
-  let right = (projectileB.x + projectileB.width) -
-      projectileA.x
-  let bottom = projectileB.y - (projectileA.y +
-      projectileA.height)
 
-  # inverting conditions to check faster
-  return not (left > 0 or right < 0 or top < 0 or bottom > 0)]#
+# Shared Procedures
+
 
 # Shared Types
 type ProjectileStatus* = enum

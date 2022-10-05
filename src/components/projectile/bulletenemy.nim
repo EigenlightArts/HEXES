@@ -30,7 +30,7 @@ proc initProjectileBulletEnemy*(gfx: Graphic, pos: Vec2f): BulletEnemy =
   )
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
 
-proc toRect*(be: BulletEnemy): Rect =
+proc toRect*(be: BulletEnemy): Rect {.deprecated.} =
   result.left = be.body.pos.x.toInt() - be.body.pos.x.toInt() div 2
   result.top = be.body.pos.y.toInt() - be.body.pos.x.toInt() div 2
   result.right = be.body.pos.x.toInt() + be.body.pos.x.toInt() div 2

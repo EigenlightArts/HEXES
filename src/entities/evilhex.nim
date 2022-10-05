@@ -2,67 +2,57 @@ import natu/[math, graphics, video, bios, tte, utils, posprintf, mgba]
 import ../utils/[labels, objs]
 import ../components/shared
 import ../modules/shooter
+import ecn
 
-# TODO(Kal): Split CenterHexNumber into component or new type
+# TODO(Kal): Split EvilHexCenterNumber into a new component or type
 
 type EvilHex* = object
   initialised: bool
 
   tileId, paletteId: int
   hexBuffer: array[9, char]
-
-  centerHexNumber: uint8
-  updateCHN: bool
-  labelCHN: Label
+  evilHexCenterNumber: EvilHexCenterNumber
 
   orbitRadius: Vec2i
   centerPoint: Vec2i
 
 
-proc initEvilHex*(centerHexNumber: uint8): EvilHex =
+proc initEvilHex*(evilHexCenterNumber: sink EvilHexCenterNumber): EvilHex =
   result.initialised = true
   result.orbitRadius = vec2i(15, 10)
   result.centerPoint = vec2i(ScreenWidth div 2, ScreenHeight div 2)
+  result.evilHexCenterNumber = evilHexCenterNumber
 
-  result.centerHexNumber = centerHexNumber
-  result.updateCHN = true
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
 
-  posprintf(addr result.hexBuffer, "$%X", centerHexNumber)
-
-  result.labelCHN.init(vec2i(ScreenWidth div 2, ScreenHeight div 2), s8x16, count = 22)
-  result.labelCHN.obj.pal = getPalId(gfxShipTemp)
-  result.labelCHN.ink = 1 # set the ink colour index to use from the palette
-  result.labelCHN.shadow = 2 # set the shadow colour (only relevant if the font actually has more than 1 colour)
-
-  result.labelCHN.put(addr result.hexBuffer)
-
-
+  posprintf(addr result.hexBuffer, "$%X", result.evilHexCenterNumber)
+  result.evilHexCenterNumber.label.put(addr result.hexBuffer)
+  
 # destructor - free the resources used by the hex object
 proc `=destroy`*(self: var EvilHex) =
   if self.initialised:
     self.initialised = false
     freeObjTiles(self.tileId)
     releaseObjPal(gfxShipTemp)
-    self.labelCHN.destroy()
 
 proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}
 
 # draw evilhex and related parts
 proc draw*(self: var EvilHex) =
-  self.labelCHN.draw()
+  self.evilHexCenterNumber.label.draw()
 
-  if self.updateCHN:
+  if self.evilHexCenterNumber.update:
     var size = tte.getTextSize(addr self.hexBuffer)
-    self.labelCHN.pos = vec2i(ScreenWidth div 2 - size.x div 2,
+    self.evilHexCenterNumber.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
         ScreenHeight div 2 - size.y div 2)
 
-    self.labelCHN.put(addr self.hexBuffer)
-    self.updateCHN = false
+    self.evilHexCenterNumber.label.put(addr self.hexBuffer)
+    self.evilHexCenterNumber.update = false
 
 
-proc fireModifierHex*(self: var EvilHex; modifierIndex: int; playerShipPos: Vec2f) =
+proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
+    playerShipPos: Vec2f) =
   # TODO(Kal): Implement Blue Noise RNG to select the modifier type and angle+position of bullets
 
   # FIXME(Kal): Fix the broken ranged shoot

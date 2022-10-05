@@ -3,18 +3,29 @@ import ../../utils/[objs, body]
 import ../shared
 
 type
-  # ModifierKind = enum
-  #   mkNumber
-  #   mkOperator
+  ModifierKind* = enum
+    mkNumber
+    mkOperator
+  OperatorKind* = enum
+    okAdd
+    okSub
+    okMul
+    okDiv
   Modifier* = object
     status*: ProjectileStatus
     graphic*: Graphic
-    # tileId*, palId*: int
     angle*: Angle
     body*: Body
 
-    modifierFontIndex: int
+    index: int
     modifierObj: ObjAttr
+
+    case kind*: ModifierKind
+    of mkNumber:
+      valueNumber*: int 
+    of mkOperator:
+      valueOperator*: OperatorKind
+
 
 # NOTE(Kal): Exe says that we don't need to free anything,
 # but I think he's under the impression that we have a shared state,
@@ -31,13 +42,14 @@ proc initProjectileModifier*(gfx: Graphic; obj: ObjAttr;
     fontIndex: int, pos: Vec2f): Modifier =
   result = Modifier(
     graphic: gfx,
-    modifierFontIndex: fontIndex,
+    index: fontIndex,
     modifierObj: obj,
-    body: initBody(pos, 16, 16)
+    body: initBody(pos, 16, 16),
+    kind: if fontIndex >= 0 and fontIndex <= 15: mkNumber else: mkOperator,
   )
   result.modifierObj.tileId = obj.tileId * result.graphic.frameTiles
 
-proc toRect*(modifier: Modifier): Rect =
+proc toRect*(modifier: Modifier): Rect {.deprecated.} =
   result.left = modifier.body.pos.x.toInt() - modifier.body.pos.x.toInt() div 2
   result.top = modifier.body.pos.y.toInt() - modifier.body.pos.x.toInt() div 2
   result.right = modifier.body.pos.x.toInt() + modifier.body.pos.x.toInt() div 2
@@ -64,7 +76,7 @@ proc drawModifier*(modifier: var Modifier) =
         aff = affId,
         pos = vec2i(modifier.body.pos) - vec2i(
             modifier.graphic.width div 2, modifier.graphic.height div 2),
-        tid = modifier.modifierObj.tid + (modifier.modifierFontIndex *
+        tid = modifier.modifierObj.tid + (modifier.index *
             4),
         pal = modifier.modifierObj.palId,
         size = modifier.graphic.size
@@ -74,6 +86,11 @@ proc fireModifier*(modifier: sink Modifier; angle: Angle = 0) =
 
   modifier.angle = angle
   modifier.status = Active
+  
+  if modifier.kind == mkNumber:
+    modifier.valueNumber = modifier.index
+  if modifier.kind == mkOperator:
+    modifier.valueOperator = OperatorKind(modifier.index - 15)
 
   if not modifierEntitiesInstances.isFull:
     modifierEntitiesInstances.add(modifier)
