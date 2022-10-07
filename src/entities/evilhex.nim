@@ -21,12 +21,12 @@ proc initEvilHex*(evilHexCenterNumber: sink EvilHexCenterNumber): EvilHex =
   result.initialised = true
   result.orbitRadius = vec2i(15, 10)
   result.centerPoint = vec2i(ScreenWidth div 2, ScreenHeight div 2)
-  result.evilHexCenterNumber = evilHexCenterNumber
 
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
 
-  posprintf(addr result.hexBuffer, "$%X", result.evilHexCenterNumber)
+  result.evilHexCenterNumber = evilHexCenterNumber
+  posprintf(addr result.hexBuffer, "$%X", result.evilHexCenterNumber.centerNumber)
   result.evilHexCenterNumber.label.put(addr result.hexBuffer)
   
 # destructor - free the resources used by the hex object
@@ -55,8 +55,7 @@ proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
     playerShipPos: Vec2f) =
   # TODO(Kal): Implement Blue Noise RNG to select the modifier type and angle+position of bullets
 
-  # FIXME(Kal): Fix the broken ranged shoot
-  # TODO(Kal): Consider if this is even necessary for the game?
+  # WONTFIX(Kal): The broken ranged shoot, will be using blue noise instead
   # let angleVariance = 1
   # let anglePlayer = ArcTan2(int16(playerShipPos.x.toInt()), int16(playerShipPos.y.toInt()))
   # let angle = uint32(int(anglePlayer) + rand(-angleVariance..angleVariance))

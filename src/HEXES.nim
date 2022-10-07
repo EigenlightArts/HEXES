@@ -22,7 +22,7 @@ var eventModifierIndex: int
 proc startEventLoop() =
   eventLoopTimer = 0
   eventModifierShoot = rand(40..90)
-  eventModifierIndex = rand(0..21) # excludes $
+  eventModifierIndex = rand(0..19) # excludes $
 
 var evilHexInstance = initEvilHex(initEvilHexCenterNumber(ecnValue))
 var playerShipInstance = initPlayerShip(vec2f(75, 0))

@@ -90,7 +90,7 @@ proc fireModifier*(modifier: sink Modifier; angle: Angle = 0) =
   if modifier.kind == mkNumber:
     modifier.valueNumber = modifier.index
   if modifier.kind == mkOperator:
-    modifier.valueOperator = OperatorKind(modifier.index - 15)
+    modifier.valueOperator = OperatorKind(modifier.index - 16)
 
   if not modifierEntitiesInstances.isFull:
     modifierEntitiesInstances.add(modifier)
