@@ -26,6 +26,7 @@ var evilHexInstance = initEvilHex(initEvilHexCenterNumber(ecnValue))
 proc startEventLoop() =
   eventLoopTimer = 0
   eventModifierShoot = rand(40..90)
+  # TODO(Kal): Probably a good idea to make operators more common
   eventModifierIndex = rand(1..19) # excludes 0 and $
 
 startEventLoop()

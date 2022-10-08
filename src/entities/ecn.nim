@@ -16,9 +16,10 @@ proc `=destroy`*(self: var EvilHexCenterNumber) =
     releaseObjPal(gfxShipTemp)
     self.label.destroy()
 
-proc `=copy`*(dest: var EvilHexCenterNumber; source: EvilHexCenterNumber) {.error: "Not implemented".}
+proc `=copy`*(dest: var EvilHexCenterNumber;
+    source: EvilHexCenterNumber) {.error: "Not implemented".}
 
-proc initEvilHexCenterNumber*(value: sink int): var EvilHexCenterNumber =
+proc initEvilHexCenterNumber*(value: sink int): EvilHexCenterNumber =
   result.value = value
   result.update = true
 

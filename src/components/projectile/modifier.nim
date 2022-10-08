@@ -40,7 +40,7 @@ proc `=copy`*(a: var Modifier; b: Modifier) {.error: "Not supported".}
 var modifierEntitiesInstances*: List[3, Modifier]
 
 proc initProjectileModifier*(gfx: Graphic; obj: ObjAttr;
-    fontIndex: int, pos: Vec2f): Modifier =
+    fontIndex: int; pos: Vec2f): Modifier =
   result = Modifier(
     graphic: gfx,
     index: fontIndex,
@@ -85,7 +85,7 @@ proc fireModifier*(modifier: sink Modifier; angle: Angle = 0) =
 
   modifier.angle = angle
   modifier.status = Active
-  
+
   if modifier.kind == mkNumber:
     modifier.valueNumber = modifier.index
   if modifier.kind == mkOperator:

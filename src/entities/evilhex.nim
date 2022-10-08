@@ -25,7 +25,7 @@ proc `=destroy`*(self: var EvilHex) =
 
 proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}
 
-proc initEvilHex*(centerNumber: sink EvilHexCenterNumber): var EvilHex =
+proc initEvilHex*(centerNumber: sink EvilHexCenterNumber): EvilHex =
   result.initialised = true
   result.orbitRadius = vec2i(15, 10)
   result.centerPoint = vec2i(ScreenWidth div 2, ScreenHeight div 2)
@@ -42,10 +42,11 @@ proc draw*(self: var EvilHex) =
   self.centerNumber.label.draw()
 
   if self.centerNumber.update:
-    var size = tte.getTextSize(addr self.hexBuffer)
+    let size = tte.getTextSize(addr self.hexBuffer)
     self.centerNumber.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
         ScreenHeight div 2 - size.y div 2)
 
+    posprintf(addr self.hexBuffer, "$%X", self.centerNumber.value)
     self.centerNumber.label.put(addr self.hexBuffer)
     self.centerNumber.update = false
 
@@ -73,19 +74,24 @@ proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
   shooter.fireModifier(modifier, angle)
 
 proc update*(self: var EvilHex) =
+  printf("centerNumber.value: %X", self.centerNumber.value)
   printf("valueNumberStored: %d", valueNumberStored)
   printf("valueOperatorStored: %d", valueOperatorStored)
 
 proc inputModifierValue*(self: var EvilHex) =
-  if valueNumberStored != 0 and valueOperatorStored != okNone:
+  if valueNumberStored != 0:
     case valueOperatorStored:
     of okNone:
       # TODO(Kal): Play a beep
-      printf("You don't have a stored number or operator!")
+      printf("You don't have a stored operator!")
     of okAdd: self.centerNumber.value = self.centerNumber.value + valueNumberStored
     of okSub: self.centerNumber.value = self.centerNumber.value - valueNumberStored
     of okMul: self.centerNumber.value = self.centerNumber.value * valueNumberStored
     of okDiv: self.centerNumber.value = self.centerNumber.value div valueNumberStored
+
+    self.centerNumber.update = true
+    valueNumberStored = 0
+    valueOperatorStored = okNone
   else:
     # TODO(Kal): Play a beep
-    printf("You don't have a stored number or operator!")
+    printf("You don't have a stored number and/or operator!")

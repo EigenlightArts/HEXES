@@ -54,7 +54,7 @@ proc draw*() =
     bulletPlayer.draw()
   for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
     bulletEnemy.draw()
-  # FIXME(Kal): Uncomment when Enemies get implemented 
+  # FIXME(Kal): Uncomment when Enemies get implemented
   # for enemy in mitems(enemyEntitiesInstances):
   #   enemy.draw()
   for modifier in mitems(modifierEntitiesInstances):

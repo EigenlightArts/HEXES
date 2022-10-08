@@ -21,7 +21,7 @@ proc `=copy`*(a: var BulletEnemy; b: BulletEnemy) {.error: "Not supported".}
 
 var bulletEnemyEntitiesInstances*: List[3, BulletEnemy]
 
-proc initProjectileBulletEnemy*(gfx: Graphic, pos: Vec2f): BulletEnemy =
+proc initProjectileBulletEnemy*(gfx: Graphic; pos: Vec2f): BulletEnemy =
   result = BulletEnemy(
     graphic: gfx,
     tileId: allocObjTiles(gfx),
