@@ -1,7 +1,8 @@
 import natu/[math, graphics, video, bios, input, mgba]
-import ../utils/objs
-import ../components/projectile/bulletplayer
-import ../modules/shooter
+import evilhex
+import utils/objs
+import components/projectile/bulletplayer
+import modules/shooter
 
 
 #TODO(Kal): Use the `Graphics` enum instead of calling gfxShipTemp, etc directly
@@ -13,6 +14,15 @@ type PlayerShip* = object
   centerPoint: Vec2i
   pos*: Vec2f
   angle: Angle
+
+# destructor - free the resources used by a ship object
+proc `=destroy`*(self: var PlayerShip) =
+  if self.initialised:
+    self.initialised = false
+    freeObjTiles(self.tileId)
+    releaseObjPal(gfxShipTemp)
+
+proc `=copy`*(dest: var PlayerShip; source: PlayerShip) {.error: "Not implemented".}
 
 
 # constructor - create a ship object
@@ -26,14 +36,7 @@ proc initPlayerShip*(pos: Vec2f): PlayerShip =
   result.paletteId = acquireObjPal(gfxShipTemp)
 
 
-# destructor - free the resources used by a ship object
-proc `=destroy`*(self: var PlayerShip) =
-  if self.initialised:
-    self.initialised = false
-    freeObjTiles(self.tileId)
-    releaseObjPal(gfxShipTemp)
 
-proc `=copy`*(dest: var PlayerShip; source: PlayerShip) {.error: "Not implemented".}
 
 # draw ship sprite and all the affine snazziness
 proc draw*(self: var PlayerShip) =
@@ -53,7 +56,7 @@ proc draw*(self: var PlayerShip) =
   # printf("in playership.nim proc draw x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
 
 # ship controls
-proc controls*(self: var PlayerShip) =
+proc controls*(self: var PlayerShip; evilHex: var EvilHex) =
   if keyIsDown(kiLeft):
     self.angle += 350
   if keyIsDown(kiRight):
@@ -62,12 +65,14 @@ proc controls*(self: var PlayerShip) =
     let bulPlayerProj = initProjectileBulletPlayer(gfxBulletTemp, self.pos)
     shooter.fireBulletPlayer(bulPlayerProj, self.angle)
     printf("ASSERT KEYHIT SHOOT")
+  if keyHit(kiB):
+    evilHex.inputModifierValue()
 
     # printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(),
     #     self.pos.y.toInt())
 
 
-# calculate and update ship position
+  # calculate and update ship position
 proc update*(self: var PlayerShip) =
 
   self.pos.x = self.centerPoint.x + fp(luCos(

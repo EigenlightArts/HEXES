@@ -1,34 +1,21 @@
 import natu/[math, graphics, video, bios, tte, utils, posprintf, mgba]
-import ../utils/[labels, objs]
-import ../components/shared
-import ../modules/shooter
+import utils/[labels, objs]
+import components/shared
+import modules/shooter
 import ecn
 
-# TODO(Kal): Split EvilHexCenterNumber into a new component or type
+export ecn
 
 type EvilHex* = object
   initialised: bool
+  centerNumber*: EvilHexCenterNumber
 
   tileId, paletteId: int
   hexBuffer: array[9, char]
-  evilHexCenterNumber: EvilHexCenterNumber
 
   orbitRadius: Vec2i
   centerPoint: Vec2i
 
-
-proc initEvilHex*(evilHexCenterNumber: sink EvilHexCenterNumber): EvilHex =
-  result.initialised = true
-  result.orbitRadius = vec2i(15, 10)
-  result.centerPoint = vec2i(ScreenWidth div 2, ScreenHeight div 2)
-
-  result.tileId = allocObjTiles(gfxShipTemp)
-  result.paletteId = acquireObjPal(gfxShipTemp)
-
-  result.evilHexCenterNumber = evilHexCenterNumber
-  posprintf(addr result.hexBuffer, "$%X", result.evilHexCenterNumber.centerNumber)
-  result.evilHexCenterNumber.label.put(addr result.hexBuffer)
-  
 # destructor - free the resources used by the hex object
 proc `=destroy`*(self: var EvilHex) =
   if self.initialised:
@@ -38,17 +25,29 @@ proc `=destroy`*(self: var EvilHex) =
 
 proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}
 
+proc initEvilHex*(centerNumber: sink EvilHexCenterNumber): var EvilHex =
+  result.initialised = true
+  result.orbitRadius = vec2i(15, 10)
+  result.centerPoint = vec2i(ScreenWidth div 2, ScreenHeight div 2)
+
+  result.tileId = allocObjTiles(gfxShipTemp)
+  result.paletteId = acquireObjPal(gfxShipTemp)
+
+  result.centerNumber = centerNumber
+  posprintf(addr result.hexBuffer, "$%X", result.centerNumber.value)
+  result.centerNumber.label.put(addr result.hexBuffer)
+
 # draw evilhex and related parts
 proc draw*(self: var EvilHex) =
-  self.evilHexCenterNumber.label.draw()
+  self.centerNumber.label.draw()
 
-  if self.evilHexCenterNumber.update:
+  if self.centerNumber.update:
     var size = tte.getTextSize(addr self.hexBuffer)
-    self.evilHexCenterNumber.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
+    self.centerNumber.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
         ScreenHeight div 2 - size.y div 2)
 
-    self.evilHexCenterNumber.label.put(addr self.hexBuffer)
-    self.evilHexCenterNumber.update = false
+    self.centerNumber.label.put(addr self.hexBuffer)
+    self.centerNumber.update = false
 
 
 proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
@@ -68,15 +67,25 @@ proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
       self.centerPoint.x - fp(luCos(angle) * self.orbitRadius.x),
       self.centerPoint.y - fp(luSin(angle) * self.orbitRadius.y))
 
-  let modifierProj = initProjectileModifier(gfxHwaveFont,
+  let modifier = initProjectileModifier(gfxHwaveFont,
       objHwaveFont, modifierIndex, pos)
-  # var modHexInstance: Projectile = initBulletEnemyProjectile(gfxBulletTemp) # this was done for debugging purposes
 
-  # printf("in evilhex.nim proc fire x = %l, y = %l, angle = %l", pos.x.toInt(),
-  #     pos.y.toInt(), angle.uint16)
-
-  shooter.fireModifier(modifierProj, angle)
+  shooter.fireModifier(modifier, angle)
 
 proc update*(self: var EvilHex) =
+  printf("valueNumberStored: %d", valueNumberStored)
+  printf("valueOperatorStored: %d", valueOperatorStored)
 
-  shooter.update()
+proc inputModifierValue*(self: var EvilHex) =
+  if valueNumberStored != 0 and valueOperatorStored != okNone:
+    case valueOperatorStored:
+    of okNone:
+      # TODO(Kal): Play a beep
+      printf("You don't have a stored number or operator!")
+    of okAdd: self.centerNumber.value = self.centerNumber.value + valueNumberStored
+    of okSub: self.centerNumber.value = self.centerNumber.value - valueNumberStored
+    of okMul: self.centerNumber.value = self.centerNumber.value * valueNumberStored
+    of okDiv: self.centerNumber.value = self.centerNumber.value div valueNumberStored
+  else:
+    # TODO(Kal): Play a beep
+    printf("You don't have a stored number or operator!")

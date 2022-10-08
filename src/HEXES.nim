@@ -14,18 +14,19 @@ dispcnt = initDispCnt(obj = true, obj1d = true, bg0 = true)
 
 irq.enable(iiVBlank)
 
-var ecnValue: uint8 = 255
+
+var ecnValue: int = 255
 var eventLoopTimer: int
 var eventModifierShoot: int
 var eventModifierIndex: int
 
+var playerShipInstance = initPlayerShip(vec2f(75, 0))
+var evilHexInstance = initEvilHex(initEvilHexCenterNumber(ecnValue))
+
 proc startEventLoop() =
   eventLoopTimer = 0
   eventModifierShoot = rand(40..90)
-  eventModifierIndex = rand(0..19) # excludes $
-
-var evilHexInstance = initEvilHex(initEvilHexCenterNumber(ecnValue))
-var playerShipInstance = initPlayerShip(vec2f(75, 0))
+  eventModifierIndex = rand(1..19) # excludes 0 and $
 
 startEventLoop()
 
@@ -42,7 +43,7 @@ while true:
   keyPoll()
 
   # ship controls
-  playerShipInstance.controls()
+  playerShipInstance.controls(evilHexInstance)
 
   # update ship position
   playerShipInstance.update()
@@ -52,7 +53,7 @@ while true:
     evilHexInstance.fireModifierHex(eventModifierIndex, playerShipInstance.pos)
 
   # update EvilHex subroutines
-  # evilHexInstance.update()
+  evilHexInstance.update()
 
   # update Shooter
   shooter.update()

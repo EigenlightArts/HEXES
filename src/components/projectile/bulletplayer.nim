@@ -1,6 +1,6 @@
 import natu/[math, graphics, video, oam, utils, mgba]
-import ../../utils/[objs, body]
-import ../shared
+import utils/[objs, body]
+import components/shared
 
 type BulletPlayer* = object
   status*: ProjectileStatus

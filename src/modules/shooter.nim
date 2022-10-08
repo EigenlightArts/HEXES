@@ -1,9 +1,12 @@
 import natu/[math, graphics, video, utils, mgba]
-import ../components/projectile/[bulletplayer, bulletenemy, enemy, modifier]
-import ../components/shared
-import ../utils/body
+import components/projectile/[bulletplayer, bulletenemy, enemy, modifier]
+import components/shared
+import utils/body
 
 export bulletplayer, bulletenemy, enemy, modifier
+
+var valueNumberStored*: int
+var valueOperatorStored*: OperatorKind
 
 proc destroy*() =
   bulletPlayerEntitiesInstances.clear()
@@ -12,7 +15,6 @@ proc destroy*() =
   modifierEntitiesInstances.clear()
 
 proc update*() =
-
   for modifier in mitems(modifierEntitiesInstances):
     if modifier.status == Active:
       modifier.update()
@@ -23,6 +25,10 @@ proc update*() =
       for modifierBullet in mitems(modifierEntitiesInstances):
         if modifierBullet.status == Active:
           if collide(modifierBullet.body, bullet.body):
+            if modifierBullet.kind == mkNumber:
+              valueNumberStored = modifierBullet.valueNumber
+            if modifierBullet.kind == mkOperator:
+              valueOperatorStored = modifierBullet.valueOperator
             bullet.status = Finished
             modifierBullet.status = Finished
 
@@ -52,4 +58,4 @@ proc draw*() =
   # for enemy in mitems(enemyEntitiesInstances):
   #   enemy.draw()
   for modifier in mitems(modifierEntitiesInstances):
-    modifier.drawModifier()
+    modifier.draw()

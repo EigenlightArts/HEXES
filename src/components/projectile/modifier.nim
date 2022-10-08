@@ -1,12 +1,13 @@
 import natu/[math, graphics, video, oam, utils, mgba]
-import ../../utils/[objs, body]
-import ../shared
+import utils/[objs, body]
+import components/shared
 
 type
   ModifierKind* = enum
     mkNumber
     mkOperator
   OperatorKind* = enum
+    okNone
     okAdd
     okSub
     okMul
@@ -22,7 +23,7 @@ type
 
     case kind*: ModifierKind
     of mkNumber:
-      valueNumber*: int 
+      valueNumber*: int
     of mkOperator:
       valueOperator*: OperatorKind
 
@@ -67,13 +68,11 @@ proc update*(modifier: var Modifier; speed: int = 1) =
       modifier.status = Finished
 
 # TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
-proc drawModifier*(modifier: var Modifier) =
+proc draw*(modifier: var Modifier) =
   if modifier.status == Active:
-    withObjAndAff:
-      aff.setToRotationInv(modifier.angle.uint16)
+    withObj:
       obj.init(
-        mode = omAff,
-        aff = affId,
+        mode = omReg,
         pos = vec2i(modifier.body.pos) - vec2i(
             modifier.graphic.width div 2, modifier.graphic.height div 2),
         tid = modifier.modifierObj.tid + (modifier.index *
@@ -90,7 +89,7 @@ proc fireModifier*(modifier: sink Modifier; angle: Angle = 0) =
   if modifier.kind == mkNumber:
     modifier.valueNumber = modifier.index
   if modifier.kind == mkOperator:
-    modifier.valueOperator = OperatorKind(modifier.index - 16)
+    modifier.valueOperator = OperatorKind(modifier.index - 15)
 
   if not modifierEntitiesInstances.isFull:
     modifierEntitiesInstances.add(modifier)

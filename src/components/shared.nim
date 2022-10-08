@@ -1,5 +1,5 @@
 import natu/[math, graphics, video, oam, utils]
-import ../utils/[objs]
+import utils/[objs]
 
 # NOTE(Kal): To control shared state, try to avoid mutability
 
