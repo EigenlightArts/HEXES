@@ -30,12 +30,6 @@ proc initProjectileBulletEnemy*(gfx: Graphic; pos: Vec2f): BulletEnemy =
   )
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
 
-proc toRect*(be: BulletEnemy): Rect {.deprecated.} =
-  result.left = be.body.pos.x.toInt() - be.body.pos.x.toInt() div 2
-  result.top = be.body.pos.y.toInt() - be.body.pos.x.toInt() div 2
-  result.right = be.body.pos.x.toInt() + be.body.pos.x.toInt() div 2
-  result.bottom = be.body.pos.y.toInt() + be.body.pos.x.toInt() div 2
-
 proc update*(be: var BulletEnemy; speed: int = 1) =
   if be.status == Active:
     # make sure the bullet enemies go where they are supposed to go
@@ -44,7 +38,7 @@ proc update*(be: var BulletEnemy; speed: int = 1) =
     be.body.pos.y = be.body.pos.y - fp(luSin(
          be.angle)) * speed
 
-    if (not onscreen(be.toRect())):
+    if (not onscreen(be.body.hitbox())):
       be.status = Finished
 
 proc draw*(be: var BulletEnemy) =

@@ -50,12 +50,6 @@ proc initProjectileModifier*(gfx: Graphic; obj: ObjAttr;
   )
   result.modifierObj.tileId = obj.tileId * result.graphic.frameTiles
 
-proc toRect*(modifier: Modifier): Rect {.deprecated.} =
-  result.left = modifier.body.pos.x.toInt() - modifier.body.pos.x.toInt() div 2
-  result.top = modifier.body.pos.y.toInt() - modifier.body.pos.x.toInt() div 2
-  result.right = modifier.body.pos.x.toInt() + modifier.body.pos.x.toInt() div 2
-  result.bottom = modifier.body.pos.y.toInt() + modifier.body.pos.x.toInt() div 2
-
 proc update*(modifier: var Modifier; speed: int = 1) =
   if modifier.status == Active:
     # make sure the modifiers go where they are supposed to go
@@ -64,7 +58,7 @@ proc update*(modifier: var Modifier; speed: int = 1) =
     modifier.body.pos.y = modifier.body.pos.y - fp(luSin(
          modifier.angle)) * speed
 
-    if (not onscreen(modifier.toRect())):
+    if (not onscreen(modifier.body.hitbox())):
       modifier.status = Finished
 
 # TODO(Kal): Add the `$` sprite to the left of the number modifier projectile

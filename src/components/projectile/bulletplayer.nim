@@ -31,12 +31,6 @@ proc initProjectileBulletPlayer*(gfx: Graphic; pos: Vec2f): BulletPlayer =
   )
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
 
-proc toRect*(bp: BulletPlayer): Rect {.deprecated.} =
-  result.left = bp.body.pos.x.toInt() - bp.body.pos.x.toInt() div 2
-  result.top = bp.body.pos.y.toInt() - bp.body.pos.x.toInt() div 2
-  result.right = bp.body.pos.x.toInt() + bp.body.pos.x.toInt() div 2
-  result.bottom = bp.body.pos.y.toInt() + bp.body.pos.x.toInt() div 2
-
 proc update*(bp: var BulletPlayer; speed: int = 1) =
   if bp.status == Active:
     # make sure the bp players go where they are supposed to go
@@ -45,7 +39,7 @@ proc update*(bp: var BulletPlayer; speed: int = 1) =
     bp.body.pos.y = bp.body.pos.y - fp(luSin(
          bp.angle)) * speed
 
-    if (not onscreen(bp.toRect())):
+    if (not onscreen(bp.body.hitbox())):
       bp.status = Finished
 
 proc draw*(bp: var BulletPlayer) =
