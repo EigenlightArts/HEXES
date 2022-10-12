@@ -19,6 +19,7 @@ var ecnValue: int = 255
 var eventLoopTimer: int
 var eventModifierShoot: int
 var eventModifierIndex: int
+var eventEnemyShoot: int
 
 var playerShipInstance = initPlayerShip(vec2f(75, 0))
 var evilHexInstance = initEvilHex(initEvilHexCenterNumber(ecnValue))
@@ -26,6 +27,7 @@ var evilHexInstance = initEvilHex(initEvilHexCenterNumber(ecnValue))
 proc startEventLoop() =
   eventLoopTimer = 0
   eventModifierShoot = rand(40..90)
+  eventEnemyShoot = rand(30..65)
   # TODO(Kal): Probably a good idea to make operators more common
   eventModifierIndex = rand(1..19) # excludes 0 and $
 
@@ -52,7 +54,8 @@ while true:
   # fire the EvilHex projectile
   if eventLoopTimer == eventModifierShoot:
     evilHexInstance.fireModifierHex(eventModifierIndex, playerShipInstance.pos)
-
+    evilHexInstance.fireEnemyHex(playerShipInstance.pos)
+  # if eventLoopTimer == eventEnemyShoot:
   # update EvilHex subroutines
   evilHexInstance.update()
 

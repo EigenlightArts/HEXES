@@ -4,3 +4,8 @@ cd "assets/graphics"
 graphic "ship-temp.png", size=s16x16
 graphic "bullet-temp.png", size=s8x8
 graphic "hwave-font.png", size=s16x16
+
+graphic "enemy-a.png", size=s16x16
+graphic "enemy-b.png", size=s16x16
+graphic "enemy-c.png", size=s16x16
+graphic "enemy-d.png", size=s16x16

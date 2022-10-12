@@ -2,7 +2,7 @@ import natu/[math, graphics, video, bios, tte, utils, posprintf, mgba]
 import utils/[labels, objs]
 import components/shared
 import modules/shooter
-import ecn
+import entities/ecn
 
 export ecn
 
@@ -55,13 +55,6 @@ proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
     playerShipPos: Vec2f) =
   # TODO(Kal): Implement Blue Noise RNG to select the modifier type and angle+position of bullets
 
-  # WONTFIX(Kal): The broken ranged shoot, will be using blue noise instead
-  # let angleVariance = 1
-  # let anglePlayer = ArcTan2(int16(playerShipPos.x.toInt()), int16(playerShipPos.y.toInt()))
-  # let angle = uint32(int(anglePlayer) + rand(-angleVariance..angleVariance))
-  # printf("in evilhex.nim proc fire anglePlayer = %l, playerShipPos.x = %l, playerShipPos.y = %l, angle = %l", anglePlayer, -playerShipPos.x.toInt(), -playerShipPos.y.toInt(), angle.uint16)
-  # printf("in evilhex.nim proc fire rand = %l", rand(-angleVariance..angleVariance))
-
   # let angle: Angle = rand(uint16)
   let angle: Angle = 45368 # for testing and debugging
   let pos: Vec2f = vec2f(
@@ -72,6 +65,21 @@ proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
       objHwaveFont, modifierIndex, pos)
 
   shooter.fireModifier(modifier, angle)
+
+proc fireEnemyHex*(self: var EvilHex;
+    playerShipPos: Vec2f) =
+  # TODO(Kal): Implement Blue Noise RNG to select the Enemy type and angle+position of bullets
+  # With bias towards player postion
+
+  # let angle: Angle = rand(uint16)
+  let angle: Angle = 25368 # for testing and debugging
+  let pos: Vec2f = vec2f(
+      self.centerPoint.x - fp(luCos(angle) * self.orbitRadius.x),
+      self.centerPoint.y - fp(luSin(angle) * self.orbitRadius.y))
+
+  let enemy = initEnemy(gfxEnemyA, pos)
+
+  shooter.fireEnemy(enemy, pos, angle)
 
 proc update*(self: var EvilHex) =
   printf("centerNumber.value: %X", self.centerNumber.value)

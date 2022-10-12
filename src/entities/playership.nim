@@ -1,5 +1,5 @@
 import natu/[math, graphics, video, bios, input, mgba]
-import evilhex
+import entities/evilhex
 import utils/objs
 import components/projectile/bulletplayer
 import modules/shooter
@@ -36,8 +36,6 @@ proc initPlayerShip*(pos: Vec2f): PlayerShip =
   result.paletteId = acquireObjPal(gfxShipTemp)
 
 
-
-
 # draw ship sprite and all the affine snazziness
 proc draw*(self: var PlayerShip) =
   copyFrame(addr objTileMem[self.tileId], gfxShipTemp, 0)
@@ -56,6 +54,7 @@ proc draw*(self: var PlayerShip) =
   # printf("in playership.nim proc draw x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
 
 # ship controls
+# TODO(Kal): Split into a player module?
 proc controls*(self: var PlayerShip; evilHex: var EvilHex) =
   if keyIsDown(kiLeft):
     self.angle += 350
@@ -64,7 +63,6 @@ proc controls*(self: var PlayerShip; evilHex: var EvilHex) =
   if keyHit(kiA):
     let bulPlayerProj = initProjectileBulletPlayer(gfxBulletTemp, self.pos)
     shooter.fireBulletPlayer(bulPlayerProj, self.angle)
-    printf("ASSERT KEYHIT SHOOT")
   if keyHit(kiB):
     evilHex.inputModifierValue()
 

@@ -1,0 +1,4 @@
+{
+    "nim.provider": "lsp",
+    "nim.project": ["src/HEXES.nim"]
+}
