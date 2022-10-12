@@ -54,8 +54,9 @@ while true:
   # fire the EvilHex projectile
   if eventLoopTimer == eventModifierShoot:
     evilHexInstance.fireModifierHex(eventModifierIndex, playerShipInstance.pos)
+  if eventLoopTimer == eventEnemyShoot:
     evilHexInstance.fireEnemyHex(playerShipInstance.pos)
-  # if eventLoopTimer == eventEnemyShoot:
+
   # update EvilHex subroutines
   evilHexInstance.update()
 

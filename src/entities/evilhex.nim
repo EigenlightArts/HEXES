@@ -79,7 +79,7 @@ proc fireEnemyHex*(self: var EvilHex;
 
   let enemy = initEnemy(gfxEnemyA, pos)
 
-  shooter.fireEnemy(enemy, pos, angle)
+  shooter.fireEnemy(enemy, angle)
 
 proc update*(self: var EvilHex) =
   printf("centerNumber.value: %X", self.centerNumber.value)

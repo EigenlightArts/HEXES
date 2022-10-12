@@ -19,21 +19,26 @@ proc update*() =
     if modifier.status == Active:
       modifier.update()
 
-  for bullet in mitems(bulletPlayerEntitiesInstances):
-    if bullet.status == Active:
-      bullet.update(speed = 2)
+  for enemy in mitems(enemyEntitiesInstances):
+    if enemy.status == Active:
+      enemy.update()
+
+  for bulletPlayer in mitems(bulletPlayerEntitiesInstances):
+    if bulletPlayer.status == Active:
+      bulletPlayer.update(speed = 2)
       for modifierBullet in mitems(modifierEntitiesInstances):
         if modifierBullet.status == Active:
-          if collide(modifierBullet.body, bullet.body):
+          if collide(modifierBullet.body, bulletPlayer.body):
             if modifierBullet.kind == mkNumber:
               valueNumberStored = modifierBullet.valueNumber
             if modifierBullet.kind == mkOperator:
               valueOperatorStored = modifierBullet.valueOperator
-            bullet.status = Finished
+            bulletPlayer.status = Finished
             modifierBullet.status = Finished
 
 
   var indexFinishedBP = 0
+  var indexFinishedEN = 0
   var indexFinishedMD = 0
 
   while indexFinishedBP < bulletPlayerEntitiesInstances.len:
@@ -41,6 +46,12 @@ proc update*() =
       bulletPlayerEntitiesInstances.del(indexFinishedBP)
     else:
       inc indexFinishedBP
+
+  while indexFinishedEN < enemyEntitiesInstances.len:
+    if enemyEntitiesInstances[indexFinishedEN].status == Finished:
+      enemyEntitiesInstances.delete(indexFinishedEN)
+    else:
+      inc indexFinishedEN
 
   while indexFinishedMD < modifierEntitiesInstances.len:
     if modifierEntitiesInstances[indexFinishedMD].status == Finished:
@@ -54,8 +65,7 @@ proc draw*() =
     bulletPlayer.draw()
   for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
     bulletEnemy.draw()
-  # FIXME(Kal): Uncomment when Enemies get implemented
-  # for enemy in mitems(enemyEntitiesInstances):
-  #   enemy.draw()
+  for enemy in mitems(enemyEntitiesInstances):
+    enemy.draw()
   for modifier in mitems(modifierEntitiesInstances):
     modifier.draw()

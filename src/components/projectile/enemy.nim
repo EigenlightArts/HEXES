@@ -25,7 +25,7 @@ proc `=copy`*(a: var Enemy; b: Enemy) {.error: "Not supported".}
 var enemyEntitiesInstances*: List[3, Enemy]
 
 
-proc initEnemy*(gfx: Graphic, pos: Vec2f): Enemy =
+proc initEnemy*(gfx: Graphic; pos: Vec2f): Enemy =
   result = Enemy(
     graphic: gfx,
     tileId: allocObjTiles(gfx),
@@ -60,8 +60,7 @@ proc draw*(enemy: var Enemy) =
         size = enemy.graphic.size
       )
 
-proc fireEnemy*(enemy: sink Enemy; pos: Vec2f = vec2f(0,
-  0); angle: Angle = 0) =
+proc fireEnemy*(enemy: sink Enemy; angle: Angle = 0) =
 
   enemy.angle = angle
   enemy.status = Active
