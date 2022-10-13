@@ -66,7 +66,7 @@ proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
 
   shooter.fireModifier(modifier, angle)
 
-proc fireEnemyHex*(self: var EvilHex;
+proc fireEnemyHex*(self: var EvilHex; enemySelect: int;
     playerShipPos: Vec2f) =
   # TODO(Kal): Implement Blue Noise RNG to select the Enemy type and angle+position of bullets
   # With bias towards player postion
@@ -77,7 +77,32 @@ proc fireEnemyHex*(self: var EvilHex;
       self.centerPoint.x - fp(luCos(angle) * self.orbitRadius.x),
       self.centerPoint.y - fp(luSin(angle) * self.orbitRadius.y))
 
-  let enemy = initEnemy(gfxEnemyA, pos)
+  var gfxEnemy: Graphic 
+  var scoreEnemy: int
+  var speedEnemy: int
+  case enemySelect:
+  of 0: 
+    gfxEnemy = gfxEnemyTriangle
+    scoreEnemy = 20
+    speedEnemy = 2
+  of 1:
+    gfxEnemy = gfxEnemySquare
+    scoreEnemy = 15
+    speedEnemy = 2
+  of 2:
+    gfxEnemy = gfxEnemyLozenge
+    scoreEnemy = 30
+    speedEnemy = 1
+  of 3:
+    gfxEnemy = gfxEnemyCircle
+    scoreEnemy = 20
+    speedEnemy = 3
+  else:
+    gfxEnemy = gfxBulletTemp
+    scoreEnemy = 0
+    speedEnemy = 0
+
+  let enemy = initEnemy(gfxEnemy, enemySelect, speedEnemy, pos)
 
   shooter.fireEnemy(enemy, angle)
 

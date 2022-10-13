@@ -2,17 +2,37 @@ import natu/[math, graphics, video, oam, utils, mgba]
 import utils/[objs, body]
 import components/shared
 
-# FIXME(Kal): Actually implement this lol
-# TODO(Kal): Add enemy kinds
-type Enemy* = object
-  status*: ProjectileStatus
-  graphic*: Graphic
-  tileId*, palId*: int
-  angle*: Angle
-  body*: Body
+type
+  SpeedKind* = enum
+    skNone
+    skSlow
+    skMedium
+    skFast
+  EnemyKind* = enum
+    ekNone
+    ekTriangle
+    ekSquare
+    ekLozenge
+    ekCircle
+  Enemy* = object
+    status*: ProjectileStatus
+    graphic*: Graphic
+    tileId*, palId*: int
+    angle*: Angle
+    body*: Body
 
-  enemyHealth*: int
-  enemyShooter*: bool
+    score*: int
+    health*: int
+    speed*: SpeedKind
+
+    case kind*: EnemyKind
+    of ekNone, ekSquare, ekCircle:
+      nil
+    of ekTriangle:
+      hasFlip*: bool
+    of ekLozenge:
+      canShoot*: bool
+
 
 proc `=destroy`*(enemy: var Enemy) =
   if enemy.status != Uninitialised:
@@ -25,12 +45,14 @@ proc `=copy`*(a: var Enemy; b: Enemy) {.error: "Not supported".}
 var enemyEntitiesInstances*: List[3, Enemy]
 
 
-proc initEnemy*(gfx: Graphic; pos: Vec2f): Enemy =
+proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int; pos: Vec2f): Enemy =
   result = Enemy(
     graphic: gfx,
     tileId: allocObjTiles(gfx),
     palId: acquireObjPal(gfx),
-    body: initBody(pos, 12, 12)
+    body: initBody(pos, 12, 12),
+    speed: SpeedKind(enemySpeed),
+    kind: EnemyKind(enemySelect)
   )
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
 
