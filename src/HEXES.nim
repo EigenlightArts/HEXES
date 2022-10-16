@@ -16,6 +16,7 @@ irq.enable(iiVBlank)
 
 
 var ecnValue: int = 255
+var globalFramesPassed: int
 var eventLoopTimer: int
 var eventModifierShoot: int
 var eventModifierIndex: int

@@ -29,9 +29,11 @@ type
     of ekNone, ekSquare, ekCircle:
       nil
     of ekTriangle:
-      hasFlip*: bool
+      flipDone*: bool
+      flipTimer*: int
     of ekLozenge:
-      canShoot*: bool
+      shootEnable*: bool
+      shootTimer*: int
 
 
 proc `=destroy`*(enemy: var Enemy) =
@@ -45,7 +47,8 @@ proc `=copy`*(a: var Enemy; b: Enemy) {.error: "Not supported".}
 var enemyEntitiesInstances*: List[3, Enemy]
 
 
-proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int; pos: Vec2f): Enemy =
+proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int;
+    pos: Vec2f): Enemy =
   result = Enemy(
     graphic: gfx,
     tileId: allocObjTiles(gfx),
@@ -54,15 +57,43 @@ proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int; pos: Vec2f): En
     speed: SpeedKind(enemySpeed),
     kind: EnemyKind(enemySelect)
   )
+  if result.kind == ekTriangle:
+    result.flipTimer = rand(30..55)
+  if result.kind == ekLozenge:
+    result.shootTimer = rand(25..40)
+
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
 
-proc update*(enemy: var Enemy; speed: int = 1) =
+proc update*(enemy: var Enemy) =
   if enemy.status == Active:
+    let speed = case enemy.speed:
+      of skNone:
+        fp(0)
+      of skSlow:
+        fp(0.5)
+      of skMedium:
+        fp(1)
+      of skFast:
+        fp(2)
+
     # make sure the enemy players go where they are supposed to go
     enemy.body.pos.x = enemy.body.pos.x - fp(luCos(
         enemy.angle)) * speed
     enemy.body.pos.y = enemy.body.pos.y - fp(luSin(
          enemy.angle)) * speed
+
+    # if enemy.kind == ekTriangle:
+    #   dec enemy.flipTimer
+    #   # TODO(Kal): Put in code to flip object to other side
+    #   if enemy.flipTimer <= 0:
+    #     # MP = pv - (pv - P)
+    #     let pivot = vec2f(ScreenWidth div 2, ScreenHeight div 2)
+    #     let diff = pivot - enemy.body.pos
+    #     enemy.body.pos = pivot - diff
+    # if enemy.kind == ekLozenge:
+    #   dec enemy.shootTimer
+    #   # TODO(Kal): Put in code to shoot bulletEnemies
+    #   # if enemy.shootTimer <= 0:
 
     if (not onscreen(enemy.body.hitbox())):
       enemy.status = Finished
