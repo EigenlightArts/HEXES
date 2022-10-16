@@ -62,7 +62,7 @@ while true:
     evilHexInstance.fireEnemyHex(eventEnemySelect, playerShipInstance.pos)
 
   # update EvilHex subroutines
-  evilHexInstance.update()
+  # evilHexInstance.update()
 
   # update Shooter
   shooter.update()

@@ -81,19 +81,19 @@ proc fireEnemyHex*(self: var EvilHex; enemySelect: int;
   var scoreEnemy: int
   var speedEnemy: int
   case enemySelect:
-  of 0: 
+  of 1: 
     gfxEnemy = gfxEnemyTriangle
     scoreEnemy = 20
     speedEnemy = 2
-  of 1:
+  of 2:
     gfxEnemy = gfxEnemySquare
     scoreEnemy = 15
     speedEnemy = 2
-  of 2:
+  of 3:
     gfxEnemy = gfxEnemyLozenge
     scoreEnemy = 30
     speedEnemy = 1
-  of 3:
+  of 4:
     gfxEnemy = gfxEnemyCircle
     scoreEnemy = 20
     speedEnemy = 3
