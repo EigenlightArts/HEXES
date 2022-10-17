@@ -16,6 +16,7 @@ irq.enable(iiVBlank)
 
 
 var ecnValue: int = 255
+# TODO(Kal): Implement Seconds from frames passed (1 Second/60 Frames)
 var globalFramesPassed: int
 var eventLoopTimer: int
 var eventModifierShoot: int
@@ -42,7 +43,11 @@ startEventLoop()
 # - https://www.gameenginebook.com/
 
 while true:
-  # TODO(Kal): Implement Blue Noise RNG to get seed of game events
+  # TODO(Kal): Implement Controlled RNG for game events
+  # See:
+  # - C:\Users\Kaleidosium\Documents\School Shiz\Project Documentation\HEXES\Visual Journal\handmade-help-1.txt
+  # - https://probablydance.com/2019/08/28/a-new-algorithm-for-controlled-randomness/
+
   # after 100 vblank units, restart event loop
   if eventLoopTimer == 100:
     startEventLoop()

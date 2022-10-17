@@ -53,7 +53,7 @@ proc draw*(self: var EvilHex) =
 
 proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
     playerShipPos: Vec2f) =
-  # TODO(Kal): Implement Blue Noise RNG to select the modifier type and angle+position of bullets
+  # TODO(Kal): Implement Controlled RNG to select the modifier type and angle+position of bullets
 
   # let angle: Angle = rand(uint16)
   let angle: Angle = 45368 # for testing and debugging
@@ -68,7 +68,7 @@ proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
 
 proc fireEnemyHex*(self: var EvilHex; enemySelect: int;
     playerShipPos: Vec2f) =
-  # TODO(Kal): Implement Blue Noise RNG to select the Enemy type and angle+position of bullets
+  # TODO(Kal): Implement Controlled RNG to select the Enemy type and angle+position of bullets
   # With bias towards player postion
 
   # let angle: Angle = rand(uint16)
