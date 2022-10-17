@@ -42,6 +42,7 @@ startEventLoop()
 # - https://www.gameenginebook.com/
 
 while true:
+  # TODO(Kal): Implement Blue Noise RNG to get seed of game events
   # after 100 vblank units, restart event loop
   if eventLoopTimer == 100:
     startEventLoop()
@@ -57,9 +58,9 @@ while true:
 
   # fire the EvilHex projectile
   if eventLoopTimer == eventModifierShoot:
-    evilHexInstance.fireModifierHex(eventModifierIndex, playerShipInstance.pos)
+    evilHexInstance.fireModifierHex(eventModifierIndex, playerShipInstance.body.pos)
   if eventLoopTimer == eventEnemyShoot:
-    evilHexInstance.fireEnemyHex(eventEnemySelect, playerShipInstance.pos)
+    evilHexInstance.fireEnemyHex(eventEnemySelect, playerShipInstance.body.pos)
 
   # update EvilHex subroutines
   # evilHexInstance.update()

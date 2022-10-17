@@ -2,7 +2,6 @@ import natu/[math, graphics, video, oam, utils, mgba]
 import utils/[objs, body]
 import components/shared
 import components/projectile/bulletenemy
-import modules/shooter
 
 type
   SpeedKind* = enum
@@ -63,9 +62,9 @@ proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int;
   # printf("result.speed is: %d", result.speed)
 
   if result.kind == ekTriangle:
-    result.flipTimer = rand(30..95)
+    result.flipTimer = rand(30..85)
   if result.kind == ekLozenge:
-    result.shootTimer = rand(25..50)
+    result.shootTimer = rand(25..60)
 
   result.speed = case result.speedKind:
     of skNone:
@@ -104,8 +103,8 @@ proc update*(enemy: var Enemy) =
       # TODO(Kal): Put in code to shoot bulletEnemies
       if enemy.shootTimer <= 0:
         let bulEnemyProj = initProjectileBulletEnemy(gfxBulletTemp, enemy.body.pos)
-        shooter.fireBulletEnemy(bulEnemyProj, enemy.angle)
-
+        fireBulletEnemy(bulEnemyProj, enemy.body.pos, enemy.angle)
+        enemy.shootTimer = rand(25..60)
     if (not onscreen(enemy.body.hitbox())):
       enemy.status = Finished
 
