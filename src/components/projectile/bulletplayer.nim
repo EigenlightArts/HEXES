@@ -31,7 +31,7 @@ proc initProjectileBulletPlayer*(gfx: Graphic; pos: Vec2f): BulletPlayer =
   )
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
 
-proc update*(bp: var BulletPlayer; speed: int = 1) =
+proc update*(bp: var BulletPlayer; speed: int = 2) =
   if bp.status == Active:
     # make sure the bp players go where they are supposed to go
     bp.body.pos.x = bp.body.pos.x - fp(luCos(

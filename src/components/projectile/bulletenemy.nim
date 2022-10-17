@@ -30,7 +30,7 @@ proc initProjectileBulletEnemy*(gfx: Graphic; pos: Vec2f): BulletEnemy =
   )
   copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
 
-proc update*(be: var BulletEnemy; speed: int = 1) =
+proc update*(be: var BulletEnemy; speed: int = 2) =
   if be.status == Active:
     # make sure the bullet enemies go where they are supposed to go
     be.body.pos.x = be.body.pos.x - fp(luCos(

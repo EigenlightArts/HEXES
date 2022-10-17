@@ -1,6 +1,8 @@
 import natu/[math, graphics, video, oam, utils, mgba]
 import utils/[objs, body]
 import components/shared
+import components/projectile/bulletenemy
+import modules/shooter
 
 type
   SpeedKind* = enum
@@ -61,9 +63,9 @@ proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int;
   # printf("result.speed is: %d", result.speed)
 
   if result.kind == ekTriangle:
-    result.flipTimer = rand(10..20)
+    result.flipTimer = rand(30..95)
   if result.kind == ekLozenge:
-    result.shootTimer = rand(10..20)
+    result.shootTimer = rand(25..50)
 
   result.speed = case result.speedKind:
     of skNone:
@@ -88,18 +90,21 @@ proc update*(enemy: var Enemy) =
     enemy.body.pos.y = enemy.body.pos.y - fp(luSin(
          enemy.angle)) * enemy.speed
 
-    if enemy.kind == ekTriangle:
+    if enemy.kind == ekTriangle and not enemy.flipDone:
       dec enemy.flipTimer
       if enemy.flipTimer <= 0:
+        enemy.speed = enemy.speed * -1
         # MP = pv - (pv - P)
         let pivot = vec2f(ScreenWidth div 2, ScreenHeight div 2)
         let diff = pivot - enemy.body.pos
         enemy.body.pos = pivot - diff
-        enemy.speed = enemy.speed * -1
+        enemy.flipDone = true
     if enemy.kind == ekLozenge:
       dec enemy.shootTimer
       # TODO(Kal): Put in code to shoot bulletEnemies
-      # if enemy.shootTimer <= 0:
+      if enemy.shootTimer <= 0:
+        let bulEnemyProj = initProjectileBulletEnemy(gfxBulletTemp, enemy.body.pos)
+        shooter.fireBulletEnemy(bulEnemyProj, enemy.angle)
 
     if (not onscreen(enemy.body.hitbox())):
       enemy.status = Finished

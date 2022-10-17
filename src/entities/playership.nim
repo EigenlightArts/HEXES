@@ -1,6 +1,6 @@
 import natu/[math, graphics, video, bios, input, mgba]
 import entities/evilhex
-import utils/objs
+import utils/[objs, body]
 import components/projectile/bulletplayer
 import modules/shooter
 
@@ -12,7 +12,7 @@ type PlayerShip* = object
   tileId, paletteId: int
   orbitRadius: Vec2i
   centerPoint: Vec2i
-  pos*: Vec2f
+  body*: Body
   angle: Angle
 
 # destructor - free the resources used by a ship object
@@ -29,7 +29,7 @@ proc `=copy`*(dest: var PlayerShip; source: PlayerShip) {.error: "Not implemente
 proc initPlayerShip*(pos: Vec2f): PlayerShip =
   result.initialised = true # you should add an extra field
   result.orbitRadius = vec2i(90, 60)
-  result.pos = pos
+  result.body = initBody(pos, 14, 14)
   result.angle = 0
   result.centerPoint = vec2i(ScreenWidth div 2, ScreenHeight div 2)
   result.tileId = allocObjTiles(gfxShipTemp)
@@ -40,12 +40,12 @@ proc initPlayerShip*(pos: Vec2f): PlayerShip =
 proc draw*(self: var PlayerShip) =
   copyFrame(addr objTileMem[self.tileId], gfxShipTemp, 0)
   withObjAndAff:
-    let delta = self.centerPoint - self.pos
+    let delta = self.centerPoint - self.body.pos
     aff.setToRotationInv(ArcTan2(int16(delta.x), int16(delta.y)))
     obj.init:
       mode = omAff
       affId = affId
-      pos = vec2i(self.pos) - vec2i(gfxShipTemp.width div 2,
+      pos = vec2i(self.body.pos) - vec2i(gfxShipTemp.width div 2,
           gfxShipTemp.height div 2)
       size = gfxShipTemp.size
       tileId = self.tileId
@@ -61,7 +61,7 @@ proc controls*(self: var PlayerShip; evilHex: var EvilHex) =
   if keyIsDown(kiRight):
     self.angle -= 350
   if keyHit(kiA):
-    let bulPlayerProj = initProjectileBulletPlayer(gfxBulletTemp, self.pos)
+    let bulPlayerProj = initProjectileBulletPlayer(gfxBulletTemp, self.body.pos)
     shooter.fireBulletPlayer(bulPlayerProj, self.angle)
   if keyHit(kiB):
     evilHex.inputModifierValue()
@@ -73,8 +73,8 @@ proc controls*(self: var PlayerShip; evilHex: var EvilHex) =
   # calculate and update ship position
 proc update*(self: var PlayerShip) =
 
-  self.pos.x = self.centerPoint.x + fp(luCos(
+  self.body.pos.x = self.centerPoint.x + fp(luCos(
       self.angle) * self.orbitRadius.x)
-  self.pos.y = self.centerPoint.y + fp(luSin(
+  self.body.pos.y = self.centerPoint.y + fp(luSin(
       self.angle) * self.orbitRadius.y)
 
