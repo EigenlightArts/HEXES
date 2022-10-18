@@ -1,13 +1,19 @@
-import natu/[math, graphics, video, utils, mgba]
+import natu/[video, utils, mgba]
 import components/projectile/[bulletplayer, bulletenemy, enemy, modifier]
 import components/shared
 import utils/body
+import modules/types
 
 export bulletplayer, bulletenemy, enemy, modifier
 
-var valueTimeScore*: int
-var valueNumberStored*: int
-var valueOperatorStored*: OperatorKind
+var invisibilityFrames: int = 400
+var invisibilityOn: bool = false
+
+var timeScoreValue*: int
+var timeScorePenalty*: int = -30
+
+var numberStoredValue*: int
+var operatorStoredValue*: OperatorKind
 
 proc destroy*() =
   bulletPlayerEntitiesInstances.clear()
@@ -15,14 +21,44 @@ proc destroy*() =
   enemyEntitiesInstances.clear()
   modifierEntitiesInstances.clear()
 
-proc update*() =
+proc draw*() =
+  for bulletPlayer in mitems(bulletPlayerEntitiesInstances):
+    bulletPlayer.draw()
+  for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
+    bulletEnemy.draw()
+  for enemy in mitems(enemyEntitiesInstances):
+    enemy.draw()
   for modifier in mitems(modifierEntitiesInstances):
-    if modifier.status == Active:
-      modifier.update()
+    modifier.draw()
 
+proc update*(playerShip: var PlayerShip, evilHex: var EvilHex) =
   for enemy in mitems(enemyEntitiesInstances):
     if enemy.status == Active:
       enemy.update()
+      
+      if collide(playerShip.body, enemy.body) and not invisibilityOn:
+        enemy.status = Finished
+        timeScoreValue = timeScorePenalty
+        invisibilityOn = true
+
+  for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
+    if bulletEnemy.status == Active:
+      bulletEnemy.update(speed = 2)
+      
+      if collide(playerShip.body, bulletEnemy.body):
+        bulletEnemy.status = Finished
+        timeScoreValue = timeScorePenalty
+
+  if invisibilityOn:
+    if invisibilityFrames >= 0:
+      invisibilityFrames = 400
+      invisibilityOn = false
+    
+    dec invisibilityFrames
+
+  for modifier in mitems(modifierEntitiesInstances):
+    if modifier.status == Active:
+      modifier.update()
 
   for bulletPlayer in mitems(bulletPlayerEntitiesInstances):
     if bulletPlayer.status == Active:
@@ -31,21 +67,19 @@ proc update*() =
         if modifierBP.status == Active:
           if collide(modifierBP.body, bulletPlayer.body):
             if modifierBP.kind == mkNumber:
-              valueNumberStored = modifierBP.valueNumber
+              numberStoredValue = modifierBP.valueNumber
             if modifierBP.kind == mkOperator:
-              valueOperatorStored = modifierBP.valueOperator
+              operatorStoredValue = modifierBP.valueOperator
             bulletPlayer.status = Finished
             modifierBP.status = Finished
       for enemyBP in mitems(enemyEntitiesInstances):
         if enemyBP.status == Active:
           if collide(enemyBP.body, bulletPlayer.body):
-            valueTimeScore = enemyBP.timeScore
+            timeScoreValue = enemyBP.timeScore
             bulletPlayer.status = Finished
             enemyBP.status = Finished
-
-  for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
-    if bulletEnemy.status == Active:
-      bulletEnemy.update(speed = 2)
+      if collide(evilHex.body, bulletPlayer.body):
+        bulletPlayer.status = Finished
 
   var indexFinishedMD = 0
   var indexFinishedEN = 0
@@ -76,13 +110,3 @@ proc update*() =
     else:
       inc indexFinishedBE
 
-
-proc draw*() =
-  for bulletPlayer in mitems(bulletPlayerEntitiesInstances):
-    bulletPlayer.draw()
-  for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
-    bulletEnemy.draw()
-  for enemy in mitems(enemyEntitiesInstances):
-    enemy.draw()
-  for modifier in mitems(modifierEntitiesInstances):
-    modifier.draw()

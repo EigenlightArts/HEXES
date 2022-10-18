@@ -1,34 +1,13 @@
-import natu/[math, graphics, video, bios, tte, utils, posprintf, mgba]
-import utils/[labels, objs]
+import natu/[math, graphics, video, tte, utils, posprintf]
 import components/shared
-import modules/shooter
 import entities/ecn
+import modules/[types]
 
 export ecn
 
-type EvilHex* = object
-  initialised: bool
-  centerNumber*: EvilHexCenterNumber
-
-  tileId, paletteId: int
-  hexBuffer: array[9, char]
-
-  orbitRadius: Vec2i
-  centerPoint: Vec2i
-
-# destructor - free the resources used by the hex object
-proc `=destroy`*(self: var EvilHex) =
-  if self.initialised:
-    self.initialised = false
-    freeObjTiles(self.tileId)
-    releaseObjPal(gfxShipTemp)
-
-proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}
-
 proc initEvilHex*(centerNumber: sink EvilHexCenterNumber): EvilHex =
   result.initialised = true
-  result.orbitRadius = vec2i(15, 10)
-  result.centerPoint = vec2i(ScreenWidth div 2, ScreenHeight div 2)
+  result.body = initBody(vec2f(ScreenWidth div 2, ScreenHeight div 2), 15, 10)
 
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
@@ -50,6 +29,12 @@ proc draw*(self: var EvilHex) =
     self.centerNumber.label.put(addr self.hexBuffer)
     self.centerNumber.update = false
 
+import modules/shooter
+
+proc update*(self: var EvilHex) =
+  printf("centerNumber.value: %X", self.centerNumber.value)
+  printf("numberStoredValue: %d", numberStoredValue)
+  printf("operatorStoredValue: %d", operatorStoredValue)
 
 proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
     playerShipPos: Vec2f) =
@@ -58,8 +43,8 @@ proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
   # let angle: Angle = rand(uint16)
   let angle: Angle = 45368 # for testing and debugging
   let pos: Vec2f = vec2f(
-      self.centerPoint.x - fp(luCos(angle) * self.orbitRadius.x),
-      self.centerPoint.y - fp(luSin(angle) * self.orbitRadius.y))
+      self.body.x - fp(luCos(angle) * self.body.w),
+      self.body.y - fp(luSin(angle) * self.body.h))
 
   let modifier = initProjectileModifier(gfxHwaveFont,
       objHwaveFont, modifierIndex, pos)
@@ -74,14 +59,14 @@ proc fireEnemyHex*(self: var EvilHex; enemySelect: int;
   # let angle: Angle = rand(uint16)
   let angle: Angle = 25368 # for testing and debugging
   let pos: Vec2f = vec2f(
-      self.centerPoint.x - fp(luCos(angle) * self.orbitRadius.x),
-      self.centerPoint.y - fp(luSin(angle) * self.orbitRadius.y))
+      self.body.x - fp(luCos(angle) * self.body.w),
+      self.body.y - fp(luSin(angle) * self.body.h))
 
-  var gfxEnemy: Graphic 
+  var gfxEnemy: Graphic
   var enemyTimeScore: int
   var enemySpeed: int
   case enemySelect:
-  of 1: 
+  of 1:
     gfxEnemy = gfxEnemyTriangle
     enemyTimeScore = 20
     enemySpeed = 2
@@ -106,25 +91,21 @@ proc fireEnemyHex*(self: var EvilHex; enemySelect: int;
 
   shooter.fireEnemy(enemy, angle)
 
-proc update*(self: var EvilHex) =
-  printf("centerNumber.value: %X", self.centerNumber.value)
-  printf("valueNumberStored: %d", valueNumberStored)
-  printf("valueOperatorStored: %d", valueOperatorStored)
 
 proc inputModifierValue*(self: var EvilHex) =
-  if valueNumberStored != 0:
-    case valueOperatorStored:
+  if numberStoredValue != 0:
+    case operatorStoredValue:
     of okNone:
       # TODO(Kal): Play a beep
       printf("You don't have a stored operator!")
-    of okAdd: self.centerNumber.value = self.centerNumber.value + valueNumberStored
-    of okSub: self.centerNumber.value = self.centerNumber.value - valueNumberStored
-    of okMul: self.centerNumber.value = self.centerNumber.value * valueNumberStored
-    of okDiv: self.centerNumber.value = self.centerNumber.value div valueNumberStored
+    of okAdd: self.centerNumber.value = self.centerNumber.value + numberStoredValue
+    of okSub: self.centerNumber.value = self.centerNumber.value - numberStoredValue
+    of okMul: self.centerNumber.value = self.centerNumber.value * numberStoredValue
+    of okDiv: self.centerNumber.value = self.centerNumber.value div numberStoredValue
 
     self.centerNumber.update = true
-    valueNumberStored = 0
-    valueOperatorStored = okNone
+    numberStoredValue = 0
+    operatorStoredValue = okNone
   else:
     # TODO(Kal): Play a beep
     printf("You don't have a stored number and/or operator!")

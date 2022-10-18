@@ -1,4 +1,4 @@
-import natu/[math, graphics, video, oam, utils]
+import natu/[graphics, video, oam, utils]
 import utils/[objs]
 
 # NOTE(Kal): To control shared state, try to avoid mutability

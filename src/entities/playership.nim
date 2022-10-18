@@ -1,29 +1,11 @@
-import natu/[math, graphics, video, bios, input, mgba]
+import natu/[math, graphics, video, bios, input]
 import entities/evilhex
-import utils/[objs, body]
+import utils/objs
 import components/projectile/bulletplayer
-import modules/shooter
+import modules/[types]
 
 
 #TODO(Kal): Use the `Graphics` enum instead of calling gfxShipTemp, etc directly
-
-type PlayerShip* = object
-  initialised: bool
-  tileId, paletteId: int
-  orbitRadius: Vec2i
-  centerPoint: Vec2i
-  body*: Body
-  angle: Angle
-
-# destructor - free the resources used by a ship object
-proc `=destroy`*(self: var PlayerShip) =
-  if self.initialised:
-    self.initialised = false
-    freeObjTiles(self.tileId)
-    releaseObjPal(gfxShipTemp)
-
-proc `=copy`*(dest: var PlayerShip; source: PlayerShip) {.error: "Not implemented".}
-
 
 # constructor - create a ship object
 proc initPlayerShip*(pos: Vec2f): PlayerShip =
@@ -53,6 +35,16 @@ proc draw*(self: var PlayerShip) =
 
   # printf("in playership.nim proc draw x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
 
+# calculate and update ship position
+proc update*(self: var PlayerShip) =
+
+  self.body.pos.x = self.centerPoint.x + fp(luCos(
+      self.angle) * self.orbitRadius.x)
+  self.body.pos.y = self.centerPoint.y + fp(luSin(
+      self.angle) * self.orbitRadius.y)
+
+import modules/shooter
+
 # ship controls
 # TODO(Kal): Split into a player module?
 proc controls*(self: var PlayerShip; evilHex: var EvilHex) =
@@ -68,13 +60,4 @@ proc controls*(self: var PlayerShip; evilHex: var EvilHex) =
 
     # printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(),
     #     self.pos.y.toInt())
-
-
-  # calculate and update ship position
-proc update*(self: var PlayerShip) =
-
-  self.body.pos.x = self.centerPoint.x + fp(luCos(
-      self.angle) * self.orbitRadius.x)
-  self.body.pos.y = self.centerPoint.y + fp(luSin(
-      self.angle) * self.orbitRadius.y)
 

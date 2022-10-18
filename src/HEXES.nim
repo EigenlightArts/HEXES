@@ -67,14 +67,14 @@ while true:
   if eventLoopTimer == eventEnemyShoot:
     evilHexInstance.fireEnemyHex(eventEnemySelect, playerShipInstance.body.pos)
 
+  # update timer  
+  timerInstance.update()
+
   # update EvilHex subroutines
   # evilHexInstance.update()
 
   # update shooter
-  shooter.update()
-
-  # update timer  
-  timerInstance.update()
+  shooter.update(playerShipInstance, evilHexInstance)
 
   # wait for the end of the frame
   VBlankIntrWait()
@@ -87,11 +87,11 @@ while true:
   # draw the EvilHex
   evilHexInstance.draw()
 
-  # draw the Shooter projectiles
-  shooter.draw()
-
   # draw the timer label  
   timerInstance.draw()
+
+  # draw the Shooter projectiles
+  shooter.draw()
 
   # copy the PAL RAM buffer into the real PAL RAM.
   flushPals()
