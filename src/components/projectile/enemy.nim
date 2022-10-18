@@ -22,7 +22,7 @@ type
     angle*: Angle
     body*: Body
 
-    score*: int
+    timeScore*: int
     health*: int
     speed*: Fixed
     speedKind*: SpeedKind
@@ -49,13 +49,14 @@ proc `=copy`*(a: var Enemy; b: Enemy) {.error: "Not supported".}
 var enemyEntitiesInstances*: List[3, Enemy]
 
 
-proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int;
+proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int; enemyTimeScore: int;
     pos: Vec2f): Enemy =
   result = Enemy(
     graphic: gfx,
     tileId: allocObjTiles(gfx),
     palId: acquireObjPal(gfx),
     body: initBody(pos, 12, 12),
+    timeScore: enemyTimeScore,
     speedKind: SpeedKind(enemySpeed),
     kind: EnemyKind(enemySelect)
   )

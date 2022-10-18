@@ -5,6 +5,7 @@ import utils/body
 
 export bulletplayer, bulletenemy, enemy, modifier
 
+var valueTimeScore*: int
 var valueNumberStored*: int
 var valueOperatorStored*: OperatorKind
 
@@ -26,15 +27,21 @@ proc update*() =
   for bulletPlayer in mitems(bulletPlayerEntitiesInstances):
     if bulletPlayer.status == Active:
       bulletPlayer.update(speed = 2)
-      for modifierBullet in mitems(modifierEntitiesInstances):
-        if modifierBullet.status == Active:
-          if collide(modifierBullet.body, bulletPlayer.body):
-            if modifierBullet.kind == mkNumber:
-              valueNumberStored = modifierBullet.valueNumber
-            if modifierBullet.kind == mkOperator:
-              valueOperatorStored = modifierBullet.valueOperator
+      for modifierBP in mitems(modifierEntitiesInstances):
+        if modifierBP.status == Active:
+          if collide(modifierBP.body, bulletPlayer.body):
+            if modifierBP.kind == mkNumber:
+              valueNumberStored = modifierBP.valueNumber
+            if modifierBP.kind == mkOperator:
+              valueOperatorStored = modifierBP.valueOperator
             bulletPlayer.status = Finished
-            modifierBullet.status = Finished
+            modifierBP.status = Finished
+      for enemyBP in mitems(enemyEntitiesInstances):
+        if enemyBP.status == Active:
+          if collide(enemyBP.body, bulletPlayer.body):
+            valueTimeScore = enemyBP.timeScore
+            bulletPlayer.status = Finished
+            enemyBP.status = Finished
 
   for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
     if bulletEnemy.status == Active:

@@ -1,6 +1,6 @@
 import natu/[video, bios, irq, input, math, graphics, utils]
 import utils/objs
-import entities/[playership, evilhex, ecn]
+import entities/[playership, evilhex, ecn, timer]
 import modules/shooter
 
 # TODO(Kal): change this to rgb8() later
@@ -16,8 +16,7 @@ irq.enable(iiVBlank)
 
 
 var ecnValue: int = 255
-# TODO(Kal): Implement Seconds from frames passed (1 Second/60 Frames)
-var globalFramesPassed: int
+var timerInitial: int = 300
 var eventLoopTimer: int
 var eventModifierShoot: int
 var eventModifierIndex: int
@@ -26,6 +25,7 @@ var eventEnemySelect: int
 
 var playerShipInstance = initPlayerShip(vec2f(75, 0))
 var evilHexInstance = initEvilHex(initEvilHexCenterNumber(ecnValue))
+var timerInstance = initTimer(timerInitial)
 
 # TODO(Kal): Would be better to use fractions of probability instead
 proc startEventLoop() =
@@ -70,13 +70,16 @@ while true:
   # update EvilHex subroutines
   # evilHexInstance.update()
 
-  # update Shooter
+  # update shooter
   shooter.update()
+
+  # update timer  
+  timerInstance.update()
 
   # wait for the end of the frame
   VBlankIntrWait()
 
-  eventLoopTimer += 1
+  inc eventLoopTimer 
 
   # draw the ship
   playerShipInstance.draw()
@@ -86,6 +89,9 @@ while true:
 
   # draw the Shooter projectiles
   shooter.draw()
+
+  # draw the timer label  
+  timerInstance.draw()
 
   # copy the PAL RAM buffer into the real PAL RAM.
   flushPals()

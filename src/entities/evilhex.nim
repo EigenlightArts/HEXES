@@ -78,31 +78,31 @@ proc fireEnemyHex*(self: var EvilHex; enemySelect: int;
       self.centerPoint.y - fp(luSin(angle) * self.orbitRadius.y))
 
   var gfxEnemy: Graphic 
-  var scoreEnemy: int
-  var speedEnemy: int
+  var enemyTimeScore: int
+  var enemySpeed: int
   case enemySelect:
   of 1: 
     gfxEnemy = gfxEnemyTriangle
-    scoreEnemy = 20
-    speedEnemy = 2
+    enemyTimeScore = 20
+    enemySpeed = 2
   of 2:
     gfxEnemy = gfxEnemySquare
-    scoreEnemy = 15
-    speedEnemy = 2
+    enemyTimeScore = 15
+    enemySpeed = 2
   of 3:
     gfxEnemy = gfxEnemyLozenge
-    scoreEnemy = 30
-    speedEnemy = 1
+    enemyTimeScore = 30
+    enemySpeed = 1
   of 4:
     gfxEnemy = gfxEnemyCircle
-    scoreEnemy = 20
-    speedEnemy = 3
+    enemyTimeScore = 20
+    enemySpeed = 3
   else:
     gfxEnemy = gfxBulletTemp
-    scoreEnemy = 0
-    speedEnemy = 0
+    enemyTimeScore = 0
+    enemySpeed = 0
 
-  let enemy = initEnemy(gfxEnemy, enemySelect, speedEnemy, pos)
+  let enemy = initEnemy(gfxEnemy, enemySelect, enemySpeed, enemyTimeScore, pos)
 
   shooter.fireEnemy(enemy, angle)
 
