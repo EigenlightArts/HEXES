@@ -11,7 +11,7 @@ proc initTimer*(valueSeconds: int): Timer =
   result.updateFlag = false
   result.introFlag = true
 
-  result.label.init(vec2i(ScreenWidth div 2, ScreenHeight div 12), s8x16, count = 10)
+  result.label.init(vec2i(ScreenWidth div 2, ScreenHeight div 12), s8x16, count = 25)
   result.label.obj.pal = acquireObjPal(gfxShipTemp)
   result.label.ink = 1 # set the ink colour index to use from the palette
   result.label.shadow = 2 # set the shadow colour (only relevant if the font actually has more than 1 colour)
@@ -24,15 +24,9 @@ proc update*(self: var Timer) =
     if self.introFlag:
       dec self.introSeconds
 
-    printf("ASSERT self.introSeconds is %d", self.introSeconds)
-    printf("ASSERT self.valueSeconds is %d", self.valueSeconds)
-
-    printf("ASSERT self.introFlag is %d", self.introFlag)
-    printf("ASSERT self.updateFlag is %d", self.updateFlag)
-
-    if self.introSeconds == 0:
+    if self.introSeconds <= 0:
       self.introFlag = false
-    else:
+    if not self.introFlag:
       self.updateFlag = true
 
   if timeScoreValue != 0:
@@ -50,7 +44,7 @@ proc draw*(self: var Timer, centerNumber: CenterNumber) =
     ScreenHeight div 12 - size.y div 2)
 
   if self.introFlag:
-    posprintf(addr self.hexBuffer, "Get to %X!", centerNumber.target)
+    posprintf(addr self.hexBuffer, "Get to $%X!", centerNumber.target)
     self.label.put(addr self.hexBuffer)
     printf("if self.introFlag")
 
