@@ -2,6 +2,7 @@
 /nimcache
 /output
 /mGBA-dev
+/xniq
 
 # Development Junk
 *.elf
