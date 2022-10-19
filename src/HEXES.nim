@@ -1,7 +1,8 @@
 import natu/[video, bios, irq, input, math, graphics, utils]
 import utils/objs
-import entities/[playership, evilhex, ecn, timer]
-import modules/shooter
+import entities/[playership, evilhex]
+import entities/hud/[ecn, timer]
+import modules/[shooter, player]
 
 # TODO(Kal): change this to rgb8() later
 # background color, approximating eigengrau
@@ -14,8 +15,14 @@ dispcnt = initDispCnt(obj = true, obj1d = true, bg0 = true)
 
 irq.enable(iiVBlank)
 
+# TODO(Kal): move these to Module Types?
+var ecnValue: int = rand(255)
+var ecnTarget: int = rand(255)
 
-var ecnValue: int = 255
+# prevent ecnValue to be the same as the target
+while ecnValue == ecnTarget:
+  ecnTarget = rand(255)
+
 var timerInitial: int = 300
 var eventLoopTimer: int
 var eventModifierShoot: int
@@ -24,7 +31,8 @@ var eventEnemyShoot: int
 var eventEnemySelect: int
 
 var playerShipInstance = initPlayerShip(vec2f(75, 0))
-var evilHexInstance = initEvilHex(initEvilHexCenterNumber(ecnValue))
+var centerNumberInstance = initCenterNumber(ecnValue, ecnTarget)
+var evilHexInstance = initEvilHex()
 var timerInstance = initTimer(timerInitial)
 
 # TODO(Kal): Would be better to use fractions of probability instead
@@ -39,7 +47,7 @@ proc startEventLoop() =
 startEventLoop()
 
 # NOTE(Kal): Resources about Game Engine Development:
-# - https://gameprogrammingpatterns.com/
+# - https://www.gameprogrammingpatterns.com/
 # - https://www.gameenginebook.com/
 
 while true:
@@ -55,19 +63,20 @@ while true:
   # update key states
   keyPoll()
 
-  # ship controls
-  playerShipInstance.controls(evilHexInstance)
+  # player controls
+  player.controlsGame(playerShipInstance, centerNumberInstance)
 
   # update ship position
   playerShipInstance.update()
 
   # fire the EvilHex projectile
   if eventLoopTimer == eventModifierShoot:
-    evilHexInstance.fireModifierHex(eventModifierIndex, playerShipInstance.body.pos)
+    evilHexInstance.fireModifierHex(eventModifierIndex,
+        playerShipInstance.body.pos)
   if eventLoopTimer == eventEnemyShoot:
     evilHexInstance.fireEnemyHex(eventEnemySelect, playerShipInstance.body.pos)
 
-  # update timer  
+  # update timer
   timerInstance.update()
 
   # update EvilHex subroutines
@@ -79,16 +88,16 @@ while true:
   # wait for the end of the frame
   VBlankIntrWait()
 
-  inc eventLoopTimer 
+  inc eventLoopTimer
 
   # draw the ship
   playerShipInstance.draw()
 
-  # draw the EvilHex
-  evilHexInstance.draw()
+  # draw the CenterNumber
+  centerNumberInstance.draw()
 
-  # draw the timer label  
-  timerInstance.draw()
+  # draw the timer label
+  timerInstance.draw(centerNumberInstance)
 
   # draw the Shooter projectiles
   shooter.draw()

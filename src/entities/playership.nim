@@ -1,8 +1,6 @@
 import natu/[math, graphics, video, bios, input]
-import entities/evilhex
 import utils/objs
-import components/projectile/bulletplayer
-import modules/[types]
+import modules/types/entities
 
 
 #TODO(Kal): Use the `Graphics` enum instead of calling gfxShipTemp, etc directly
@@ -42,22 +40,3 @@ proc update*(self: var PlayerShip) =
       self.angle) * self.orbitRadius.x)
   self.body.pos.y = self.centerPoint.y + fp(luSin(
       self.angle) * self.orbitRadius.y)
-
-import modules/shooter
-
-# ship controls
-# TODO(Kal): Split into a player module?
-proc controls*(self: var PlayerShip; evilHex: var EvilHex) =
-  if keyIsDown(kiLeft):
-    self.angle += 350
-  if keyIsDown(kiRight):
-    self.angle -= 350
-  if keyHit(kiA):
-    let bulPlayerProj = initProjectileBulletPlayer(gfxBulletTemp, self.body.pos)
-    shooter.fireBulletPlayer(bulPlayerProj, self.angle)
-  if keyHit(kiB):
-    evilHex.inputModifierValue()
-
-    # printf("in playership.nim proc controls x = %l, y = %l", self.pos.x.toInt(),
-    #     self.pos.y.toInt())
-

@@ -2,7 +2,7 @@ import natu/[video, utils, mgba]
 import components/projectile/[bulletplayer, bulletenemy, enemy, modifier]
 import components/shared
 import utils/body
-import modules/types
+import modules/types/entities
 
 export bulletplayer, bulletenemy, enemy, modifier
 

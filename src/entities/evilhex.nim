@@ -1,38 +1,21 @@
-import natu/[math, graphics, video, tte, utils, posprintf]
+import natu/[math, graphics, video]
 import components/shared
-import entities/ecn
-import modules/[types]
+import modules/shooter
+import modules/types/entities
 
-export ecn
-
-proc initEvilHex*(centerNumber: sink EvilHexCenterNumber): EvilHex =
+proc initEvilHex*(): EvilHex =
   result.initialised = true
   result.body = initBody(vec2f(ScreenWidth div 2, ScreenHeight div 2), 15, 10)
 
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
 
-  result.centerNumber = centerNumber
-  posprintf(addr result.hexBuffer, "$%X", result.centerNumber.value)
-  result.centerNumber.label.put(addr result.hexBuffer)
 
 # draw evilhex and related parts
-proc draw*(self: var EvilHex) =
-  self.centerNumber.label.draw()
+# proc draw*(self: var EvilHex) =
 
-  if self.centerNumber.update:
-    let size = tte.getTextSize(addr self.hexBuffer)
-    self.centerNumber.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
-        ScreenHeight div 2 - size.y div 2)
-
-    posprintf(addr self.hexBuffer, "$%X", self.centerNumber.value)
-    self.centerNumber.label.put(addr self.hexBuffer)
-    self.centerNumber.update = false
-
-import modules/shooter
-
+# TODO(Kal): move this to HUD and actually display it properly
 proc update*(self: var EvilHex) =
-  printf("centerNumber.value: %X", self.centerNumber.value)
   printf("numberStoredValue: %d", numberStoredValue)
   printf("operatorStoredValue: %d", operatorStoredValue)
 
@@ -90,22 +73,3 @@ proc fireEnemyHex*(self: var EvilHex; enemySelect: int;
   let enemy = initEnemy(gfxEnemy, enemySelect, enemySpeed, enemyTimeScore, pos)
 
   shooter.fireEnemy(enemy, angle)
-
-
-proc inputModifierValue*(self: var EvilHex) =
-  if numberStoredValue != 0:
-    case operatorStoredValue:
-    of okNone:
-      # TODO(Kal): Play a beep
-      printf("You don't have a stored operator!")
-    of okAdd: self.centerNumber.value = self.centerNumber.value + numberStoredValue
-    of okSub: self.centerNumber.value = self.centerNumber.value - numberStoredValue
-    of okMul: self.centerNumber.value = self.centerNumber.value * numberStoredValue
-    of okDiv: self.centerNumber.value = self.centerNumber.value div numberStoredValue
-
-    self.centerNumber.update = true
-    numberStoredValue = 0
-    operatorStoredValue = okNone
-  else:
-    # TODO(Kal): Play a beep
-    printf("You don't have a stored number and/or operator!")
