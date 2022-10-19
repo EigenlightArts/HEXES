@@ -4,14 +4,16 @@ import modules/shooter
 import modules/types/hud
 
 
-proc initTimer*(valueSeconds: int): Timer =
+proc initTimer*(valueSeconds: int, introSeconds: int): Timer =
+  result.initialised = true
+
   result.valueSeconds = valueSeconds
+  result.introSeconds = introSeconds
   result.valueFrames = result.valueSeconds * 60
-  result.introSeconds = 5
   result.updateFlag = false
   result.introFlag = true
 
-  result.label.init(vec2i(ScreenWidth div 2, ScreenHeight div 12), s8x16, count = 25)
+  result.label.init(vec2i(ScreenWidth div 2, ScreenHeight div 12), s8x16, count = 15)
   result.label.obj.pal = acquireObjPal(gfxShipTemp)
   result.label.ink = 1 # set the ink colour index to use from the palette
   result.label.shadow = 2 # set the shadow colour (only relevant if the font actually has more than 1 colour)
@@ -36,7 +38,7 @@ proc update*(self: var Timer) =
     timeScoreValue = 0
 
 
-proc draw*(self: var Timer, centerNumber: CenterNumber) =
+proc draw*(self: var Timer, target: int) =
   self.label.draw()
 
   let size = tte.getTextSize(addr self.hexBuffer)
@@ -44,7 +46,7 @@ proc draw*(self: var Timer, centerNumber: CenterNumber) =
     ScreenHeight div 12 - size.y div 2)
 
   if self.introFlag:
-    posprintf(addr self.hexBuffer, "Get to $%X!", centerNumber.target)
+    posprintf(addr self.hexBuffer, "Get to $%X!", target)
     self.label.put(addr self.hexBuffer)
     printf("if self.introFlag")
 

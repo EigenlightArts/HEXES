@@ -12,9 +12,6 @@ var invisibilityOn: bool = false
 var timeScoreValue*: int
 var timeScorePenalty*: int = -30
 
-var numberStoredValue*: int
-var operatorStoredValue*: OperatorKind
-
 proc destroy*() =
   bulletPlayerEntitiesInstances.clear()
   bulletEnemyEntitiesInstances.clear()

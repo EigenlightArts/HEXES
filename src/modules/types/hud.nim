@@ -1,7 +1,9 @@
 import natu/[math, graphics, video, mgba]
 import utils/labels
+import components/projectile/modifier
 
 export labels, mgba
+
 
 type CenterNumber* = object
   initialised*: bool
@@ -20,6 +22,22 @@ proc `=destroy`*(self: var CenterNumber) =
 
 proc `=copy`*(dest: var CenterNumber;
     source: CenterNumber) {.error: "Not implemented".}
+
+
+type ModifierSlots* = object
+  initialised*: bool
+
+  modifier*: Modifier
+  numberStoredValue*: int
+  operatorStoredValue*: OperatorKind
+  updateFlag*: bool
+
+proc `=destroy`*(self: var ModifierSlots) =
+  if self.initialised:
+    self.initialised = false
+
+proc `=copy`*(dest: var ModifierSlots;
+    source: ModifierSlots) {.error: "Not implemented".}
 
 
 type Timer* = object
@@ -42,3 +60,20 @@ proc `=destroy`*(self: var Timer) =
 
 proc `=copy`*(dest: var Timer;
     source: Timer) {.error: "Not implemented".}
+
+
+type Target* = object
+  initialised*: bool
+  label*: Label
+  hexBuffer*: array[9, char]
+  
+  target*: int
+
+proc `=destroy`*(self: var Target) =
+  if self.initialised:
+    self.initialised = false
+    releaseObjPal(gfxShipTemp)
+    self.label.destroy()
+
+proc `=copy`*(dest: var Target;
+    source: Target) {.error: "Not implemented".}

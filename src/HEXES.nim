@@ -1,7 +1,7 @@
 import natu/[video, bios, irq, input, math, graphics, utils]
 import utils/objs
 import entities/[playership, evilhex]
-import entities/hud/[ecn, timer]
+import entities/hud/[ecn, timer, target]
 import modules/[shooter, player]
 
 # TODO(Kal): change this to rgb8() later
@@ -16,24 +16,27 @@ dispcnt = initDispCnt(obj = true, obj1d = true, bg0 = true)
 irq.enable(iiVBlank)
 
 # TODO(Kal): move these to Module Types?
-var ecnValue: int = rand(255)
-var ecnTarget: int = rand(255)
+var ecnValue: int = rand(0..255)
+var ecnTarget: int = rand(0..255)
 
 # prevent ecnValue to be the same as the target
 while ecnValue == ecnTarget:
-  ecnTarget = rand(255)
+  ecnTarget = rand(0..255)
 
 var timerInitial: int = 300
+
+var playerShipInstance = initPlayerShip(vec2f(75, 0))
+var evilHexInstance = initEvilHex()
+
+var centerNumberInstance = initCenterNumber(ecnValue, ecnTarget)
+var timerInstance = initTimer(timerInitial, 5)
+var targetInstance = initTarget(centerNumberInstance.target)
+
 var eventLoopTimer: int
 var eventModifierShoot: int
 var eventModifierIndex: int
 var eventEnemyShoot: int
 var eventEnemySelect: int
-
-var playerShipInstance = initPlayerShip(vec2f(75, 0))
-var centerNumberInstance = initCenterNumber(ecnValue, ecnTarget)
-var evilHexInstance = initEvilHex()
-var timerInstance = initTimer(timerInitial)
 
 # TODO(Kal): Would be better to use fractions of probability instead
 proc startEventLoop() =
@@ -90,17 +93,21 @@ while true:
 
   inc eventLoopTimer
 
+  # draw the timer label
+  timerInstance.draw(centerNumberInstance.target)
+
+  # If it's no longer the intro, add a target label 
+  targetInstance.draw(timerInstance.introFlag)
+
+  # draw the Shooter projectiles
+  shooter.draw()
+
   # draw the ship
   playerShipInstance.draw()
 
   # draw the CenterNumber
   centerNumberInstance.draw()
 
-  # draw the timer label
-  timerInstance.draw(centerNumberInstance)
-
-  # draw the Shooter projectiles
-  shooter.draw()
 
   # copy the PAL RAM buffer into the real PAL RAM.
   flushPals()

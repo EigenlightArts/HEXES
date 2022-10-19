@@ -5,6 +5,8 @@ import modules/shooter
 import modules/types/hud
 
 proc initCenterNumber*(value: sink int, target: sink int): CenterNumber =
+  result.initialised = true
+
   result.value = value
   result.target = target
   result.updateFlag = true
