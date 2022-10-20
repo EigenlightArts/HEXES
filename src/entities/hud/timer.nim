@@ -48,7 +48,7 @@ proc draw*(self: var Timer, target: int) =
   if self.introFlag:
     posprintf(addr self.hexBuffer, "Get to $%X!", target)
     self.label.put(addr self.hexBuffer)
-    printf("if self.introFlag")
+
 
   elif self.updateFlag:
     let seconds = self.valueSeconds mod 60
@@ -58,5 +58,4 @@ proc draw*(self: var Timer, target: int) =
     self.label.put(addr self.hexBuffer)
     self.updateFlag = false
 
-    printf("elif self.updateFlag")    
 

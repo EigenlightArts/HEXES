@@ -61,9 +61,9 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex, modifierSlots: va
           if enemyBP.status == Active:
             if collide(enemyBP.body, bulletPlayer.body):
               dec enemyBP.health
+              bulletPlayer.status = Finished
               if enemyBP.health <= 0:
                 timeScoreValue = enemyBP.timeScore
-                bulletPlayer.status = Finished
                 enemyBP.status = Finished
         if collide(evilHex.body, bulletPlayer.body):
           bulletPlayer.status = Finished

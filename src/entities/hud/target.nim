@@ -23,6 +23,5 @@ proc draw*(self: var Target, introFlag: bool) =
   if not introFlag:
     posprintf(addr self.hexBuffer, "$%X", self.target)
     self.label.put(addr self.hexBuffer)
-    printf("if self.introFlag")
 
 

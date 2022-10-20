@@ -5,7 +5,7 @@ import types/entities
 
 proc initEvilHex*(): EvilHex =
   result.initialised = true
-  result.body = initBody(vec2f(ScreenWidth div 2, ScreenHeight div 2), 15, 10)
+  result.body = initBody(vec2f(ScreenWidth div 2 - 10, ScreenHeight div 2 - 10), 20, 20)
 
   result.tileId = allocObjTiles(gfxShipTemp)
   result.paletteId = acquireObjPal(gfxShipTemp)
