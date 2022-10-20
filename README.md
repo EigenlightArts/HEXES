@@ -1,14 +1,15 @@
 # HEXES
 
-WIP GBA GAME IN NATU.
+HEXES, The fast action puzzle shoot'em up!
 
 ## Special Thanks
 
-- Exelotl for creating Natu and a lot of code and math help
-- PyroPyro for the code help and pointing out when I was being dumb
-- Justburner for some of the math help
-- Jeti for Enter Command and Squarewave, the former was used for this project, the latter was modified for Hwave
+- [exelotl](https://natu.exelo.tl/)
+- [kathound](https://kathrynhathaway.bandcamp.com/)
+- [Jeti](https://fontenddev.com/)
+- PyroPyro
+- Justburner
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE).
