@@ -2,7 +2,7 @@ import natu/[math, graphics, posprintf, video, tte, utils]
 import components/shared
 import utils/objs
 import modules/shooter
-import modules/types/hud
+import types/hud
 
 proc initCenterNumber*(value: sink int, target: sink int): CenterNumber =
   result.initialised = true

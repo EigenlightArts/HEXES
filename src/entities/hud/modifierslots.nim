@@ -3,9 +3,7 @@ import components/shared
 import components/projectile/modifier
 import utils/objs
 import modules/shooter
-import modules/types/hud
-
-# TODO(Kal): Finish ModifierSlots
+import types/hud
 
 proc initModifierSlots*(): ModifierSlots =
   result.initialised = true

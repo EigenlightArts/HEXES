@@ -2,15 +2,9 @@ import natu/[video, utils, mgba]
 import components/projectile/[bulletplayer, bulletenemy, enemy, modifier]
 import components/shared
 import utils/body
-import modules/types/[entities, hud]
+import types/[entities, hud]
 
 export bulletplayer, bulletenemy, enemy, modifier
-
-var invisibilityFrames: int = 400
-var invisibilityOn: bool = false
-
-var timeScoreValue*: int
-var timeScorePenalty*: int = -30
 
 proc destroy*() =
   bulletPlayerEntitiesInstances.clear()
@@ -29,52 +23,67 @@ proc draw*() =
     modifier.draw()
 
 proc update*(playerShip: var PlayerShip, evilHex: var EvilHex, modifierSlots: var ModifierSlots) =
-  for enemy in mitems(enemyEntitiesInstances):
-    if enemy.status == Active:
-      enemy.update()
-      
-      if collide(playerShip.body, enemy.body) and not invisibilityOn:
-        enemy.status = Finished
-        timeScoreValue = timeScorePenalty
-        invisibilityOn = true
+  # handle Active projectiles
+  if not screenStopOn:
+    for enemy in mitems(enemyEntitiesInstances):
+      if enemy.status == Active:
+        enemy.update()
 
-  for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
-    if bulletEnemy.status == Active:
-      bulletEnemy.update(speed = 2)
-      
-      if collide(playerShip.body, bulletEnemy.body):
-        bulletEnemy.status = Finished
-        timeScoreValue = timeScorePenalty
+        if collide(playerShip.body, enemy.body) and not invisibilityOn:
+          enemy.status = Finished
+          timeScoreValue = timeScorePenalty
+          screenStopOn = true
+          invisibilityOn = true
+
+    for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
+      if bulletEnemy.status == Active:
+        bulletEnemy.update(speed = 2)
+
+        if collide(playerShip.body, bulletEnemy.body):
+          bulletEnemy.status = Finished
+          timeScoreValue = timeScorePenalty
+
+    for modifier in mitems(modifierEntitiesInstances):
+      if modifier.status == Active:
+        modifier.update()
+
+    for bulletPlayer in mitems(bulletPlayerEntitiesInstances):
+      if bulletPlayer.status == Active:
+        bulletPlayer.update(speed = 2)
+        for modifierBP in mitems(modifierEntitiesInstances):
+          if modifierBP.status == Active:
+            if collide(modifierBP.body, bulletPlayer.body):
+              bulletPlayer.status = Finished
+              modifierBP.status = Finished
+
+              modifierSlots.assignModifiers(modifierBP)
+        for enemyBP in mitems(enemyEntitiesInstances):
+          if enemyBP.status == Active:
+            if collide(enemyBP.body, bulletPlayer.body):
+              dec enemyBP.health
+              if enemyBP.health <= 0:
+                timeScoreValue = enemyBP.timeScore
+                bulletPlayer.status = Finished
+                enemyBP.status = Finished
+        if collide(evilHex.body, bulletPlayer.body):
+          bulletPlayer.status = Finished
+
+  # handle Screen effects
+  if screenStopOn:
+    if screenStopFrames <= 0:
+      screenStopFrames = 60
+      screenStopOn = false
+    
+    dec screenStopFrames
 
   if invisibilityOn:
-    if invisibilityFrames >= 0:
-      invisibilityFrames = 400
+    if invisibilityFrames <= 0:
+      invisibilityFrames = 300
       invisibilityOn = false
     
     dec invisibilityFrames
 
-  for modifier in mitems(modifierEntitiesInstances):
-    if modifier.status == Active:
-      modifier.update()
-
-  for bulletPlayer in mitems(bulletPlayerEntitiesInstances):
-    if bulletPlayer.status == Active:
-      bulletPlayer.update(speed = 2)
-      for modifierBP in mitems(modifierEntitiesInstances):
-        if modifierBP.status == Active:
-          if collide(modifierBP.body, bulletPlayer.body):
-            bulletPlayer.status = Finished
-            modifierBP.status = Finished
-
-            modifierSlots.assignModifiers(modifierBP)
-      for enemyBP in mitems(enemyEntitiesInstances):
-        if enemyBP.status == Active:
-          if collide(enemyBP.body, bulletPlayer.body):
-            timeScoreValue = enemyBP.timeScore
-            bulletPlayer.status = Finished
-            enemyBP.status = Finished
-      if collide(evilHex.body, bulletPlayer.body):
-        bulletPlayer.status = Finished
+  # handle Finished projectiles
 
   var indexFinishedMD = 0
   var indexFinishedEN = 0

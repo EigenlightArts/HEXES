@@ -4,6 +4,9 @@ import components/projectile/modifier
 
 export labels, mgba
 
+var timeScoreValue*: int
+var timeScorePenalty*: int = -30
+
 type ModifierSlots* = object
   initialised*: bool
 

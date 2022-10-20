@@ -1,9 +1,7 @@
 import natu/[math, graphics, video, tte, posprintf]
 import utils/objs
 import modules/shooter
-import modules/types/hud
-
-# TODO(Kal): Maybe merge with timer?
+import types/hud
 
 proc initTarget*(target: int): Target =
   result.initialised = true

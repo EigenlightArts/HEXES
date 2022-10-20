@@ -4,9 +4,8 @@ import entities/[playership, evilhex]
 import entities/hud/[ecn, timer, target, modifierslots]
 import modules/[shooter, player]
 
-# TODO(Kal): change this to rgb8() later
 # background color, approximating eigengrau
-bgColorBuf[0] = rgb5(3, 3, 4)
+bgColorBuf[0] = rgb8(22, 22, 29)
 
 # enable VBlank interrupt so we can wait for the end of the frame without burning CPU cycles
 irq.enable(iiVBlank)
@@ -15,11 +14,10 @@ dispcnt = initDispCnt(obj = true, obj1d = true, bg0 = true)
 
 irq.enable(iiVBlank)
 
-# TODO(Kal): move these to Module Types?
 var ecnValue: int = rand(0..255)
 var ecnTarget: int = rand(0..255)
 
-# prevent ecnValue to be the same as the target
+# prevent ecnValue from having the same value as ecnTarget
 while ecnValue == ecnTarget:
   ecnTarget = rand(0..255)
 

@@ -49,7 +49,7 @@ proc `=copy`*(a: var Enemy; b: Enemy) {.error: "Not supported".}
 var enemyEntitiesInstances*: List[3, Enemy]
 
 
-proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int; enemyTimeScore: int;
+proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int; enemyHealth: int; enemyTimeScore: int;
     pos: Vec2f): Enemy =
   result = Enemy(
     graphic: gfx,
@@ -57,6 +57,7 @@ proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int; enemyTimeScore:
     palId: acquireObjPal(gfx),
     body: initBody(pos, 12, 12),
     timeScore: enemyTimeScore,
+    health: enemyHealth,
     speedKind: SpeedKind(enemySpeed),
     kind: EnemyKind(enemySelect)
   )
@@ -101,7 +102,6 @@ proc update*(enemy: var Enemy) =
         enemy.flipDone = true
     if enemy.kind == ekLozenge:
       dec enemy.shootTimer
-      # TODO(Kal): Put in code to shoot bulletEnemies
       if enemy.shootTimer <= 0:
         let bulEnemyProj = initProjectileBulletEnemy(gfxBulletTemp, enemy.body.pos)
         fireBulletEnemy(bulEnemyProj, enemy.body.pos, enemy.angle)

@@ -3,6 +3,12 @@ import utils/body
 
 export body, mgba
 
+var invisibilityOn*: bool = false
+var invisibilityFrames*: int = 300
+
+var screenStopOn*: bool = false
+var screenStopFrames*: int = 60
+
 type PlayerShip* = object
   initialised*: bool
   tileId*, paletteId*: int

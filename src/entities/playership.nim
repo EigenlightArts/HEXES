@@ -1,9 +1,7 @@
 import natu/[math, graphics, video, bios, input]
 import utils/objs
-import modules/types/entities
+import types/entities
 
-
-#TODO(Kal): Use the `Graphics` enum instead of calling gfxShipTemp, etc directly
 
 # constructor - create a ship object
 proc initPlayerShip*(pos: Vec2f): PlayerShip =
@@ -19,23 +17,37 @@ proc initPlayerShip*(pos: Vec2f): PlayerShip =
 # draw ship sprite and all the affine snazziness
 proc draw*(self: var PlayerShip) =
   copyFrame(addr objTileMem[self.tileId], gfxShipTemp, 0)
-  withObjAndAff:
-    let delta = self.centerPoint - self.body.pos
-    aff.setToRotationInv(ArcTan2(int16(delta.x), int16(delta.y)))
-    obj.init:
-      mode = omAff
-      affId = affId
-      pos = vec2i(self.body.pos) - vec2i(gfxShipTemp.width div 2,
-          gfxShipTemp.height div 2)
-      size = gfxShipTemp.size
-      tileId = self.tileId
-      palId = self.paletteId
+  if not invisibilityOn and not screenStopOn:
+    withObjAndAff:
+      let delta = self.centerPoint - self.body.pos
+      aff.setToRotationInv(ArcTan2(int16(delta.x), int16(delta.y)))
+      obj.init:
+        mode = omAff
+        affId = affId
+        pos = vec2i(self.body.pos) - vec2i(gfxShipTemp.width div 2,
+            gfxShipTemp.height div 2)
+        size = gfxShipTemp.size
+        tileId = self.tileId
+        palId = self.paletteId
+  elif invisibilityOn:
+    if (invisibilityFrames div 20) mod 2 == 0:
+      withObjAndAff:
+        let delta = self.centerPoint - self.body.pos
+        aff.setToRotationInv(ArcTan2(int16(delta.x), int16(delta.y)))
+        obj.init:
+          mode = omAff
+          affId = affId
+          pos = vec2i(self.body.pos) - vec2i(gfxShipTemp.width div 2,
+              gfxShipTemp.height div 2)
+          size = gfxShipTemp.size
+          tileId = self.tileId
+          palId = self.paletteId
+
 
   # printf("in playership.nim proc draw x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
 
 # calculate and update ship position
 proc update*(self: var PlayerShip) =
-
   self.body.pos.x = self.centerPoint.x + fp(luCos(
       self.angle) * self.orbitRadius.x)
   self.body.pos.y = self.centerPoint.y + fp(luSin(

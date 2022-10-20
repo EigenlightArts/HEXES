@@ -1,7 +1,7 @@
 import natu/[math, graphics, video, tte, posprintf]
 import utils/objs
 import modules/shooter
-import modules/types/hud
+import types/hud
 
 
 proc initTimer*(valueSeconds: int, introSeconds: int): Timer =
