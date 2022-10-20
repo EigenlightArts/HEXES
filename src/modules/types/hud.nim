@@ -4,6 +4,32 @@ import components/projectile/modifier
 
 export labels, mgba
 
+type ModifierSlots* = object
+  initialised*: bool
+
+  modifierOperator*: Modifier
+  modifierNumber*: Modifier
+  drawNumber*: bool
+  drawOperator*: bool
+  # numberStoredValue*: int
+  # operatorStoredValue*: OperatorKind
+  updateFlag*: bool
+
+proc `=destroy`*(self: var ModifierSlots) =
+  if self.initialised:
+    self.initialised = false
+
+proc `=copy`*(dest: var ModifierSlots;
+    source: ModifierSlots) {.error: "Not implemented".}
+
+proc assignModifiers*(modifierSlots: var ModifierSlots,
+    modifierStored: Modifier) =
+  if modifierStored.kind == mkNumber:
+    modifierSlots.modifierNumber = modifierStored
+    modifierSlots.drawNumber = true
+  if modifierStored.kind == mkOperator:
+    modifierSlots.modifierOperator = modifierStored
+    modifierSlots.drawOperator = true
 
 type CenterNumber* = object
   initialised*: bool
@@ -23,21 +49,24 @@ proc `=destroy`*(self: var CenterNumber) =
 proc `=copy`*(dest: var CenterNumber;
     source: CenterNumber) {.error: "Not implemented".}
 
+proc inputModifierValue*(self: var CenterNumber,
+    modifierSlots: var ModifierSlots) =
+  if modifierSlots.modifierNumber.valueNumber != 0:
+    case modifierSlots.modifierOperator.valueOperator:
+    of okNone:
+      # TODO(Kal): Play a beep
+      printf("You don't have a stored operator!")
+    of okAdd: self.value = self.value + modifierSlots.modifierNumber.valueNumber
+    of okSub: self.value = self.value - modifierSlots.modifierNumber.valueNumber
+    of okMul: self.value = self.value * modifierSlots.modifierNumber.valueNumber
+    of okDiv: self.value = self.value div modifierSlots.modifierNumber.valueNumber
 
-type ModifierSlots* = object
-  initialised*: bool
-
-  modifier*: Modifier
-  numberStoredValue*: int
-  operatorStoredValue*: OperatorKind
-  updateFlag*: bool
-
-proc `=destroy`*(self: var ModifierSlots) =
-  if self.initialised:
-    self.initialised = false
-
-proc `=copy`*(dest: var ModifierSlots;
-    source: ModifierSlots) {.error: "Not implemented".}
+    self.updateFlag = true
+    modifierSlots.modifierNumber.valueNumber = 0
+    modifierSlots.modifierOperator.valueOperator = okNone
+  else:
+    # TODO(Kal): Play a beep
+    printf("You don't have a stored number and/or operator!")
 
 
 type Timer* = object

@@ -18,8 +18,8 @@ type
     angle*: Angle
     body*: Body
 
-    index: int
-    modifierObj: ObjAttr
+    index*: int
+    modifierObj*: ObjAttr
 
     case kind*: ModifierKind
     of mkNumber:
@@ -35,7 +35,7 @@ proc `=destroy`*(modifier: var Modifier) =
   if modifier.status != Uninitialised:
     modifier.status = Uninitialised
 
-proc `=copy`*(a: var Modifier; b: Modifier) {.error: "Not supported".}
+# proc `=copy`*(a: var Modifier; b: Modifier) {.error: "Not supported".}
 
 var modifierEntitiesInstances*: List[3, Modifier]
 

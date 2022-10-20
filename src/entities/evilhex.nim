@@ -14,10 +14,8 @@ proc initEvilHex*(): EvilHex =
 # draw evilhex and related parts
 # proc draw*(self: var EvilHex) =
 
-# TODO(Kal): move this to modifierslots and actually display it properly
-proc update*(self: var EvilHex) =
-  printf("numberStoredValue: %d", numberStoredValue)
-  printf("operatorStoredValue: %d", operatorStoredValue)
+# proc update*(self: var EvilHex) =
+
 
 proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
     playerShipPos: Vec2f) =

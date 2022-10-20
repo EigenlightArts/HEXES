@@ -30,21 +30,3 @@ proc draw*(self: var CenterNumber) =
     posprintf(addr self.hexBuffer, "$%X", self.value)
     self.label.put(addr self.hexBuffer)
     self.updateFlag = false
-
-proc inputModifierValue*(self: var CenterNumber) =
-  if numberStoredValue != 0:
-    case operatorStoredValue:
-    of okNone:
-      # TODO(Kal): Play a beep
-      printf("You don't have a stored operator!")
-    of okAdd: self.value = self.value + numberStoredValue
-    of okSub: self.value = self.value - numberStoredValue
-    of okMul: self.value = self.value * numberStoredValue
-    of okDiv: self.value = self.value div numberStoredValue
-
-    self.updateFlag = true
-    numberStoredValue = 0
-    operatorStoredValue = okNone
-  else:
-    # TODO(Kal): Play a beep
-    printf("You don't have a stored number and/or operator!")

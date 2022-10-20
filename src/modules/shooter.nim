@@ -2,7 +2,7 @@ import natu/[video, utils, mgba]
 import components/projectile/[bulletplayer, bulletenemy, enemy, modifier]
 import components/shared
 import utils/body
-import modules/types/entities
+import modules/types/[entities, hud]
 
 export bulletplayer, bulletenemy, enemy, modifier
 
@@ -28,7 +28,7 @@ proc draw*() =
   for modifier in mitems(modifierEntitiesInstances):
     modifier.draw()
 
-proc update*(playerShip: var PlayerShip, evilHex: var EvilHex) =
+proc update*(playerShip: var PlayerShip, evilHex: var EvilHex, modifierSlots: var ModifierSlots) =
   for enemy in mitems(enemyEntitiesInstances):
     if enemy.status == Active:
       enemy.update()
@@ -63,12 +63,10 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex) =
       for modifierBP in mitems(modifierEntitiesInstances):
         if modifierBP.status == Active:
           if collide(modifierBP.body, bulletPlayer.body):
-            if modifierBP.kind == mkNumber:
-              numberStoredValue = modifierBP.valueNumber
-            if modifierBP.kind == mkOperator:
-              operatorStoredValue = modifierBP.valueOperator
             bulletPlayer.status = Finished
             modifierBP.status = Finished
+
+            modifierSlots.assignModifiers(modifierBP)
       for enemyBP in mitems(enemyEntitiesInstances):
         if enemyBP.status == Active:
           if collide(enemyBP.body, bulletPlayer.body):

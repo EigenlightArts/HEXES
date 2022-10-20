@@ -1,7 +1,7 @@
 import natu/[video, bios, irq, input, math, graphics, utils]
 import utils/objs
 import entities/[playership, evilhex]
-import entities/hud/[ecn, timer, target]
+import entities/hud/[ecn, timer, target, modifierslots]
 import modules/[shooter, player]
 
 # TODO(Kal): change this to rgb8() later
@@ -31,6 +31,7 @@ var evilHexInstance = initEvilHex()
 var centerNumberInstance = initCenterNumber(ecnValue, ecnTarget)
 var timerInstance = initTimer(timerInitial, 5)
 var targetInstance = initTarget(centerNumberInstance.target)
+var modifierSlotsInstance = initModifierSlots()
 
 var eventLoopTimer: int
 var eventModifierShoot: int
@@ -67,7 +68,7 @@ while true:
   keyPoll()
 
   # player controls
-  player.controlsGame(playerShipInstance, centerNumberInstance)
+  player.controlsGame(playerShipInstance, centerNumberInstance, modifierSlotsInstance)
 
   # update ship position
   playerShipInstance.update()
@@ -86,7 +87,7 @@ while true:
   # evilHexInstance.update()
 
   # update shooter
-  shooter.update(playerShipInstance, evilHexInstance)
+  shooter.update(playerShipInstance, evilHexInstance, modifierSlotsInstance)
 
   # wait for the end of the frame
   VBlankIntrWait()
@@ -108,6 +109,7 @@ while true:
   # draw the CenterNumber
   centerNumberInstance.draw()
 
+  modifierSlotsInstance.draw()
 
   # copy the PAL RAM buffer into the real PAL RAM.
   flushPals()
