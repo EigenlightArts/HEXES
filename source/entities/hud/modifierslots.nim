@@ -17,8 +17,8 @@ proc draw*(modifierSlots: var ModifierSlots) =
           pos = vec2i(ScreenWidth - 26, ScreenHeight - 16) - vec2i(
               modifierSlots.modifierOperator.graphic.width div 2,
               modifierSlots.modifierOperator.graphic.height div 2),
-          tid = modifierSlots.modifierOperator.modifierObj.tid + (modifierSlots.modifierOperator.index *
-              4),
+          tid = modifierSlots.modifierOperator.modifierObj.tid +
+          (modifierSlots.modifierOperator.index * 4),
           pal = modifierSlots.modifierOperator.modifierObj.palId,
           size = modifierSlots.modifierOperator.graphic.size
         )
@@ -30,8 +30,8 @@ proc draw*(modifierSlots: var ModifierSlots) =
           pos = vec2i(ScreenWidth - 10, ScreenHeight - 16) - vec2i(
               modifierSlots.modifierNumber.graphic.width div 2,
               modifierSlots.modifierNumber.graphic.height div 2),
-          tid = modifierSlots.modifierNumber.modifierObj.tid + (modifierSlots.modifierNumber.index *
-              4),
+          tid = modifierSlots.modifierNumber.modifierObj.tid +
+          (modifierSlots.modifierNumber.index * 4),
           pal = modifierSlots.modifierNumber.modifierObj.palId,
           size = modifierSlots.modifierNumber.graphic.size
         )

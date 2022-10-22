@@ -1,7 +1,7 @@
 import natu/[graphics, video, oam, utils]
 import utils/[objs]
 
-# NOTE(Kal): To control shared state, try to avoid mutability
+# IMPORTANT(Kal): To control shared state, try to avoid mutability here
 
 
 # Shared Fonts

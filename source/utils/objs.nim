@@ -5,11 +5,11 @@ export oam
 # initialisation:
 
 for obj in mitems(objMem):
-  obj.attr0 = omHide.uint16   # fast hide
+  obj.attr0 = omHide.uint16 # fast hide
 
 
 var
-  objNum = 128           # id of the object *before* the next one to be allocated (counts down)
+  objNum = 128 # id of the object *before* the next one to be allocated (counts down)
   objNumPrev = 128
   objAffCount = 0
   objAffMax = 31
@@ -52,22 +52,22 @@ iterator mutate[T](a: var T): var T =
 
 template withObj*(body: untyped) =
   ## Attempts to allocate a hardware sprite, and executes `body` if successful.
-  ## 
+  ##
   ## Within the `body`, a mutable reference to the sprite is available via `obj`
   ## and the index of the sprite is available via `objId`.
-  ## 
+  ##
   ## **Example:**
-  ## 
+  ##
   ## .. code-block:: nim
-  ##   
+  ##
   ##   var monster: Monster  # some example entity
-  ##   
+  ##
   ##   # During VBlank
   ##   withObj:
   ##     assert(addr obj == addr objMem[objId])
   ##     obj = monster.obj    # copy attributes into OAM
   ##     obj.pos = screenPos  # edit some attributes directly
-  ##  
+  ##
   if objNum - 1 >= 0:
     dec objNum
     let objId {.inject.} = objNum

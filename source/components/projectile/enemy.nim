@@ -49,8 +49,8 @@ proc `=copy`*(a: var Enemy; b: Enemy) {.error: "Not supported".}
 var enemyEntitiesInstances*: List[3, Enemy]
 
 
-proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int; enemyHealth: int; enemyTimeScore: int;
-    pos: Vec2f): Enemy =
+proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int;
+    enemyHealth: int; enemyTimeScore: int;pos: Vec2f): Enemy =
   result = Enemy(
     graphic: gfx,
     tileId: allocObjTiles(gfx),
@@ -100,7 +100,8 @@ proc update*(enemy: var Enemy) =
     if enemy.kind == ekLozenge:
       dec enemy.shootTimer
       if enemy.shootTimer <= 0:
-        let bulEnemyProj = initProjectileBulletEnemy(gfxBulletTemp, enemy.body.pos)
+        let bulEnemyProj = initProjectileBulletEnemy(gfxBulletTemp,
+            enemy.body.pos)
         fireBulletEnemy(bulEnemyProj, enemy.body.pos, enemy.angle)
         enemy.shootTimer = rand(25..60)
     if (not onscreen(enemy.body.hitbox())):

@@ -8,21 +8,21 @@ type Body* {.bycopy.} = object
 
 {.push inline.}
 
-proc x*(body: Body): Fixed =            body.pos.x
-proc x*(body: var Body): var Fixed =    body.pos.x
-proc `x=`*(body: var Body, x: Fixed) =  body.pos.x = x
+proc x*(body: Body): Fixed = body.pos.x
+proc x*(body: var Body): var Fixed = body.pos.x
+proc `x=`*(body: var Body, x: Fixed) = body.pos.x = x
 
-proc y*(body: Body): Fixed =            body.pos.y
-proc y*(body: var Body): var Fixed =    body.pos.y
-proc `y=`*(body: var Body, y: Fixed) =  body.pos.y = y
+proc y*(body: Body): Fixed = body.pos.y
+proc y*(body: var Body): var Fixed = body.pos.y
+proc `y=`*(body: var Body, y: Fixed) = body.pos.y = y
 
-proc w*(body: Body): int =            body.size.x
-proc w*(body: var Body): var int =    body.size.x
-proc `w=`*(body: var Body, w: int) =  body.size.x = w
+proc w*(body: Body): int = body.size.x
+proc w*(body: var Body): var int = body.size.x
+proc `w=`*(body: var Body, w: int) = body.size.x = w
 
-proc h*(body: Body): int =            body.size.y
-proc h*(body: var Body): var int =    body.size.y
-proc `h=`*(body: var Body, h: int) =  body.size.y = h
+proc h*(body: Body): int = body.size.y
+proc h*(body: var Body): var int = body.size.y
+proc `h=`*(body: var Body, h: int) = body.size.y = h
 
 proc initBody*(x, y: Fixed, w, h: int): Body {.inline, noinit.} =
   result.x = x

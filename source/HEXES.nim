@@ -22,16 +22,16 @@ proc onVBlank =
     canRedraw = false
     flushPals()
     drawScene()
-    oamUpdate()  # clear unused entries, reset allocation counters
+    oamUpdate() # clear unused entries, reset allocation counters
   # audio.frame()
 
 proc main =
   # Recommended waitstate configuration
   waitcnt.init(
-    sram = WsSram.N8_S8,   # 8 cycles to access SRAM.
-    rom0 = WsRom0.N3_S1,   # 3 cycles to access ROM, or 1 cycle for sequential access.
-    rom2 = WsRom2.N8_S8,   # 8 cycles to access ROM (mirror #2) which may be used for flash storage.
-    prefetch = true        # prefetch buffer enabled.
+    sram = WsSram.N8_S8, # 8 cycles to access SRAM.
+    rom0 = WsRom0.N3_S1, # 3 cycles to access ROM, or 1 cycle for sequential access.
+    rom2 = WsRom2.N8_S8, # 8 cycles to access ROM (mirror #2) which may be used for flash storage.
+    prefetch = true # prefetch buffer enabled.
   )
 
   irq.init()
@@ -40,7 +40,7 @@ proc main =
   setScene(GameScene)
 
   while true:
-    discard rand()  # introduce some nondeterminism to the RNG
+    discard rand() # introduce some nondeterminism to the RNG
     keyPoll()
     updateScene()
     canRedraw = true

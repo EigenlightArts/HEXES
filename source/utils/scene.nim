@@ -7,10 +7,10 @@ type Scene* = object
   draw*: proc() {.nimcall.}
 
 var
-  display*: DispCnt  ## Buffered display control to avoid visual artifacts when loading the scene.
+  display*: DispCnt ## Buffered display control to avoid visual artifacts when loading the scene.
   sceneChanged = false
   currentScene, nextScene: Scene
-  deferredFn: proc() {.nimcall.}  ## Code to be executed at the end of the frame.
+  deferredFn: proc() {.nimcall.} ## Code to be executed at the end of the frame.
 
 proc nothing = discard
 currentScene.show = nothing
@@ -18,7 +18,7 @@ currentScene.hide = nothing
 currentScene.update = nothing
 currentScene.draw = nothing
 
-proc setScene*(s:Scene) =
+proc setScene*(s: Scene) =
   nextScene = s
   sceneChanged = true
 
@@ -29,7 +29,7 @@ proc updateScene* =
   if deferredFn != nil:
     deferredFn()
     deferredFn = nil
-  
+
   if sceneChanged:
     sceneChanged = false
     dispcnt.init()
@@ -38,12 +38,12 @@ proc updateScene* =
     currentScene.hide()
     currentScene = nextScene
     currentScene.show()
-  
+
   currentScene.update()
 
 proc drawScene* =
   currentScene.draw()
   dispcnt = display
 
-proc deferFn*(f:proc(){.nimcall.}) =
+proc deferFn*(f: proc(){.nimcall.}) =
   deferredFn = f

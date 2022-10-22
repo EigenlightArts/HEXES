@@ -16,12 +16,12 @@ tte.setContext(addr tc)
 tte.initBase(fntVerdana9b4, chr4cDrawgB4cts, chr4cErase)
 
 type Label* = object
-  obj*: ObjAttr  # base sprite
+  obj*: ObjAttr               # base sprite
   text: cstring
   font*: Font
-  dirty* {.bitsize: 1.}: bool     # whether to redraw the text
-  count* {.bitsize: 7.}: uint     # how many sprites to stitch together
-  width*: uint8                   # size of rendered text in pixels.
+  dirty* {.bitsize: 1.}: bool # whether to redraw the text
+  count* {.bitsize: 7.}: uint # how many sprites to stitch together
+  width*: uint8               # size of rendered text in pixels.
   ink* {.bitsize: 4.}: uint16
   shadow* {.bitsize: 4.}: uint16
   tilesPerObj: uint8
@@ -29,10 +29,10 @@ type Label* = object
 func initialized*(self: Label): bool {.inline.} =
   (self.tilesPerObj > 0)
 
-proc `=destroy`*(self: var Label)  =
+proc `=destroy`*(self: var Label) =
   if self.initialized:
     self.count = 0
-    self.tilesPerObj = 0   # marks as deinitialised
+    self.tilesPerObj = 0 # marks as deinitialised
     freeObjTiles(self.obj.tid)
 
 func pos*(self: Label): Vec2i {.inline.} =
@@ -42,11 +42,11 @@ func `pos=`*(self: var Label, pos: Vec2i) {.inline.} =
   self.obj.pos = pos
 
 proc put*(self: var Label; text: cstring) =
-  ## 
+  ##
   ## Update the label text.
-  ## 
+  ##
   ## Note! Any buffer pointed to by `text` must persist until the next call to `draw` or `render`.
-  ## 
+  ##
   self.text = text
   self.dirty = true
   if text != nil:
@@ -61,14 +61,15 @@ proc put*(self: var Label; text: cstring) =
   else:
     self.width = 0
 
-proc init*(self: var Label, pos: Vec2i, size: ObjSize, count: range[1..32], text: cstring = nil, font = fntVerdana9b4, ink = 1, shadow = 2) =
+proc init*(self: var Label, pos: Vec2i, size: ObjSize, count: range[1..32],
+    text: cstring = nil, font = fntVerdana9b4, ink = 1, shadow = 2) =
   let (w, h) = getSize(size)
   var tid = self.obj.tid
-  
+
   let tilesPerObj = (w*h) div (8*8)
   let numTiles = count * tilesPerObj
   let prevTiles = self.count * self.tilesPerObj
-  
+
   if prevTiles == numTiles.uint:
     # already allocated the right number of tiles
     discard
@@ -94,15 +95,15 @@ proc destroy*(self: var Label) {.inline.} =
   `=destroy`(self)
 
 proc render*(self: var Label) =
-  ## 
+  ##
   ## Repaint the text for a label.
-  ## 
+  ##
   ## This should be done during vblank or while the label is not visible.
-  ## 
+  ##
   ## If desired, you can call this immediately after creating the label, but
   ## keep in mind that visual glitches may appear if the label happened to be
   ## created on the next frame after a sprite was destroyed.
-  ## 
+  ##
   let (w, h) = getSize(self.obj)
   tte.setContext(addr tc)
   let surface = addr tc.dst.SurfaceChr4c
@@ -124,10 +125,10 @@ proc render*(self: var Label) =
 
 proc draw*(self: var Label) =
   if self.initialized:
-    
+
     if self.dirty:
       self.render()
-    
+
     withObjs(self.count.int):
       let w = getWidth(self.obj)
       let tilesPerObj = self.tilesPerObj.int

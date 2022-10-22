@@ -25,7 +25,7 @@ proc `=destroy`*(self: var ModifierSlots) =
 proc `=copy`*(dest: var ModifierSlots;
     source: ModifierSlots) {.error: "Not implemented".}
 
-proc assignModifiers*(modifierSlots: var ModifierSlots,
+proc assignModifiers*(modifierSlots: var ModifierSlots;
     modifierStored: Modifier) =
   if modifierStored.kind == mkNumber:
     modifierSlots.modifierNumber = modifierStored
@@ -52,7 +52,7 @@ proc `=destroy`*(self: var CenterNumber) =
 proc `=copy`*(dest: var CenterNumber;
     source: CenterNumber) {.error: "Not implemented".}
 
-proc inputModifierValue*(self: var CenterNumber,
+proc inputModifierValue*(self: var CenterNumber;
     modifierSlots: var ModifierSlots) =
   if modifierSlots.modifierNumber.valueNumber != 0:
     case modifierSlots.modifierOperator.valueOperator:
@@ -79,7 +79,7 @@ type Timer* = object
 
   updateFlag*: bool
   introFlag*: bool
-  
+
   valueSeconds*: int
   valueFrames*: int
   introSeconds*: int
@@ -98,7 +98,7 @@ type Target* = object
   initialised*: bool
   label*: Label
   hexBuffer*: array[9, char]
-  
+
   target*: int
 
 proc `=destroy`*(self: var Target) =

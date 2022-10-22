@@ -22,7 +22,8 @@ proc draw*() =
   for modifier in mitems(modifierEntitiesInstances):
     modifier.draw()
 
-proc update*(playerShip: var PlayerShip, evilHex: var EvilHex, modifierSlots: var ModifierSlots) =
+proc update*(playerShip: var PlayerShip, evilHex: var EvilHex,
+    modifierSlots: var ModifierSlots) =
   # handle Active projectiles
   if not screenStopOn:
     for enemy in mitems(enemyEntitiesInstances):
@@ -73,14 +74,14 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex, modifierSlots: va
     if screenStopFrames <= 0:
       screenStopFrames = screenStopFramesConst
       screenStopOn = false
-    
+
     dec screenStopFrames
 
   if invisibilityOn:
     if invisibilityFrames <= 0:
       invisibilityFrames = invisibilityFramesConst
       invisibilityOn = false
-    
+
     dec invisibilityFrames
 
   # handle Finished projectiles

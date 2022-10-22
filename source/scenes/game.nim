@@ -44,7 +44,9 @@ proc startEventLoop() =
   eventEnemyShoot = rand(10..40)
   eventEnemySelect = rand(1..4)
   eventModifierShoot = rand(30..80)
-  eventModifierIndex = if chooseModifierKind == 4: rand(16..19) else: rand(1..15)# excludes 0 and $
+  # excludes 0 and $
+  eventModifierIndex = if chooseModifierKind == 4: rand(16..19) else: rand(
+      1..15)
 
 proc onShow =
   new(game)
@@ -58,7 +60,7 @@ proc onShow =
 
   while game.ecnValue == game.ecnTarget:
     game.ecnTarget = rand(0..255)
-  
+
   playerShipInstance = initPlayerShip(vec2f(75, 0))
   evilHexInstance = initEvilHex()
 
@@ -67,10 +69,11 @@ proc onShow =
   targetInstance = initTarget(centerNumberInstance.target)
   modifierSlotsInstance = initModifierSlots()
 
-  display.layers = { lBg0, lObj } 
+  display.layers = {lBg0, lObj}
   display.obj1d = true
 
-  # enable VBlank interrupt so we can wait for the end of the frame without burning CPU cycles
+  # enable VBlank interrupt so we can wait for
+  # the end of the frame without burning CPU cycles
   irq.enable(iiVBlank)
 
   startEventLoop()
@@ -105,7 +108,7 @@ proc onHide =
 proc onDraw =
   timerInstance.draw(centerNumberInstance.target)
 
-  # If it's no longer the intro, add a target label 
+  # If it's no longer the intro, add a target label
   targetInstance.draw(timerInstance.introFlag)
 
   # draw the Shooter projectiles
