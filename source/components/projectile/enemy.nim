@@ -61,7 +61,6 @@ proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int; enemyHealth: in
     speedKind: SpeedKind(enemySpeed),
     kind: EnemyKind(enemySelect)
   )
-  # printf("result.speed is: %d", result.speed)
 
   if result.kind == ekTriangle:
     result.flipTimer = rand(30..85)
@@ -82,8 +81,6 @@ proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int; enemyHealth: in
 
 proc update*(enemy: var Enemy) =
   if enemy.status == Active:
-    # printf("enemy.speed is: %d", ord(enemy.speed))
-    # printf("enemy.kind is: %d", ord(enemy.kind))
 
     # make sure the enemy players go where they are supposed to go
     enemy.body.pos.x = enemy.body.pos.x - fp(luCos(

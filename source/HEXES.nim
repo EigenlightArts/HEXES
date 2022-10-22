@@ -21,7 +21,7 @@ proc onVBlank =
   if canRedraw:
     canRedraw = false
     flushPals()
-    # drawScene()
+    drawScene()
     oamUpdate()  # clear unused entries, reset allocation counters
   # audio.frame()
 
@@ -34,16 +34,8 @@ proc main =
     prefetch = true        # prefetch buffer enabled.
   )
 
-  # background color, approximating eigengrau
-  bgColorBuf[0] = rgb8(22, 22, 29)
-
   irq.init()
   irq.put(iiVBlank, onVBlank)
-
-  dispcnt = initDispCnt(obj = true, obj1d = true, bg0 = true)
-
-  # enable VBlank interrupt so we can wait for the end of the frame without burning CPU cycles
-  irq.enable(iiVBlank)
 
   setScene(GameScene)
 

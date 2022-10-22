@@ -1,4 +1,4 @@
-import natu/[input, math, utils]
+import natu/[video, graphics, input, irq, math, utils]
 import utils/scene
 import entities/[playership, evilhex]
 import entities/hud/[ecn, timer, target, modifierslots]
@@ -20,8 +20,10 @@ var timerInstance: Timer
 var targetInstance: Target
 var modifierSlotsInstance: ModifierSlots
 
+var shootEnemy: int
+var chooseModifierKind: int
+
 var eventLoopTimer: int
-var eventLoopRand: int
 var eventModifierShoot: int
 var eventModifierIndex: int
 var eventEnemyShoot: int
@@ -35,15 +37,21 @@ const timerInitialConst = 300
 # - https://probablydance.com/2019/08/28/a-new-algorithm-for-controlled-randomness/
 
 proc startEventLoop() =
+  shootEnemy = rand(0..1)
+  chooseModifierKind = rand(0..4)
+
   eventLoopTimer = 0
-  eventLoopRand = rand(1..10)
-  eventEnemyShoot = rand(1..4)
+  eventEnemyShoot = rand(10..40)
   eventEnemySelect = rand(1..4)
-  eventModifierShoot = rand(3..8)
-  # TODO(Kal): Probably a good idea to make operators more common
-  eventModifierIndex = rand(1..19) # excludes 0 and $
+  eventModifierShoot = rand(30..80)
+  eventModifierIndex = if chooseModifierKind == 4: rand(16..19) else: rand(1..15)# excludes 0 and $
 
 proc onShow =
+  new(game)
+
+  # background color, approximating eigengrau
+  bgColorBuf[0] = rgb8(22, 22, 29)
+
   game.ecnValue = rand(0..255)
   game.ecnTarget = rand(0..255)
   game.timerInitial = timerInitialConst
@@ -59,36 +67,34 @@ proc onShow =
   targetInstance = initTarget(centerNumberInstance.target)
   modifierSlotsInstance = initModifierSlots()
 
+  display.layers = { lBg0, lObj } 
+  display.obj1d = true
+
+  # enable VBlank interrupt so we can wait for the end of the frame without burning CPU cycles
+  irq.enable(iiVBlank)
+
   startEventLoop()
 
 proc onUpdate =
-  # after 120 vblank units, restart event loop
-  if eventLoopTimer == 120:
+  # after 100 vblank units, restart event loop
+  if eventLoopTimer == 100:
     startEventLoop()
 
-  # update key states
-  keyPoll()
+  centerNumberInstance.update()
 
-  # player controls
   player.controlsGame(playerShipInstance, centerNumberInstance, modifierSlotsInstance)
 
-  # update ship position
   playerShipInstance.update()
 
-  # fire the EvilHex projectile
-  if eventLoopRand == eventModifierShoot:
+  # fire the EvilHex projectiles
+  if eventLoopTimer == eventModifierShoot and shootEnemy == 1:
     evilHexInstance.fireModifierHex(eventModifierIndex,
         playerShipInstance.body.pos)
-  if eventLoopRand == eventEnemyShoot:
+  if eventLoopTimer == eventEnemyShoot:
     evilHexInstance.fireEnemyHex(eventEnemySelect, playerShipInstance.body.pos)
 
-  # update timer
-  timerInstance.update()
-
-  # update EvilHex subroutines
   # evilHexInstance.update()
-
-  # update shooter
+  timerInstance.update()
   shooter.update(playerShipInstance, evilHexInstance, modifierSlotsInstance)
 
   inc eventLoopTimer
@@ -97,7 +103,6 @@ proc onHide =
   game = nil
 
 proc onDraw =
-  # draw the timer label
   timerInstance.draw(centerNumberInstance.target)
 
   # If it's no longer the intro, add a target label 
@@ -106,12 +111,8 @@ proc onDraw =
   # draw the Shooter projectiles
   shooter.draw()
 
-  # draw the ship
   playerShipInstance.draw()
-
-  # draw the CenterNumber
   centerNumberInstance.draw()
-
   modifierSlotsInstance.draw()
 
 

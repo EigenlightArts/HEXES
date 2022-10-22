@@ -44,8 +44,6 @@ proc draw*(self: var PlayerShip) =
           palId = self.paletteId
 
 
-  # printf("in playership.nim proc draw x = %l, y = %l", self.pos.x.toInt(), self.pos.y.toInt())
-
 # calculate and update ship position
 proc update*(self: var PlayerShip) =
   self.body.pos.x = self.centerPoint.x + fp(luCos(

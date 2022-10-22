@@ -28,3 +28,10 @@ proc draw*(self: var CenterNumber) =
     posprintf(addr self.hexBuffer, "$%X", self.value)
     self.label.put(addr self.hexBuffer)
     self.updateFlag = false
+
+proc update*(self: var CenterNumber) =
+  # check if CenterNumber is overflowing or underflowing
+  if self.value >= 256:
+    self.value -= 256
+  if self.value <= -1:
+    self.value += 256
