@@ -1,5 +1,4 @@
-import natu/[math, graphics, posprintf, video, tte, utils]
-import components/shared
+import natu/[math, graphics, video]
 import components/projectile/modifier
 import utils/objs
 import modules/shooter

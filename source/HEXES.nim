@@ -1,115 +1,57 @@
-import natu/[video, bios, irq, input, math, graphics, utils]
-import utils/objs
-import entities/[playership, evilhex]
-import entities/hud/[ecn, timer, target, modifierslots]
-import modules/[shooter, player]
+# Magic string for emulators and flashcards to auto-detect save type.
+asm """
+.balign 4
+.string "SRAM_V100"
+.balign 4
+"""
 
-# background color, approximating eigengrau
-bgColorBuf[0] = rgb8(22, 22, 29)
+import natu/[video, bios, irq, input, graphics, utils, memory]
+import utils/[objs, scene]
+import scenes/game
 
-# enable VBlank interrupt so we can wait for the end of the frame without burning CPU cycles
-irq.enable(iiVBlank)
-
-dispcnt = initDispCnt(obj = true, obj1d = true, bg0 = true)
-
-irq.enable(iiVBlank)
-
-var ecnValue: int = rand(0..255)
-var ecnTarget: int = rand(0..255)
-
-# prevent ecnValue from having the same value as ecnTarget
-while ecnValue == ecnTarget:
-  ecnTarget = rand(0..255)
-
-var timerInitial: int = 300
-
-var playerShipInstance = initPlayerShip(vec2f(75, 0))
-var evilHexInstance = initEvilHex()
-
-var centerNumberInstance = initCenterNumber(ecnValue, ecnTarget)
-var timerInstance = initTimer(timerInitial, 5)
-var targetInstance = initTarget(centerNumberInstance.target)
-var modifierSlotsInstance = initModifierSlots()
-
-var eventLoopTimer: int
-var eventModifierShoot: int
-var eventModifierIndex: int
-var eventEnemyShoot: int
-var eventEnemySelect: int
-
-# TODO(Kal): Would be better to use fractions of probability instead
-proc startEventLoop() =
-  eventLoopTimer = 0
-  eventModifierShoot = rand(40..90)
-  eventEnemyShoot = rand(30..65)
-  eventEnemySelect = rand(1..4)
-  # TODO(Kal): Probably a good idea to make operators more common
-  eventModifierIndex = rand(1..19) # excludes 0 and $
-
-startEventLoop()
 
 # NOTE(Kal): Resources about Game Engine Development:
 # - https://www.gameprogrammingpatterns.com/
 # - https://www.gameenginebook.com/
 
-while true:
-  # TODO(Kal): Implement Controlled RNG for game events
-  # See:
-  # - C:\Users\Kaleidosium\Documents\School Shiz\Project Documentation\HEXES\Visual Journal\handmade-help-1.txt
-  # - https://probablydance.com/2019/08/28/a-new-algorithm-for-controlled-randomness/
+var canRedraw = false
 
-  # after 100 vblank units, restart event loop
-  if eventLoopTimer == 100:
-    startEventLoop()
+proc onVBlank =
+  # audio.vblank()
+  if canRedraw:
+    canRedraw = false
+    flushPals()
+    # drawScene()
+    oamUpdate()  # clear unused entries, reset allocation counters
+  # audio.frame()
 
-  # update key states
-  keyPoll()
+proc main =
+  # Recommended waitstate configuration
+  waitcnt.init(
+    sram = WsSram.N8_S8,   # 8 cycles to access SRAM.
+    rom0 = WsRom0.N3_S1,   # 3 cycles to access ROM, or 1 cycle for sequential access.
+    rom2 = WsRom2.N8_S8,   # 8 cycles to access ROM (mirror #2) which may be used for flash storage.
+    prefetch = true        # prefetch buffer enabled.
+  )
 
-  # player controls
-  player.controlsGame(playerShipInstance, centerNumberInstance, modifierSlotsInstance)
+  # background color, approximating eigengrau
+  bgColorBuf[0] = rgb8(22, 22, 29)
 
-  # update ship position
-  playerShipInstance.update()
+  irq.init()
+  irq.put(iiVBlank, onVBlank)
 
-  # fire the EvilHex projectile
-  if eventLoopTimer == eventModifierShoot:
-    evilHexInstance.fireModifierHex(eventModifierIndex,
-        playerShipInstance.body.pos)
-  if eventLoopTimer == eventEnemyShoot:
-    evilHexInstance.fireEnemyHex(eventEnemySelect, playerShipInstance.body.pos)
+  dispcnt = initDispCnt(obj = true, obj1d = true, bg0 = true)
 
-  # update timer
-  timerInstance.update()
+  # enable VBlank interrupt so we can wait for the end of the frame without burning CPU cycles
+  irq.enable(iiVBlank)
 
-  # update EvilHex subroutines
-  # evilHexInstance.update()
+  setScene(GameScene)
 
-  # update shooter
-  shooter.update(playerShipInstance, evilHexInstance, modifierSlotsInstance)
+  while true:
+    discard rand()  # introduce some nondeterminism to the RNG
+    keyPoll()
+    updateScene()
+    canRedraw = true
+    VBlankIntrWait()
 
-  # wait for the end of the frame
-  VBlankIntrWait()
-
-  inc eventLoopTimer
-
-  # draw the timer label
-  timerInstance.draw(centerNumberInstance.target)
-
-  # If it's no longer the intro, add a target label 
-  targetInstance.draw(timerInstance.introFlag)
-
-  # draw the Shooter projectiles
-  shooter.draw()
-
-  # draw the ship
-  playerShipInstance.draw()
-
-  # draw the CenterNumber
-  centerNumberInstance.draw()
-
-  modifierSlotsInstance.draw()
-
-  # copy the PAL RAM buffer into the real PAL RAM.
-  flushPals()
-  # hide all the objects that weren't used
-  oamUpdate()
+main()

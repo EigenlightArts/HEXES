@@ -1,6 +1,5 @@
 import natu/[math, graphics, video, tte, posprintf]
 import utils/objs
-import modules/shooter
 import types/hud
 
 proc initTarget*(target: int): Target =

@@ -1,6 +1,5 @@
-import natu/[math, graphics, video, bios, input]
+import natu/[graphics, input]
 import components/projectile/bulletplayer
-import entities/playership
 import types/[entities, hud]
 import modules/shooter
 

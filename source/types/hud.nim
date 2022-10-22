@@ -1,4 +1,4 @@
-import natu/[math, graphics, video, mgba]
+import natu/[graphics, video, mgba]
 import utils/labels
 import components/projectile/modifier
 

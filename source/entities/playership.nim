@@ -1,4 +1,4 @@
-import natu/[math, graphics, video, bios, input]
+import natu/[math, graphics, video, bios]
 import utils/objs
 import types/entities
 

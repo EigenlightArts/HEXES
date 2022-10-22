@@ -1,7 +1,5 @@
-import natu/[math, graphics, posprintf, video, tte, utils]
-import components/shared
+import natu/[math, graphics, posprintf, video, tte]
 import utils/objs
-import modules/shooter
 import types/hud
 
 proc initCenterNumber*(value: sink int, target: sink int): CenterNumber =

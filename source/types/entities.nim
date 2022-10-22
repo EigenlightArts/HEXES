@@ -3,11 +3,14 @@ import utils/body
 
 export body, mgba
 
+const invisibilityFramesConst* = 300
+const screenStopFramesConst* = 60
+
 var invisibilityOn*: bool = false
-var invisibilityFrames*: int = 300
+var invisibilityFrames*: int = invisibilityFramesConst
 
 var screenStopOn*: bool = false
-var screenStopFrames*: int = 60
+var screenStopFrames*: int = screenStopFramesConst
 
 type PlayerShip* = object
   initialised*: bool

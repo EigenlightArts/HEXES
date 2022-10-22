@@ -71,14 +71,14 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex, modifierSlots: va
   # handle Screen effects
   if screenStopOn:
     if screenStopFrames <= 0:
-      screenStopFrames = 60
+      screenStopFrames = screenStopFramesConst
       screenStopOn = false
     
     dec screenStopFrames
 
   if invisibilityOn:
     if invisibilityFrames <= 0:
-      invisibilityFrames = 300
+      invisibilityFrames = invisibilityFramesConst
       invisibilityOn = false
     
     dec invisibilityFrames
