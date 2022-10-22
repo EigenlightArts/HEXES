@@ -9,7 +9,7 @@
       "program": "${workspaceRoot}/HEXES.elf",
       "args": [],
       "stopAtEntry": false,
-      "cwd": "${workspaceRoot}/src",
+      "cwd": "${workspaceRoot}/source",
       "environment": [],
       "externalConsole": false,
       "MIMode": "gdb",

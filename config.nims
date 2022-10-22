@@ -1,7 +1,7 @@
 import os, strutils
 import natu/config
 
-const main = "./src/HEXES.nim"         # path to project file
+const main = "./source/HEXES.nim"         # path to project file
 const name = splitFile(main).name      # name of ROM
 
 put "natu.gameTitle", "HEXES"          # max 12 chars, uppercase
