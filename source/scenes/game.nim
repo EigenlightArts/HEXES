@@ -9,6 +9,7 @@ type Game = ref object
   ecnValue: int
   ecnTarget: int
   timerInitial: int
+  gameOverFlag: bool
 
 var game: Game
 
@@ -57,6 +58,7 @@ proc onShow =
   game.ecnValue = rand(0..255)
   game.ecnTarget = rand(0..255)
   game.timerInitial = timerInitialConst
+  game.gameOverFlag = false
 
   while game.ecnValue == game.ecnTarget:
     game.ecnTarget = rand(0..255)
@@ -85,7 +87,7 @@ proc onUpdate =
 
   centerNumberInstance.update()
 
-  player.controlsGame(playerShipInstance, centerNumberInstance, modifierSlotsInstance)
+  player.controlsGame(playerShipInstance, centerNumberInstance, modifierSlotsInstance, game.gameOverFlag)
 
   playerShipInstance.update()
 
@@ -97,7 +99,7 @@ proc onUpdate =
     evilHexInstance.fireEnemyHex(eventEnemySelect, playerShipInstance.body.pos)
 
   # evilHexInstance.update()
-  timerInstance.update()
+  timerInstance.update(game.gameOverFlag)
   shooter.update(playerShipInstance, evilHexInstance, modifierSlotsInstance)
 
   inc eventLoopTimer
@@ -106,7 +108,7 @@ proc onHide =
   game = nil
 
 proc onDraw =
-  timerInstance.draw(centerNumberInstance.target)
+  timerInstance.draw(centerNumberInstance.target, game.gameOverFlag)
 
   # If it's no longer the intro, add a target label
   targetInstance.draw(timerInstance.introFlag)
@@ -114,9 +116,9 @@ proc onDraw =
   # draw the Shooter projectiles
   shooter.draw()
 
-  playerShipInstance.draw()
-  centerNumberInstance.draw()
-  modifierSlotsInstance.draw()
+  centerNumberInstance.draw(game.gameOverFlag)
+  playerShipInstance.draw(game.gameOverFlag)
+  modifierSlotsInstance.draw(game.gameOverFlag)
 
 
 const GameScene* = Scene(

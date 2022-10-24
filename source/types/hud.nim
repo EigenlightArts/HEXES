@@ -14,8 +14,6 @@ type ModifierSlots* = object
   modifierNumber*: Modifier
   drawNumber*: bool
   drawOperator*: bool
-  # numberStoredValue*: int
-  # operatorStoredValue*: OperatorKind
   updateFlag*: bool
 
 proc `=destroy`*(self: var ModifierSlots) =

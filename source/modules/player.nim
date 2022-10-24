@@ -4,8 +4,8 @@ import types/[entities, hud]
 import modules/shooter
 
 proc controlsGame*(playerShip: var PlayerShip; centerNumber: var CenterNumber;
-    modifierSlots: var ModifierSlots) =
-  if not screenStopOn:
+    modifierSlots: var ModifierSlots; gameOver: bool) =
+  if not screenStopOn or not gameOver:
     if keyIsDown(kiLeft):
       playerShip.angle += 350
     if keyIsDown(kiRight):

@@ -15,22 +15,10 @@ proc initPlayerShip*(pos: Vec2f): PlayerShip =
 
 
 # draw ship sprite and all the affine snazziness
-proc draw*(self: var PlayerShip) =
-  copyFrame(addr objTileMem[self.tileId], gfxShipTemp, 0)
-  if not invisibilityOn and not screenStopOn:
-    withObjAndAff:
-      let delta = self.centerPoint - self.body.pos
-      aff.setToRotationInv(ArcTan2(int16(delta.x), int16(delta.y)))
-      obj.init:
-        mode = omAff
-        affId = affId
-        pos = vec2i(self.body.pos) - vec2i(gfxShipTemp.width div 2,
-            gfxShipTemp.height div 2)
-        size = gfxShipTemp.size
-        tileId = self.tileId
-        palId = self.paletteId
-  elif invisibilityOn:
-    if (invisibilityFrames div 20) mod 2 == 0:
+proc draw*(self: var PlayerShip, gameOver: bool) =
+  if not gameOver:
+    copyFrame(addr objTileMem[self.tileId], gfxShipTemp, 0)
+    if not invisibilityOn and not screenStopOn:
       withObjAndAff:
         let delta = self.centerPoint - self.body.pos
         aff.setToRotationInv(ArcTan2(int16(delta.x), int16(delta.y)))
@@ -42,6 +30,19 @@ proc draw*(self: var PlayerShip) =
           size = gfxShipTemp.size
           tileId = self.tileId
           palId = self.paletteId
+    elif invisibilityOn:
+      if (invisibilityFrames div 20) mod 2 == 0:
+        withObjAndAff:
+          let delta = self.centerPoint - self.body.pos
+          aff.setToRotationInv(ArcTan2(int16(delta.x), int16(delta.y)))
+          obj.init:
+            mode = omAff
+            affId = affId
+            pos = vec2i(self.body.pos) - vec2i(gfxShipTemp.width div 2,
+                gfxShipTemp.height div 2)
+            size = gfxShipTemp.size
+            tileId = self.tileId
+            palId = self.paletteId
 
 
 # calculate and update ship position
@@ -50,3 +51,4 @@ proc update*(self: var PlayerShip) =
       self.angle) * self.orbitRadius.x)
   self.body.pos.y = self.centerPoint.y + fp(luSin(
       self.angle) * self.orbitRadius.y)
+  

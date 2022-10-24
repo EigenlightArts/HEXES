@@ -5,9 +5,9 @@ asm """
 .balign 4
 """
 
-import natu/[video, bios, irq, input, graphics, utils, memory]
+import natu/[video, bios, irq, input, graphics, utils, memory, mgba]
 import utils/[objs, scene]
-import scenes/game
+import scenes/[game, title]
 
 
 # NOTE(Kal): Resources about Game Engine Development:
@@ -37,12 +37,16 @@ proc main =
   irq.init()
   irq.put(iiVBlank, onVBlank)
 
+  printf("ASSERT HEXES.NIM A")
+
+  # setScene(TitleScene)
   setScene(GameScene)
 
   while true:
     discard rand() # introduce some nondeterminism to the RNG
     keyPoll()
     updateScene()
+    printf("ASSERT HEXES.NIM B")
     canRedraw = true
     VBlankIntrWait()
 

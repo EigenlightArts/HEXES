@@ -40,9 +40,11 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex,
       if bulletEnemy.status == Active:
         bulletEnemy.update(speed = 2)
 
-        if collide(playerShip.body, bulletEnemy.body):
+        if collide(playerShip.body, bulletEnemy.body) and not invisibilityOn:
           bulletEnemy.status = Finished
           timeScoreValue = timeScorePenalty
+          screenStopOn = true
+          invisibilityOn = true
 
     for modifier in mitems(modifierEntitiesInstances):
       if modifier.status == Active:

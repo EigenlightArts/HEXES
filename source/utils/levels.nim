@@ -1,5 +1,5 @@
-import natu/[core, bios, irq, oam, input, video, mgba, math]
+import natu/[bios, irq, oam, input, video, mgba, math]
 import natu/[graphics, backgrounds]
-import utils/[objs, levels, scene]
+import utils/[objs, scene]
 
 # TODO(Kal): Implement Levels

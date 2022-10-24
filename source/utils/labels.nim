@@ -1,5 +1,5 @@
 import natu/[utils, oam, video, math, graphics, tte, surfaces]
-import objs
+import utils/objs
 
 export tte
 

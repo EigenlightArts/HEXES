@@ -23,12 +23,13 @@ if projectPath() == thisDir() / main:
   switch "linedir", "on"               # get Nim stack traces instead of C 
   warning "UnusedImport", off          # ignore unused import warnings, FIXME(Kal): remove after going to final stages of production 
 
-task graphics, "convert spritesheets":
+task assets, "convert assets":
   gfxConvert "graphics.nims"
+  bgConvert "backgrounds.nims"
 
 task build, "builds the GBA rom":
   let args = commandLineParams()[1..^1].join(" ")
-  graphicsTask()
+  assetsTask()
   selfExec "c " & args & " -o:" & name & ".elf " & thisDir() / main
   gbaStrip name & ".elf", name & ".gba"
   gbaFix name & ".gba"
