@@ -4,7 +4,7 @@ HEXES, The fast-paced puzzle shoot'em up!
 
 Programming by: [Kaleidosium](https://github.com/Kaleidosium)
 
-Music by: [kathound](https://kathrynhathaway.bandcamp.com/)
+Music and SFX by: [kathound](https://kathrynhathaway.bandcamp.com/)
 
 ## Special Thanks
 
