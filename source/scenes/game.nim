@@ -36,15 +36,18 @@ const timerInitialConst = 300
 # See:
 # - C:\Users\Kaleidosium\Documents\School Shiz\Project Documentation\HEXES\Visual Journal\handmade-help-1.txt
 # - https://probablydance.com/2019/08/28/a-new-algorithm-for-controlled-randomness/
+# - https://stackoverflow.com/a/28933315/10916748
 
 proc startEventLoop() =
+  eventLoopTimer = 0
+
   shootEnemy = rand(0..1)
   chooseModifierKind = rand(0..4)
 
-  eventLoopTimer = 0
-  eventEnemyShoot = rand(10..40)
+  eventEnemyShoot = rand(40..80)
   eventEnemySelect = rand(1..4)
-  eventModifierShoot = rand(30..80)
+
+  eventModifierShoot = rand(10..50)
   # excludes 0 and $
   eventModifierIndex = if chooseModifierKind == 4: rand(16..19) else: rand(
       1..15)
@@ -87,15 +90,16 @@ proc onUpdate =
 
   centerNumberInstance.update()
 
-  player.controlsGame(playerShipInstance, centerNumberInstance, modifierSlotsInstance, game.gameOverFlag)
+  player.controlsGame(playerShipInstance, centerNumberInstance,
+      modifierSlotsInstance, game.gameOverFlag)
 
   playerShipInstance.update()
 
   # fire the EvilHex projectiles
-  if eventLoopTimer == eventModifierShoot and shootEnemy == 1:
+  if eventLoopTimer == eventModifierShoot:
     evilHexInstance.fireModifierHex(eventModifierIndex,
         playerShipInstance.body.pos)
-  if eventLoopTimer == eventEnemyShoot:
+  if eventLoopTimer == eventEnemyShoot and shootEnemy == 1:
     evilHexInstance.fireEnemyHex(eventEnemySelect, playerShipInstance.body.pos)
 
   # evilHexInstance.update()

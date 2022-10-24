@@ -37,16 +37,14 @@ proc main =
   irq.init()
   irq.put(iiVBlank, onVBlank)
 
-  printf("ASSERT HEXES.NIM A")
 
-  # setScene(TitleScene)
-  setScene(GameScene)
+  setScene(TitleScene)
+  # setScene(GameScene)
 
   while true:
     discard rand() # introduce some nondeterminism to the RNG
     keyPoll()
     updateScene()
-    printf("ASSERT HEXES.NIM B")
     canRedraw = true
     VBlankIntrWait()
 
