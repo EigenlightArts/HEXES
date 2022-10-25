@@ -81,6 +81,7 @@ type Timer* = object
   valueSeconds*: int
   valueFrames*: int
   introSeconds*: int
+  limitSeconds*: int
 
 proc `=destroy`*(self: var Timer) =
   if self.initialised:

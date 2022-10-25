@@ -32,8 +32,10 @@ proc draw*(self: var CenterNumber; gameOver: bool) =
     let size = tte.getTextSize(addr self.hexBuffer)
     self.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
       ScreenHeight div 2 - size.y div 2)
+
     posprintf(addr self.hexBuffer, "$%X", self.value)
     self.label.put(addr self.hexBuffer)
+
     self.updateFlag = false
 
 proc update*(self: var CenterNumber) =

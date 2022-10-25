@@ -10,6 +10,7 @@ type Game = ref object
   ecnTarget: int
   timerInitial: int
   gameOverFlag: bool
+  pauseFlag: bool
 
 var game: Game
 
@@ -62,6 +63,7 @@ proc onShow =
   game.ecnTarget = rand(0..255)
   game.timerInitial = timerInitialConst
   game.gameOverFlag = false
+  game.pauseFlag = false
 
   while game.ecnValue == game.ecnTarget:
     game.ecnTarget = rand(0..255)
@@ -91,20 +93,22 @@ proc onUpdate =
   centerNumberInstance.update()
 
   player.controlsGame(playerShipInstance, centerNumberInstance,
-      modifierSlotsInstance, game.gameOverFlag)
+      modifierSlotsInstance, game.gameOverFlag, game.pauseFlag)
 
-  playerShipInstance.update()
+  if not game.pauseFlag:
+    playerShipInstance.update()
 
-  # fire the EvilHex projectiles
-  if eventLoopTimer == eventModifierShoot:
-    evilHexInstance.fireModifierHex(eventModifierIndex,
-        playerShipInstance.body.pos)
-  if eventLoopTimer == eventEnemyShoot and shootEnemy == 1:
-    evilHexInstance.fireEnemyHex(eventEnemySelect, playerShipInstance.body.pos)
+    # fire the EvilHex projectiles
+    if eventLoopTimer == eventModifierShoot:
+      evilHexInstance.fireModifierHex(eventModifierIndex,
+          playerShipInstance.body.pos)
+    if eventLoopTimer == eventEnemyShoot and shootEnemy == 1:
+      evilHexInstance.fireEnemyHex(eventEnemySelect,
+          playerShipInstance.body.pos)
 
-  # evilHexInstance.update()
-  timerInstance.update(game.gameOverFlag)
-  shooter.update(playerShipInstance, evilHexInstance, modifierSlotsInstance)
+    # evilHexInstance.update()
+    timerInstance.update(game.gameOverFlag)
+    shooter.update(playerShipInstance, evilHexInstance, modifierSlotsInstance)
 
   inc eventLoopTimer
 
@@ -112,7 +116,8 @@ proc onHide =
   game = nil
 
 proc onDraw =
-  timerInstance.draw(centerNumberInstance.target, game.gameOverFlag)
+  timerInstance.draw(centerNumberInstance.target, game.gameOverFlag,
+      game.pauseFlag, eventLoopTimer)
 
   # If it's no longer the intro, add a target label
   targetInstance.draw(timerInstance.introFlag)

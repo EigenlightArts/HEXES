@@ -7,8 +7,9 @@ proc initTimer*(valueSeconds: int, introSeconds: int): Timer =
   result.initialised = true
 
   result.valueSeconds = valueSeconds
-  result.introSeconds = introSeconds
   result.valueFrames = result.valueSeconds * 60
+  result.introSeconds = introSeconds
+  result.limitSeconds = result.introSeconds * 2
   result.updateFlag = false
   result.introFlag = true
 
@@ -31,8 +32,9 @@ proc update*(self: var Timer, gameOver: var bool) =
       self.updateFlag = true
 
   if timeScoreValue != 0:
-    self.valueFrames += timeScoreValue * 60
-    self.valueSeconds += timeScoreValue
+    if self.valueSeconds <= self.limitSeconds:
+      self.valueFrames += timeScoreValue * 60
+      self.valueSeconds += timeScoreValue
 
     timeScoreValue = 0
 
@@ -40,19 +42,25 @@ proc update*(self: var Timer, gameOver: var bool) =
     gameOver = true
 
 
-proc draw*(self: var Timer, target: int, gameOver: bool) =
+proc draw*(self: var Timer, target: int, gameOver: bool, pause: bool,
+    eventLoopTimer: int) =
   if not gameOver:
-    self.label.draw()
+    if not pause:
+      self.label.draw()
 
     let size = tte.getTextSize(addr self.hexBuffer)
     self.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
       ScreenHeight div 12 - size.y div 2)
 
-    if self.introFlag:
+    if pause:
+      if (eventLoopTimer div 25) mod 2 == 0:
+        self.label.draw()
+
+        posprintf(addr self.hexBuffer, "PAUSED")
+        self.label.put(addr self.hexBuffer)
+    elif self.introFlag:
       posprintf(addr self.hexBuffer, "Get to $%X!", target)
       self.label.put(addr self.hexBuffer)
-
-
     elif self.updateFlag:
       let seconds = self.valueSeconds mod 60
       let minutes = (self.valueSeconds div 60) mod 60
