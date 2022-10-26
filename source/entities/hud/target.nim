@@ -12,13 +12,13 @@ proc initTarget*(target: int): Target =
   result.label.shadow = 0 # set the shadow colour (only relevant if the font actually has more than 1 colour)
 
 
-proc draw*(self: var Target, introFlag: bool) =
+proc draw*(self: var Target, timerFlag: TimerFlags) =
   self.label.draw()
 
   let size = tte.getTextSize(addr self.hexBuffer)
   self.label.pos = vec2i(ScreenWidth div 12 - size.x div 2,
     ScreenHeight - 16 - size.y div 2)
 
-  if not introFlag:
+  if timerFlag != tfIntro:
     posprintf(addr self.hexBuffer, "$%X", self.target)
     self.label.put(addr self.hexBuffer)

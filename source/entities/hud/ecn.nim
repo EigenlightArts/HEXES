@@ -1,13 +1,12 @@
 import natu/[math, graphics, posprintf, video, tte]
 import utils/objs
-import types/hud
+import types/[hud, scenes]
 
 proc initCenterNumber*(value: sink int, target: sink int): CenterNumber =
   result.initialised = true
 
   result.value = value
   result.target = target
-  result.updateFlag = true
 
   result.label.init(vec2i(ScreenWidth div 2, ScreenHeight div 2), s8x16, count = 10)
   result.label.obj.pal = acquireObjPal(gfxShipTemp)
@@ -17,18 +16,24 @@ proc initCenterNumber*(value: sink int, target: sink int): CenterNumber =
   posprintf(addr result.hexBuffer, "$%X", result.value)
   result.label.put(addr result.hexBuffer)
 
-proc draw*(self: var CenterNumber; gameOver: bool) =
+proc draw*(self: var CenterNumber; gameStatus: GameStatus) =
   self.label.draw()
 
-  if gameOver:
+  if gameStatus == GameOver:
     let size = tte.getTextSize(addr self.hexBuffer)
     self.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
       ScreenHeight div 2 - size.y div 2)
 
     posprintf(addr self.hexBuffer, "GAME OVER")
     self.label.put(addr self.hexBuffer)
-    self.updateFlag = false
-  elif self.updateFlag:
+  elif gameStatus == LevelUp:
+    let size = tte.getTextSize(addr self.hexBuffer)
+    self.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
+      ScreenHeight div 2 - size.y div 2)
+
+    posprintf(addr self.hexBuffer, "YOU WON")
+    self.label.put(addr self.hexBuffer)
+  else:
     let size = tte.getTextSize(addr self.hexBuffer)
     self.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
       ScreenHeight div 2 - size.y div 2)
@@ -36,7 +41,6 @@ proc draw*(self: var CenterNumber; gameOver: bool) =
     posprintf(addr self.hexBuffer, "$%X", self.value)
     self.label.put(addr self.hexBuffer)
 
-    self.updateFlag = false
 
 proc update*(self: var CenterNumber) =
   # check if CenterNumber is overflowing or underflowing

@@ -1,12 +1,12 @@
 import natu/[graphics, input]
 import components/projectile/bulletplayer
-import types/[entities, hud]
+import types/[scenes, entities, hud]
 import modules/shooter
 
 proc controlsGame*(playerShip: var PlayerShip; centerNumber: var CenterNumber;
-    modifierSlots: var ModifierSlots; gameOver: bool; pause: var bool) =
-  if not gameOver:
-    if not pause and not screenStopOn:
+    modifierSlots: var ModifierSlots; gameStatus: var GameStatus) =
+  if gameStatus != GameOver:
+    if gameStatus == Play:
       if keyIsDown(kiLeft):
         playerShip.angle += 350
       if keyIsDown(kiRight):
@@ -18,8 +18,8 @@ proc controlsGame*(playerShip: var PlayerShip; centerNumber: var CenterNumber;
       if keyHit(kiB):
         centerNumber.inputModifierValue(modifierSlots)
     if keyHit(kiStart):
-      if pause:
-        pause = false
-      else:
-        pause = true
+      if gameStatus == Paused:
+        gameStatus = Play
+      elif gameStatus == Play:
+        gameStatus = Paused
 

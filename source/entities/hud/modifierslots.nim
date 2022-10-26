@@ -2,14 +2,13 @@ import natu/[math, graphics, video]
 import components/projectile/modifier
 import utils/objs
 import modules/shooter
-import types/hud
+import types/[hud, scenes]
 
 proc initModifierSlots*(): ModifierSlots =
   result.initialised = true
-  # result.updateFlag = true
 
-proc draw*(modifierSlots: var ModifierSlots, gameOver: bool) =
-  if not gameOver:
+proc draw*(modifierSlots: var ModifierSlots, gameStatus: GameStatus) =
+  if gameStatus != GameOver:
     if modifierSlots.drawOperator:
       if modifierSlots.modifierOperator.valueOperator != okNone:
         withObj:

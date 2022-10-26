@@ -1,6 +1,6 @@
 import natu/[math, graphics, video, tte, posprintf]
 import utils/objs
-import types/hud
+import types/[hud, scenes]
 
 
 proc initTimer*(valueSeconds: int, introSeconds: int): Timer =
@@ -10,26 +10,23 @@ proc initTimer*(valueSeconds: int, introSeconds: int): Timer =
   result.valueFrames = result.valueSeconds * 60
   result.introSeconds = introSeconds
   result.limitSeconds = result.introSeconds * 2
-  result.updateFlag = false
-  result.introFlag = true
+  result.flag = tfIntro
 
   result.label.init(vec2i(ScreenWidth div 2, ScreenHeight div 12), s8x16, count = 15)
   result.label.obj.pal = acquireObjPal(gfxShipTemp)
   result.label.ink = 1 # set the ink colour index to use from the palette
   result.label.shadow = 0 # set the shadow colour (only relevant if the font actually has more than 1 colour)
 
-proc update*(self: var Timer, gameOver: var bool) =
+proc update*(self: var Timer, gameStatus: var GameStatus) =
   dec self.valueFrames
 
   if self.valueFrames mod 60 == 0:
     dec self.valueSeconds
-    if self.introFlag:
+    if self.flag == tfIntro:
       dec self.introSeconds
 
     if self.introSeconds <= 0:
-      self.introFlag = false
-    if not self.introFlag:
-      self.updateFlag = true
+      self.flag = tfUpdate
 
   if timeScoreValue != 0:
     if self.valueSeconds <= self.limitSeconds:
@@ -39,34 +36,35 @@ proc update*(self: var Timer, gameOver: var bool) =
     timeScoreValue = 0
 
   if self.valueFrames <= 0:
-    gameOver = true
+    gameStatus = GameOver
 
 
-proc draw*(self: var Timer, target: int, gameOver: bool, pause: bool,
+proc draw*(self: var Timer, target: int, gameStatus: GameStatus,
     eventLoopTimer: int) =
-  if not gameOver:
-    if not pause:
+  if gameStatus != GameOver:
+    if gameStatus == Play:
       self.label.draw()
 
     let size = tte.getTextSize(addr self.hexBuffer)
     self.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
       ScreenHeight div 12 - size.y div 2)
 
-    if pause:
+
+    if gameStatus == Paused:
       if (eventLoopTimer div 25) mod 2 == 0:
         self.label.draw()
 
         posprintf(addr self.hexBuffer, "PAUSED")
         self.label.put(addr self.hexBuffer)
-    elif self.introFlag:
+    elif self.flag == tfIntro:
       posprintf(addr self.hexBuffer, "Get to $%X!", target)
       self.label.put(addr self.hexBuffer)
-    elif self.updateFlag:
+    elif self.flag == tfUpdate:
       let seconds = self.valueSeconds mod 60
       let minutes = (self.valueSeconds div 60) mod 60
 
       posprintf(addr self.hexBuffer, "%02d:%02d", minutes, seconds)
       self.label.put(addr self.hexBuffer)
-      self.updateFlag = false
+      self.flag = tfNone
 
 

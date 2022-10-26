@@ -1,6 +1,6 @@
 import natu/[math, graphics, video, bios]
 import utils/objs
-import types/entities
+import types/[entities, scenes]
 
 
 # constructor - create a ship object
@@ -15,8 +15,8 @@ proc initPlayerShip*(pos: Vec2f): PlayerShip =
 
 
 # draw ship sprite and all the affine snazziness
-proc draw*(self: var PlayerShip, gameOver: bool) =
-  if not gameOver:
+proc draw*(self: var PlayerShip, gameStatus: GameStatus) =
+  if gameStatus != GameOver:
     copyFrame(addr objTileMem[self.tileId], gfxShipTemp, 0)
     if not invisibilityOn and not screenStopOn:
       withObjAndAff:

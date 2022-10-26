@@ -2,7 +2,7 @@ import natu/[video, utils, mgba]
 import components/projectile/[bulletplayer, bulletenemy, enemy, modifier]
 import components/shared
 import utils/body
-import types/[entities, hud]
+import types/[entities, hud, scenes]
 
 export bulletplayer, bulletenemy, enemy, modifier
 
@@ -12,15 +12,16 @@ proc destroy*() =
   enemyEntitiesInstances.clear()
   modifierEntitiesInstances.clear()
 
-proc draw*() =
-  for bulletPlayer in mitems(bulletPlayerEntitiesInstances):
-    bulletPlayer.draw()
-  for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
-    bulletEnemy.draw()
-  for enemy in mitems(enemyEntitiesInstances):
-    enemy.draw()
-  for modifier in mitems(modifierEntitiesInstances):
-    modifier.draw()
+proc draw*(gameStatus: GameStatus) =
+  if gameStatus != LevelUp:
+    for bulletPlayer in mitems(bulletPlayerEntitiesInstances):
+      bulletPlayer.draw()
+    for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
+      bulletEnemy.draw()
+    for enemy in mitems(enemyEntitiesInstances):
+      enemy.draw()
+    for modifier in mitems(modifierEntitiesInstances):
+      modifier.draw()
 
 proc update*(playerShip: var PlayerShip, evilHex: var EvilHex,
     modifierSlots: var ModifierSlots) =

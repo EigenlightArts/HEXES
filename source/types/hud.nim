@@ -14,7 +14,6 @@ type ModifierSlots* = object
   modifierNumber*: Modifier
   drawNumber*: bool
   drawOperator*: bool
-  updateFlag*: bool
 
 proc `=destroy`*(self: var ModifierSlots) =
   if self.initialised:
@@ -39,7 +38,6 @@ type CenterNumber* = object
 
   value*: int
   target*: int
-  updateFlag*: bool
 
 proc `=destroy`*(self: var CenterNumber) =
   if self.initialised:
@@ -62,7 +60,6 @@ proc inputModifierValue*(self: var CenterNumber;
     of okMul: self.value = self.value * modifierSlots.modifierNumber.valueNumber
     of okDiv: self.value = self.value div modifierSlots.modifierNumber.valueNumber
 
-    self.updateFlag = true
     modifierSlots.modifierNumber.valueNumber = 0
     modifierSlots.modifierOperator.valueOperator = okNone
   else:
@@ -70,18 +67,21 @@ proc inputModifierValue*(self: var CenterNumber;
     printf("You don't have a stored number and/or operator!")
 
 
-type Timer* = object
-  initialised*: bool
-  label*: Label
-  hexBuffer*: array[9, char]
+type 
+  TimerFlags* = enum
+    tfNone
+    tfUpdate
+    tfIntro
+  Timer* = object
+    initialised*: bool
+    flag*: TimerFlags
+    label*: Label
+    hexBuffer*: array[9, char]
 
-  updateFlag*: bool
-  introFlag*: bool
-
-  valueSeconds*: int
-  valueFrames*: int
-  introSeconds*: int
-  limitSeconds*: int
+    valueSeconds*: int
+    valueFrames*: int
+    introSeconds*: int
+    limitSeconds*: int
 
 proc `=destroy`*(self: var Timer) =
   if self.initialised:
