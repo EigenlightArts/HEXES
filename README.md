@@ -8,7 +8,7 @@ Music and SFX by: [kathound](https://kathrynhathaway.bandcamp.com/)
 
 ## Special Thanks
 
-- [exelotl](https://natu.exelo.tl/), along with PyroPyro for Natu and XNIQ
+- [exelotl](https://natu.exelo.tl/), along with PyroPyro for Natu and XNIQ's code
 - [Jeti](https://fontenddev.com/) for the fonts used or derived
 - [Jonathan So](https://jonathan-so.itch.io/creatorpack) for The Game Creator's Pack
 - [Mark Brown](https://www.youtube.com/c/MarkBrownGMT/) for the *Developing* series

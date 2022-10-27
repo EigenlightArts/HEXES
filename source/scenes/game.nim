@@ -37,7 +37,9 @@ const timerLevelUp = 120
 
 # TODO(Kal): Remaining things for Game Jam
 # - Kick player back to TitleScreen if GameOver
-# - Go to endGameScene if Player finishes all levels 
+# - Go to endGameScene if Player finishes all levels
+# - Add score system calculated from remaining time in the timer
+# - Add rudimentary save system for High Scores
 
 proc levelUp(self: var Game) =
   if self.level < levelMax:
