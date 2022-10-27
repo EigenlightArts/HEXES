@@ -10,7 +10,7 @@ Music and SFX by: [kathound](https://kathrynhathaway.bandcamp.com/)
 
 - [exelotl](https://natu.exelo.tl/), along with PyroPyro for Natu and XNIQ's code
 - [Jeti](https://fontenddev.com/) for the fonts used or derived
-- [Jonathan So](https://jonathan-so.itch.io/creatorpack) for *The Game Creator's Pack*, used during development
+- [Jonathan So](https://jonathan-so.itch.io/creatorpack) for *The Game Creator's Pack*, used temporarily during development
 - [Mark Brown](https://www.youtube.com/c/MarkBrownGMT/) for the *Developing* series
 - Justburner for some minor math help
 
