@@ -5,7 +5,7 @@ asm """
 .balign 4
 """
 
-import natu/[video, bios, irq, input, graphics, utils, memory, mgba]
+import natu/[video, bios, irq, input, graphics, utils, memory]
 import utils/[objs, scene]
 import scenes/[game, title]
 

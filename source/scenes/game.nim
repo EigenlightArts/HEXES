@@ -1,21 +1,13 @@
 import natu/[video, graphics, input, irq, math, utils]
-import utils/[scene, levels]
+import utils/[scene, log]
 import entities/[playership, evilhex]
 import entities/hud/[ecn, timer, target, modifierslots]
-import modules/[shooter, player, score]
+import modules/[shooter, player, score, levels]
 import types/[scenes, entities, hud]
 
 proc goToGameEndScene()
 
 var game: Game
-
-var playerShipInstance: PlayerShip
-var evilHexInstance: EvilHex
-
-var centerNumberInstance: CenterNumber
-var timerInstance: Timer
-var targetInstance: Target
-var modifierSlotsInstance: ModifierSlots
 
 var shootEnemy: int
 var chooseModifierKind: int
@@ -46,9 +38,28 @@ const timerGameOverFrames = 170
 # - Add score system calculated from remaining time in the timer
 # - Add rudimentary save system for High Scores
 
+proc initGame*(): Game =
+  result.status = Intro
+
+  result.ecnValue = rand(0..255)
+  result.ecnTarget = rand(0..255)
+
+  while result.ecnValue == result.ecnTarget:
+    result.ecnTarget = rand(0..255)
+
+  result.playerShipInstance = initPlayerShip(vec2f(75, 0))
+  result.evilHexInstance = initEvilHex()
+
+  result.centerNumberInstance = initCenterNumber(result.ecnValue, result.ecnTarget)
+  result.timerInstance = initTimer(timerInitialSeconds, timerIntroSeconds, timerLimitSeconds)
+  result.targetInstance = initTarget(result.centerNumberInstance.target)
+  result.modifierSlotsInstance = initModifierSlots()
+
+  eventLevelUpTimer = timerLevelUpFrames
+  eventGameOverTimer = timerGameOverFrames
+
 proc levelUp(self: var Game) =
   if self.level < levelMax:
-    self.timer = timerInitialSeconds
     inc self.level
     self.status = LevelUp
   elif self.level >= levelMax:
@@ -58,7 +69,9 @@ proc startEventLoop() =
   eventLoopTimer = 0
 
   shootEnemy = rand(0..1)
-  chooseModifierKind = rand(0..4)
+  chooseModifierKind = rand(1..4)
+
+  log "game.level: %d", game.level
 
   eventEnemySelect = selectEnemy(game.level)
   eventEnemyShoot = enemyShoot(game.level)
@@ -69,30 +82,12 @@ proc startEventLoop() =
       1..15)
 
 proc onShow =
-  new(game)
+  game = initGame()
 
-  game.ecnValue = rand(0..255)
-  game.ecnTarget = rand(0..255)
-  game.timer = timerInitialSeconds
-  game.status = Intro
   game.level = 1
-
-  while game.ecnValue == game.ecnTarget:
-    game.ecnTarget = rand(0..255)
 
   # background color, approximating eigengrau
   bgColorBuf[0] = rgb8(22, 22, 29)
-
-  playerShipInstance = initPlayerShip(vec2f(75, 0))
-  evilHexInstance = initEvilHex()
-
-  centerNumberInstance = initCenterNumber(game.ecnValue, game.ecnTarget)
-  timerInstance = initTimer(game.timer, timerIntroSeconds, timerLimitSeconds)
-  targetInstance = initTarget(centerNumberInstance.target)
-  modifierSlotsInstance = initModifierSlots()
-
-  eventLevelUpTimer = timerLevelUpFrames
-  eventGameOverTimer = timerGameOverFrames
 
   display.layers = {lBg0, lObj}
   display.obj1d = true
@@ -108,36 +103,40 @@ proc onUpdate =
   if eventLoopTimer == 100:
     startEventLoop()
 
-  centerNumberInstance.update()
+  game.centerNumberInstance.update()
 
-  player.controlsGame(playerShipInstance, centerNumberInstance,
-      modifierSlotsInstance, game.status)
+  player.controlsGame(game.playerShipInstance, game.centerNumberInstance,
+      game.modifierSlotsInstance, game.status)
+
+  game.modifierSlotsInstance.draw(game.status)
 
   if game.status == Play or game.status == Intro:
-    playerShipInstance.update()
+    game.playerShipInstance.update()
 
     # fire the EvilHex projectiles
     if eventLoopTimer == eventModifierShoot:
-      evilHexInstance.fireModifierHex(eventModifierIndex,
-          playerShipInstance.body.pos)
+      game.evilHexInstance.fireModifierHex(eventModifierIndex,
+          game.playerShipInstance.body.pos)
     if eventLoopTimer == eventEnemyShoot and shootEnemy == 1:
-      evilHexInstance.fireEnemyHex(eventEnemySelect,
-          playerShipInstance.body.pos)
+      game.evilHexInstance.fireEnemyHex(eventEnemySelect,
+          game.playerShipInstance.body.pos)
 
-    # evilHexInstance.update()
-    timerInstance.update(game.status)
-    shooter.update(playerShipInstance, evilHexInstance, modifierSlotsInstance)
+    # game.evilHexInstance.update()
+    game.timerInstance.update(game.status)
+    shooter.update(game.playerShipInstance, game.evilHexInstance, game.modifierSlotsInstance)
 
     if keyHit(kiSelect): # FIXME(Kal): Debug Only
     # if game.ecnValue == game.ecnTarget:
       game.levelUp()
 
   if game.status == LevelUp:
+    discard rand() # introduce some nondeterminism to the RNG
+
     dec eventLevelUpTimer
     if eventLevelUpTimer <= 0:
-      addScoreFromSeconds(game.timer)
-      eventLevelUpTimer = timerLevelUpFrames
-      game.status = Intro
+      addScoreFromSeconds(game.timerInstance.getValueSeconds())
+
+      game = initGame()
   
   if game.status == GameOver:
     dec eventGameOverTimer
@@ -148,23 +147,21 @@ proc onUpdate =
   inc eventLoopTimer
 
 proc onHide =
-  game = nil
-
   display.layers = display.layers - {lBg0, lObj}
   display.obj1d = false
 
 proc onDraw =
-  timerInstance.draw(centerNumberInstance.target, game.status, eventLoopTimer)
+  game.timerInstance.draw(game.centerNumberInstance.target, game.status, eventLoopTimer)
 
   # If it's no longer the intro, add a target label
-  targetInstance.draw(game.status)
+  game.targetInstance.draw(game.status)
 
   # draw the Shooter projectiles
   shooter.draw(game.status)
 
-  centerNumberInstance.draw(game.status)
-  playerShipInstance.draw(game.status)
-  modifierSlotsInstance.draw(game.status)
+  game.centerNumberInstance.draw(game.status)
+  game.playerShipInstance.draw(game.status)
+  game.modifierSlotsInstance.draw(game.status)
 
 
 const GameScene* = Scene(

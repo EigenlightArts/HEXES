@@ -1,3 +1,5 @@
+import types/[entities, hud]
+
 type
   GameStatus* = enum
     None
@@ -6,10 +8,23 @@ type
     Paused
     LevelUp
     GameOver
-  Game* = ref object
+  Game* = object
+    status*: GameStatus
+    
     ecnValue*: int
     ecnTarget*: int
-    timer*: int
     level*: int
 
-    status*: GameStatus
+    playerShipInstance*: PlayerShip
+    evilHexInstance*: EvilHex
+
+    centerNumberInstance*: CenterNumber
+    timerInstance*: Timer
+    targetInstance*: Target
+    modifierSlotsInstance*: ModifierSlots
+
+proc `=destroy`*(self: var Game) =
+  if self.status != None:
+    self.status = None
+
+proc `=copy`*(dest: var Game; source: Game) {.error: "Not implemented".}

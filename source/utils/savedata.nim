@@ -1,7 +1,7 @@
-import natu/[bios, irq, oam, input, video, mgba, math, memory]
+import natu/[bios, irq, oam, input, video, math, memory]
 import natu/utils as nutils
 import natu/[graphics, backgrounds]
-import scene, objs
+import utils/[scene, objs, log]
 
 type SaveData = object
   header: uint32
@@ -37,11 +37,11 @@ proc load*() =
       src = sram,
       size = sizeof(SaveData)
     )
-    # log "loaded valid save"
+    log "loaded valid save"
   else:
     sav = default(SaveData)
     sav.header = 42069
-    # log "created new save"
+    log "created new save"
 
 proc getHighScore*(): uint = sav.score
 
@@ -52,4 +52,4 @@ proc saveHighScore*(n: uint) =
     src = addr sav,
     size = sizeof(SaveData)
   )
-  # log "saved score %d = ", sav.score
+  log "saved score %d = ", sav.score

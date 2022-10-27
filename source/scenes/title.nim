@@ -1,6 +1,6 @@
-import natu/[bios, irq, oam, input, video, mgba, math, tte, posprintf]
+import natu/[bios, irq, oam, input, video, math, tte, posprintf]
 import natu/[graphics, backgrounds]
-import utils/[objs, labels, levels, scene]
+import utils/[objs, labels, scene]
 
 proc goToGameScene()
 

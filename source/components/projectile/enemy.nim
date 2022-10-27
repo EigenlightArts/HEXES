@@ -1,4 +1,4 @@
-import natu/[math, graphics, video, oam, utils, mgba]
+import natu/[math, graphics, video, oam, utils]
 import utils/[objs, body]
 import components/shared
 import components/projectile/bulletenemy

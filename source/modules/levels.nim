@@ -1,4 +1,4 @@
-import natu/[bios, irq, oam, input, video, mgba, math, utils]
+import natu/[bios, irq, oam, input, video, math, utils]
 import natu/[graphics, backgrounds]
 import utils/[objs, scene]
 
@@ -10,7 +10,7 @@ type
 
 const levelMax* = 4
 
-const levels*: array[1..levelMax, Level] = [
+const levels: array[1..levelMax, Level] = [
   1: Level(
     enemySelect: 1..2,
     enemyShoot: 30..90,
@@ -35,12 +35,12 @@ const levels*: array[1..levelMax, Level] = [
 
 proc selectEnemy*(currentLevel: int): int =
   let slice = levels[currentLevel].enemySelect
-  rand(slice)
+  result = rand(slice)
 
 proc enemyShoot*(currentLevel: int): int =
   let slice = levels[currentLevel].enemyShoot
-  rand(slice)
+  result = rand(slice)
 
 proc enemyModifier*(currentLevel: int): int =
   let slice = levels[currentLevel].modifierShoot
-  rand(slice)
+  result = rand(slice)

@@ -1,7 +1,7 @@
-import natu/[math, graphics, video, mgba]
+import natu/[math, graphics, video]
 import utils/body
 
-export body, mgba
+export body
 
 const invisibilityFramesConst* = 300
 const screenStopFramesConst* = 60

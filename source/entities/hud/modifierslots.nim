@@ -6,6 +6,11 @@ import types/[hud, scenes]
 
 proc initModifierSlots*(): ModifierSlots =
   result.initialised = true
+
+proc update*(self: var ModifierSlots, gameStatus: GameStatus) =
+  if gameStatus == GameOver or gameStatus == LevelUp:
+    self.modifierNumber.valueNumber = 0
+    self.modifierOperator.valueOperator = okNone
         
 proc draw*(self: var ModifierSlots, gameStatus: GameStatus) =
   if gameStatus == Play or gameStatus == Intro:
@@ -35,6 +40,4 @@ proc draw*(self: var ModifierSlots, gameStatus: GameStatus) =
             pal = self.modifierNumber.modifierObj.palId,
             size = self.modifierNumber.graphic.size
           )
-  if gameStatus == GameOver or gameStatus == LevelUp:
-    self.modifierNumber.valueNumber = 0
-    self.modifierOperator.valueOperator = okNone
+

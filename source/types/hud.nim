@@ -1,8 +1,8 @@
-import natu/[graphics, video, mgba]
-import utils/labels
+import natu/[graphics, video]
+import utils/[labels, log]
 import components/projectile/modifier
 
-export labels, mgba
+export labels
 
 var timeScoreValue*: int
 var timeScorePenalty*: int = -30
@@ -54,7 +54,7 @@ proc inputModifierValue*(self: var CenterNumber;
     case modifierSlots.modifierOperator.valueOperator:
     of okNone:
       # TODO(Kal): Play a beep
-      printf("You don't have a stored operator!")
+      log "You don't have a stored operator!"
     of okAdd: self.value = self.value + modifierSlots.modifierNumber.valueNumber
     of okSub: self.value = self.value - modifierSlots.modifierNumber.valueNumber
     of okMul: self.value = self.value * modifierSlots.modifierNumber.valueNumber
@@ -64,7 +64,7 @@ proc inputModifierValue*(self: var CenterNumber;
     modifierSlots.modifierOperator.valueOperator = okNone
   else:
     # TODO(Kal): Play a beep
-    printf("You don't have a stored number and/or operator!")
+    log "You don't have a stored number and/or operator!"
 
 
 type 
