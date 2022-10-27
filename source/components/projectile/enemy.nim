@@ -100,7 +100,7 @@ proc update*(enemy: var Enemy) =
     if enemy.kind == ekLozenge:
       dec enemy.shootTimer
       if enemy.shootTimer <= 0:
-        let bulEnemyProj = initProjectileBulletEnemy(gfxBulletTemp,
+        let bulEnemyProj = initProjectileBulletEnemy(gfxBulletEnemy,
             enemy.body.pos)
         fireBulletEnemy(bulEnemyProj, enemy.body.pos, enemy.angle)
         enemy.shootTimer = rand(25..60)

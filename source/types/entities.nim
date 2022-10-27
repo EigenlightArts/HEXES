@@ -25,7 +25,7 @@ proc `=destroy`*(self: var PlayerShip) =
   if self.initialised:
     self.initialised = false
     freeObjTiles(self.tileId)
-    releaseObjPal(gfxShipTemp)
+    releaseObjPal(gfxShipPlayer)
 
 proc `=copy`*(dest: var PlayerShip; source: PlayerShip) {.error: "Not implemented".}
 
@@ -44,6 +44,6 @@ proc `=destroy`*(self: var EvilHex) =
   if self.initialised:
     self.initialised = false
     freeObjTiles(self.tileId)
-    releaseObjPal(gfxShipTemp)
+    releaseObjPal(gfxShipPlayer)
 
 proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}

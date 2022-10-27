@@ -32,18 +32,18 @@ proc onShow =
   eventEndGameTimer = timerEndGameFrames
 
   thanksLabel.init(vec2i(ScreenWidth div 2, ScreenHeight div 2 - 32), s8x16, count = 30)
-  thanksLabel.obj.pal = acquireObjPal(gfxShipTemp)
-  thanksLabel.ink = 1 # set the ink colour index to use from the palette
+  thanksLabel.obj.pal = acquireObjPal(gfxShipPlayer)
+  thanksLabel.ink = 2 # set the ink colour index to use from the palette
   thanksLabel.shadow = 0 # set the shadow colour (only relevant if the font actually has more than 1 colour)
 
   scoreLabel.init(vec2i(ScreenWidth div 2, ScreenHeight div 2), s8x16, count = 15)
-  scoreLabel.obj.pal = acquireObjPal(gfxShipTemp)
-  scoreLabel.ink = 1 # set the ink colour index to use from the palette
+  scoreLabel.obj.pal = acquireObjPal(gfxShipPlayer)
+  scoreLabel.ink = 2 # set the ink colour index to use from the palette
   scoreLabel.shadow = 0 # set the shadow colour (only relevant if the font actually has more than 1 colour)
 
   highScoreLabel.init(vec2i(ScreenWidth div 2, ScreenHeight div 2 + 32), s8x16, count = 25)
-  highScoreLabel.obj.pal = acquireObjPal(gfxShipTemp)
-  highScoreLabel.ink = 1 # set the ink colour index to use from the palette
+  highScoreLabel.obj.pal = acquireObjPal(gfxShipPlayer)
+  highScoreLabel.ink = 2 # set the ink colour index to use from the palette
   highScoreLabel.shadow = 0 # set the shadow colour (only relevant if the font actually has more than 1 colour)
 
   # enable VBlank interrupt so we can wait for
@@ -54,7 +54,7 @@ proc onHide =
   display.layers = display.layers - {lBg0, lObj}
   display.obj1d = false
 
-  releaseObjPal(gfxShipTemp)
+  releaseObjPal(gfxShipPlayer)
   thanksLabel.destroy()
 
 proc onUpdate =

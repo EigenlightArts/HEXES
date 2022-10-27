@@ -9,8 +9,8 @@ proc initCenterNumber*(value: sink int, target: sink int): CenterNumber =
   result.target = target
 
   result.label.init(vec2i(ScreenWidth div 2, ScreenHeight div 2), s8x16, count = 10)
-  result.label.obj.pal = acquireObjPal(gfxShipTemp)
-  result.label.ink = 1 # set the ink colour index to use from the palette
+  result.label.obj.pal = acquireObjPal(gfxShipPlayer)
+  result.label.ink = 2 # set the ink colour index to use from the palette
   result.label.shadow = 0 # set the shadow colour (only relevant if the font actually has more than 1 colour)
 
   posprintf(addr result.hexBuffer, "$%X", result.value)

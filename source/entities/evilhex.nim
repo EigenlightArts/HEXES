@@ -7,8 +7,8 @@ proc initEvilHex*(): EvilHex =
   result.initialised = true
   result.body = initBody(vec2f(ScreenWidth div 2 - 10, ScreenHeight div 2 - 10), 20, 20)
 
-  result.tileId = allocObjTiles(gfxShipTemp)
-  result.paletteId = acquireObjPal(gfxShipTemp)
+  result.tileId = allocObjTiles(gfxShipPlayer)
+  result.paletteId = acquireObjPal(gfxShipPlayer)
 
 
 # draw evilhex and related parts
@@ -69,7 +69,7 @@ proc fireEnemyHex*(self: var EvilHex; enemySelect: int;
     enemySpeed = 3
     enemyHealth = 1
   else:
-    gfxEnemy = gfxBulletTemp
+    gfxEnemy = gfxShipPlayer
     enemyTimeScore = 0
     enemySpeed = 0
     enemyHealth = 0

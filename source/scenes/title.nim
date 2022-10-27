@@ -24,8 +24,8 @@ proc onShow =
   display.obj1d = true
 
   startLabel.init(vec2i(ScreenWidth div 2, ScreenHeight - 32), s8x16, count = 15)
-  startLabel.obj.pal = acquireObjPal(gfxShipTemp)
-  startLabel.ink = 1 # set the ink colour index to use from the palette
+  startLabel.obj.pal = acquireObjPal(gfxShipPlayer)
+  startLabel.ink = 2 # set the ink colour index to use from the palette
   startLabel.shadow = 0 # set the shadow colour (only relevant if the font actually has more than 1 colour)
 
   # enable VBlank interrupt so we can wait for
@@ -36,7 +36,7 @@ proc onHide =
   display.layers = display.layers - {lBg0, lObj}
   display.obj1d = false
 
-  releaseObjPal(gfxShipTemp)
+  releaseObjPal(gfxShipPlayer)
   startLabel.destroy()
 
 proc onUpdate =

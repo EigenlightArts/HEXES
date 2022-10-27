@@ -12,7 +12,7 @@ proc controlsGame*(playerShip: var PlayerShip; centerNumber: var CenterNumber;
       if keyIsDown(kiRight):
         playerShip.angle -= 350
       if keyHit(kiA):
-        let bulPlayerProj = initProjectileBulletPlayer(gfxBulletTemp,
+        let bulPlayerProj = initProjectileBulletPlayer(gfxBulletPlayer,
             playerShip.body.pos)
         shooter.fireBulletPlayer(bulPlayerProj, playerShip.angle)
       if keyHit(kiB):

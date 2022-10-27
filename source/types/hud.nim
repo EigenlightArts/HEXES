@@ -42,7 +42,7 @@ type CenterNumber* = object
 proc `=destroy`*(self: var CenterNumber) =
   if self.initialised:
     self.initialised = false
-    releaseObjPal(gfxShipTemp)
+    releaseObjPal(gfxShipPlayer)
     self.label.destroy()
 
 proc `=copy`*(dest: var CenterNumber;
@@ -82,7 +82,7 @@ type
 proc `=destroy`*(self: var Timer) =
   if self.initialised:
     self.initialised = false
-    releaseObjPal(gfxShipTemp)
+    releaseObjPal(gfxShipPlayer)
     self.label.destroy()
 
 proc `=copy`*(dest: var Timer;
@@ -99,7 +99,7 @@ type Target* = object
 proc `=destroy`*(self: var Target) =
   if self.initialised:
     self.initialised = false
-    releaseObjPal(gfxShipTemp)
+    releaseObjPal(gfxShipPlayer)
     self.label.destroy()
 
 proc `=copy`*(dest: var Target;
