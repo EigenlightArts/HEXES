@@ -38,25 +38,28 @@ const timerGameOverFrames = 170
 # - Add score system calculated from remaining time in the timer
 # - Add rudimentary save system for High Scores
 
-proc initGame*(): Game =
-  result.status = Intro
+proc reset(game: var Game) =
+  game.status = Intro
 
-  result.ecnValue = rand(0..255)
-  result.ecnTarget = rand(0..255)
+  game.ecnValue = rand(0..255)
+  game.ecnTarget = rand(0..255)
 
-  while result.ecnValue == result.ecnTarget:
-    result.ecnTarget = rand(0..255)
+  while game.ecnValue == game.ecnTarget:
+    game.ecnTarget = rand(0..255)
 
-  result.playerShipInstance = initPlayerShip(vec2f(75, 0))
-  result.evilHexInstance = initEvilHex()
+  game.evilHexInstance = initEvilHex()
+  game.playerShipInstance = initPlayerShip(vec2f(75, 0))
+  game.playerShipInstance.angle = 16500
 
-  result.centerNumberInstance = initCenterNumber(result.ecnValue, result.ecnTarget)
-  result.timerInstance = initTimer(timerInitialSeconds, timerIntroSeconds, timerLimitSeconds)
-  result.targetInstance = initTarget(result.centerNumberInstance.target)
-  result.modifierSlotsInstance = initModifierSlots()
+  game.centerNumberInstance = initCenterNumber(game.ecnValue, game.ecnTarget)
+  game.timerInstance = initTimer(timerInitialSeconds, timerIntroSeconds, timerLimitSeconds)
+  game.targetInstance = initTarget(game.centerNumberInstance.target)
+  game.modifierSlotsInstance = initModifierSlots()
 
   eventLevelUpTimer = timerLevelUpFrames
   eventGameOverTimer = timerGameOverFrames
+
+proc initGame(): Game = result.reset()
 
 proc levelUp(self: var Game) =
   if self.level < levelMax:
@@ -135,8 +138,8 @@ proc onUpdate =
     dec eventLevelUpTimer
     if eventLevelUpTimer <= 0:
       addScoreFromSeconds(game.timerInstance.getValueSeconds())
-
-      game = initGame()
+      shooter.destroy()
+      game.reset()
   
   if game.status == GameOver:
     dec eventGameOverTimer
