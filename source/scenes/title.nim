@@ -8,7 +8,7 @@ proc goToGameScene()
 # var menuCur: int
 
 var startLabel: Label
-var hexBuffer: array[9, char]
+var labelBuffer: array[9, char]
 
 proc onShow =
   # Use a BG Control register to select a charblock and screenblock:
@@ -46,12 +46,12 @@ proc onUpdate =
 proc onDraw =
   startLabel.draw()
 
-  let size = tte.getTextSize(addr hexBuffer)
+  let size = tte.getTextSize(addr labelBuffer)
   startLabel.pos = vec2i(ScreenWidth div 2 - size.x div 2,
     (ScreenHeight - 32) - size.y div 2)
 
-  posprintf(addr hexBuffer, "PRESS START")
-  startLabel.put(addr hexBuffer)
+  posprintf(addr labelBuffer, "PRESS START")
+  startLabel.put(addr labelBuffer)
 
 const TitleScene* = Scene(
   show: onShow,

@@ -16,10 +16,10 @@ proc draw*(self: var Target, gameStatus: GameStatus) =
   if gameStatus == Play or gameStatus == Intro:
     self.label.draw()
 
-    let size = tte.getTextSize(addr self.hexBuffer)
+    let size = tte.getTextSize(addr self.labelBuffer)
     self.label.pos = vec2i(ScreenWidth div 12 - size.x div 2,
       ScreenHeight - 16 - size.y div 2)
 
     if gameStatus != Intro:
-      posprintf(addr self.hexBuffer, "$%X", self.target)
-      self.label.put(addr self.hexBuffer)
+      posprintf(addr self.labelBuffer, "$%X", self.target)
+      self.label.put(addr self.labelBuffer)

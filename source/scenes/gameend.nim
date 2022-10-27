@@ -10,9 +10,9 @@ proc backToTitle()
 var thanksLabel: Label
 var scoreLabel: Label
 var highScoreLabel: Label
-var hexBufferT: array[30, char]
-var hexBufferS: array[12, char]
-var hexBufferH: array[20, char]
+var labelBufferT: array[30, char]
+var labelBufferS: array[12, char]
+var labelBufferH: array[20, char]
 
 var eventEndGameTimer: int
 
@@ -61,6 +61,7 @@ proc onUpdate =
   dec eventEndGameTimer
   if eventEndGameTimer <= 0:
     eventEndGameTimer = timerEndGameFrames
+    resetScore()
     backToTitle()
 
 proc onDraw =
@@ -68,32 +69,32 @@ proc onDraw =
   scoreLabel.draw()
   highScoreLabel.draw()
 
-  let sizeT = tte.getTextSize(addr hexBufferT)
+  let sizeT = tte.getTextSize(addr labelBufferT)
   thanksLabel.pos = vec2i(ScreenWidth div 2 - sizeT.x div 2,
     (ScreenHeight div 2 - 32) - sizeT.y div 2)
 
-  posprintf(addr hexBufferT, "THANKS FOR PLAYING THIS DEMO")
-  thanksLabel.put(addr hexBufferT)
+  posprintf(addr labelBufferT, "THANKS FOR PLAYING THIS DEMO")
+  thanksLabel.put(addr labelBufferT)
 
-  let sizeS = tte.getTextSize(addr hexBufferS)
+  let sizeS = tte.getTextSize(addr labelBufferS)
   scoreLabel.pos = vec2i(ScreenWidth div 2 - sizeS.x div 2,
     (ScreenHeight div 2) - sizeS.y div 2)
 
-  posprintf(addr hexBufferS, "SCORE: %d", totalScore)
-  scoreLabel.put(addr hexBufferS)
+  posprintf(addr labelBufferS, "SCORE: %d", totalScore)
+  scoreLabel.put(addr labelBufferS)
 
-  let sizeH = tte.getTextSize(addr hexBufferH)
+  let sizeH = tte.getTextSize(addr labelBufferH)
   highScoreLabel.pos = vec2i(ScreenWidth div 2 - sizeH.x div 2,
     (ScreenHeight div 2 + 32) - sizeH.y div 2)
 
   checkAndStoreIfNewHighScore()
 
   if newHighScore:
-    posprintf(addr hexBufferH, "NEW HIGHSCORE: %d", highScore)
-    highScoreLabel.put(addr hexBufferH)
+    posprintf(addr labelBufferH, "NEW HIGHSCORE: %d", highScore)
+    highScoreLabel.put(addr labelBufferH)
   else:
-    posprintf(addr hexBufferH, "HIGHSCORE: %d", highScore)
-    highScoreLabel.put(addr hexBufferH)
+    posprintf(addr labelBufferH, "HIGHSCORE: %d", highScore)
+    highScoreLabel.put(addr labelBufferH)
 
 const GameEndScene* = Scene(
   show: onShow,

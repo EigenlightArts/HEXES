@@ -34,7 +34,7 @@ proc assignModifiers*(modifierSlots: var ModifierSlots;
 type CenterNumber* = object
   initialised*: bool
   label*: Label
-  hexBuffer*: array[9, char]
+  labelBuffer*: array[9, char]
 
   value*: int
   target*: int
@@ -71,7 +71,7 @@ type
   Timer* = object
     initialised*: bool
     label*: Label
-    hexBuffer*: array[9, char]
+    labelBuffer*: array[9, char]
 
     valueSeconds*: int
     valueFrames*: int
@@ -92,7 +92,7 @@ proc `=copy`*(dest: var Timer;
 type Target* = object
   initialised*: bool
   label*: Label
-  hexBuffer*: array[9, char]
+  labelBuffer*: array[9, char]
 
   target*: int
 

@@ -48,7 +48,7 @@ proc draw*(self: var Timer, target: int, gameStatus: GameStatus,
     if gameStatus == Play or gameStatus == Intro:
       self.label.draw()
 
-    let size = tte.getTextSize(addr self.hexBuffer)
+    let size = tte.getTextSize(addr self.labelBuffer)
     self.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
       ScreenHeight div 12 - size.y div 2)
 
@@ -56,17 +56,17 @@ proc draw*(self: var Timer, target: int, gameStatus: GameStatus,
       if (eventLoopTimer div 25) mod 2 == 0:
         self.label.draw()
 
-        posprintf(addr self.hexBuffer, "PAUSED")
-        self.label.put(addr self.hexBuffer)
+        posprintf(addr self.labelBuffer, "PAUSED")
+        self.label.put(addr self.labelBuffer)
     elif gameStatus == LevelUp:
       # gameStatus = Intro
       self.introSeconds = self.introSecondsInitial
     elif gameStatus == Intro:
-      posprintf(addr self.hexBuffer, "Get to $%X!", target)
-      self.label.put(addr self.hexBuffer)
+      posprintf(addr self.labelBuffer, "Get to $%X!", target)
+      self.label.put(addr self.labelBuffer)
     else:
       let seconds = self.getValueSeconds() mod 60
       let minutes = (self.getValueSeconds() div 60) mod 60
 
-      posprintf(addr self.hexBuffer, "%02d:%02d", minutes, seconds)
-      self.label.put(addr self.hexBuffer)
+      posprintf(addr self.labelBuffer, "%02d:%02d", minutes, seconds)
+      self.label.put(addr self.labelBuffer)
