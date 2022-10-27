@@ -33,7 +33,8 @@ proc onShow =
   irq.enable(iiVBlank)
 
 proc onHide =
-  display.layers = display.layers - {lBg1, lObj}
+  display.layers = display.layers - {lBg0, lObj}
+  display.obj1d = false
 
   releaseObjPal(gfxShipTemp)
   startLabel.destroy()

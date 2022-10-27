@@ -6,7 +6,7 @@ import modules/shooter
 proc controlsGame*(playerShip: var PlayerShip; centerNumber: var CenterNumber;
     modifierSlots: var ModifierSlots; gameStatus: var GameStatus) =
   if gameStatus != GameOver:
-    if gameStatus == Play:
+    if gameStatus == Play or gameStatus == Intro:
       if keyIsDown(kiLeft):
         playerShip.angle += 350
       if keyIsDown(kiRight):

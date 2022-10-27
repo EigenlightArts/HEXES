@@ -68,19 +68,15 @@ proc inputModifierValue*(self: var CenterNumber;
 
 
 type 
-  TimerFlags* = enum
-    tfNone
-    tfUpdate
-    tfIntro
   Timer* = object
     initialised*: bool
-    flag*: TimerFlags
     label*: Label
     hexBuffer*: array[9, char]
 
     valueSeconds*: int
     valueFrames*: int
     introSeconds*: int
+    introSecondsInitial*: int
     limitSeconds*: int
 
 proc `=destroy`*(self: var Timer) =

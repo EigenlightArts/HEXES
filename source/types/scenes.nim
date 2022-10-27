@@ -1,6 +1,7 @@
 type
   GameStatus* = enum
     None
+    Intro
     Play
     Paused
     LevelUp

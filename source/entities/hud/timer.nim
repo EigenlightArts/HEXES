@@ -1,39 +1,49 @@
-import natu/[math, graphics, video, tte, posprintf]
+import natu/[math, graphics, video, tte, posprintf, mgba]
 import utils/objs
 import types/[hud, scenes]
 
 
-proc initTimer*(valueSeconds: int, introSeconds: int): Timer =
+proc initTimer*(valueSeconds: int, introSeconds: int, limitSeconds: int): Timer =
   result.initialised = true
 
-  result.valueSeconds = valueSeconds
-  result.valueFrames = result.valueSeconds * 60
+  result.valueFrames = valueSeconds * 60
   result.introSeconds = introSeconds
-  result.limitSeconds = result.introSeconds * 2
-  result.flag = tfIntro
+  result.introSecondsInitial = result.introSeconds
+  result.limitSeconds = limitSeconds
 
   result.label.init(vec2i(ScreenWidth div 2, ScreenHeight div 12), s8x16, count = 15)
   result.label.obj.pal = acquireObjPal(gfxShipTemp)
   result.label.ink = 1 # set the ink colour index to use from the palette
   result.label.shadow = 0 # set the shadow colour (only relevant if the font actually has more than 1 colour)
 
+proc getValueSeconds(self: Timer): int = self.valueFrames div 60
+
 proc update*(self: var Timer, gameStatus: var GameStatus) =
   dec self.valueFrames
 
   if self.valueFrames mod 60 == 0:
-    dec self.valueSeconds
-    if self.flag == tfIntro:
+    if gameStatus == Intro:
       dec self.introSeconds
 
     if self.introSeconds <= 0:
-      self.flag = tfUpdate
+      gameStatus = Play
 
   if timeScoreValue != 0:
-    if self.valueSeconds <= self.limitSeconds:
-      self.valueFrames += timeScoreValue * 60
-      self.valueSeconds += timeScoreValue
+    printf("timeScoreValue A: %d", timeScoreValue)
+    printf("self.valueFrames  A: %d", self.valueFrames)
+
+    # if self.getValueSeconds() < self.limitSeconds:
+    printf("ASSERT PRE self.valueFrames += timeScoreValue * 60")
+    self.valueFrames += (timeScoreValue * 60)
+    printf("ASSERT POST self.valueFrames += timeScoreValue * 60")
+
+    if self.valueFrames > (self.limitSeconds * 60):
+      self.valueFrames = self.limitSeconds
 
     timeScoreValue = 0
+
+    printf("timeScoreValue B: %d", timeScoreValue)
+    printf("self.valueFrames  B: %d", self.valueFrames)
 
   if self.valueFrames <= 0:
     gameStatus = GameOver
@@ -42,13 +52,16 @@ proc update*(self: var Timer, gameStatus: var GameStatus) =
 proc draw*(self: var Timer, target: int, gameStatus: GameStatus,
     eventLoopTimer: int) =
   if gameStatus != GameOver:
-    if gameStatus == Play:
+    if gameStatus == Play or gameStatus == Intro:
       self.label.draw()
 
     let size = tte.getTextSize(addr self.hexBuffer)
     self.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
       ScreenHeight div 12 - size.y div 2)
 
+    # let secondsTwo = self.getValueSeconds() mod 60
+    # let minutesTwo = (self.getValueSeconds() div 60) mod 60
+    # printf("%02d:%02d", minutesTwo, secondsTwo)
 
     if gameStatus == Paused:
       if (eventLoopTimer div 25) mod 2 == 0:
@@ -56,15 +69,15 @@ proc draw*(self: var Timer, target: int, gameStatus: GameStatus,
 
         posprintf(addr self.hexBuffer, "PAUSED")
         self.label.put(addr self.hexBuffer)
-    elif self.flag == tfIntro:
+    elif gameStatus == LevelUp:
+      # gameStatus = Intro
+      self.introSeconds = self.introSecondsInitial
+    elif gameStatus == Intro:
       posprintf(addr self.hexBuffer, "Get to $%X!", target)
       self.label.put(addr self.hexBuffer)
-    elif self.flag == tfUpdate:
-      let seconds = self.valueSeconds mod 60
-      let minutes = (self.valueSeconds div 60) mod 60
+    else:
+      let seconds = self.getValueSeconds() mod 60
+      let minutes = (self.getValueSeconds() div 60) mod 60
 
       posprintf(addr self.hexBuffer, "%02d:%02d", minutes, seconds)
       self.label.put(addr self.hexBuffer)
-      self.flag = tfNone
-
-

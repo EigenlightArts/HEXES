@@ -6,32 +6,35 @@ import types/[hud, scenes]
 
 proc initModifierSlots*(): ModifierSlots =
   result.initialised = true
-
-proc draw*(modifierSlots: var ModifierSlots, gameStatus: GameStatus) =
-  if gameStatus != GameOver:
-    if modifierSlots.drawOperator:
-      if modifierSlots.modifierOperator.valueOperator != okNone:
+        
+proc draw*(self: var ModifierSlots, gameStatus: GameStatus) =
+  if gameStatus == Play or gameStatus == Intro:
+    if self.drawOperator:
+      if self.modifierOperator.valueOperator != okNone:
         withObj:
           obj.init(
             mode = omReg,
             pos = vec2i(ScreenWidth - 26, ScreenHeight - 16) - vec2i(
-                modifierSlots.modifierOperator.graphic.width div 2,
-                modifierSlots.modifierOperator.graphic.height div 2),
-            tid = modifierSlots.modifierOperator.modifierObj.tid +
-            (modifierSlots.modifierOperator.index * 4),
-            pal = modifierSlots.modifierOperator.modifierObj.palId,
-            size = modifierSlots.modifierOperator.graphic.size
+                self.modifierOperator.graphic.width div 2,
+                self.modifierOperator.graphic.height div 2),
+            tid = self.modifierOperator.modifierObj.tid +
+            (self.modifierOperator.index * 4),
+            pal = self.modifierOperator.modifierObj.palId,
+            size = self.modifierOperator.graphic.size
           )
-    if modifierSlots.drawNumber:
-      if modifierSlots.modifierNumber.valueNumber != 0:
+    if self.drawNumber:
+      if self.modifierNumber.valueNumber != 0:
         withObj:
           obj.init(
             mode = omReg,
             pos = vec2i(ScreenWidth - 10, ScreenHeight - 16) - vec2i(
-                modifierSlots.modifierNumber.graphic.width div 2,
-                modifierSlots.modifierNumber.graphic.height div 2),
-            tid = modifierSlots.modifierNumber.modifierObj.tid +
-            (modifierSlots.modifierNumber.index * 4),
-            pal = modifierSlots.modifierNumber.modifierObj.palId,
-            size = modifierSlots.modifierNumber.graphic.size
+                self.modifierNumber.graphic.width div 2,
+                self.modifierNumber.graphic.height div 2),
+            tid = self.modifierNumber.modifierObj.tid +
+            (self.modifierNumber.index * 4),
+            pal = self.modifierNumber.modifierObj.palId,
+            size = self.modifierNumber.graphic.size
           )
+  if gameStatus == GameOver or gameStatus == LevelUp:
+    self.modifierNumber.valueNumber = 0
+    self.modifierOperator.valueOperator = okNone
