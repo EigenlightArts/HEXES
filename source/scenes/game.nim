@@ -9,6 +9,8 @@ proc goToGameEndScene()
 
 var game: Game
 
+var ecnValue: int
+var ecnTarget: int
 var shootEnemy: int
 var chooseModifierKind: int
 
@@ -41,23 +43,24 @@ const timerGameOverFrames = 170
 proc reset(game: var Game) =
   game.status = Intro
 
-  game.ecnValue = rand(0..255)
-  game.ecnTarget = rand(0..255)
+  eventLevelUpTimer = timerLevelUpFrames
+  eventGameOverTimer = timerGameOverFrames
 
-  while game.ecnValue == game.ecnTarget:
-    game.ecnTarget = rand(0..255)
+  ecnValue = rand(0..255)
+  ecnTarget = rand(0..255)
+
+  while ecnValue == ecnTarget:
+    ecnTarget = rand(0..255)
 
   game.evilHexInstance = initEvilHex()
   game.playerShipInstance = initPlayerShip(vec2f(75, 0))
   game.playerShipInstance.angle = 16500
 
-  game.centerNumberInstance = initCenterNumber(game.ecnValue, game.ecnTarget)
+  game.centerNumberInstance = initCenterNumber(ecnValue, ecnTarget)
   game.timerInstance = initTimer(timerInitialSeconds, timerIntroSeconds, timerLimitSeconds)
   game.targetInstance = initTarget(game.centerNumberInstance.target)
   game.modifierSlotsInstance = initModifierSlots()
 
-  eventLevelUpTimer = timerLevelUpFrames
-  eventGameOverTimer = timerGameOverFrames
 
 proc initGame(): Game = result.reset()
 
@@ -128,8 +131,8 @@ proc onUpdate =
     game.timerInstance.update(game.status)
     shooter.update(game.playerShipInstance, game.evilHexInstance, game.modifierSlotsInstance)
 
-    if keyHit(kiSelect): # FIXME(Kal): Debug Only
-    # if game.ecnValue == game.ecnTarget:
+    # if keyHit(kiSelect): # FIXME(Kal): Debug Only
+    if game.centerNumberInstance.value == game.centerNumberInstance.target:
       game.levelUp()
 
   if game.status == LevelUp:

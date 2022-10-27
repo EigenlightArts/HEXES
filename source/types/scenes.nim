@@ -11,8 +11,6 @@ type
   Game* = object
     status*: GameStatus
     
-    ecnValue*: int
-    ecnTarget*: int
     level*: int
 
     playerShipInstance*: PlayerShip
