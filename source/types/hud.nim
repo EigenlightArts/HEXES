@@ -1,5 +1,5 @@
 import natu/[graphics, video]
-import utils/[labels, log]
+import utils/[labels, log, audio]
 import components/projectile/modifier
 
 export labels
@@ -25,9 +25,11 @@ proc `=copy`*(dest: var ModifierSlots;
 proc assignModifiers*(modifierSlots: var ModifierSlots;
     modifierStored: Modifier) =
   if modifierStored.kind == mkNumber:
+    audio.playSound(sfxNumberChange)
     modifierSlots.modifierNumber = modifierStored
     modifierSlots.drawNumber = true
   if modifierStored.kind == mkOperator:
+    audio.playSound(sfxOperatorChange)
     modifierSlots.modifierOperator = modifierStored
     modifierSlots.drawOperator = true
 
@@ -50,11 +52,12 @@ proc `=copy`*(dest: var CenterNumber;
 
 proc inputModifierValue*(self: var CenterNumber;
     modifierSlots: var ModifierSlots) =
-  if modifierSlots.modifierNumber.valueNumber != 0:
+  if modifierSlots.modifierNumber.valueNumber != 0 and
+      modifierSlots.modifierOperator.valueOperator != okNone:
+    audio.playSound(sfxCenterNumberChange)
     case modifierSlots.modifierOperator.valueOperator:
     of okNone:
-      # TODO(Kal): Play a beep
-      log "You don't have a stored operator!"
+      discard
     of okAdd: self.value = self.value + modifierSlots.modifierNumber.valueNumber
     of okSub: self.value = self.value - modifierSlots.modifierNumber.valueNumber
     of okMul: self.value = self.value * modifierSlots.modifierNumber.valueNumber
@@ -63,11 +66,10 @@ proc inputModifierValue*(self: var CenterNumber;
     modifierSlots.modifierNumber.valueNumber = 0
     modifierSlots.modifierOperator.valueOperator = okNone
   else:
-    # TODO(Kal): Play a beep
-    log "You don't have a stored number and/or operator!"
+    audio.playSound(sfxError)
 
 
-type 
+type
   Timer* = object
     initialised*: bool
     label*: Label

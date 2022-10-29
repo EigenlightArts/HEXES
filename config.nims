@@ -1,5 +1,6 @@
 import os, strutils
 import natu/config
+import std/algorithm 
 
 const main = "./source/HEXES.nim"         # path to project file
 const name = splitFile(main).name      # name of ROM
@@ -26,6 +27,7 @@ if projectPath() == thisDir() / main:
 task assets, "convert assets":
   gfxConvert "graphics.nims"
   bgConvert "backgrounds.nims"
+  mmConvert "audio.nims"
 
 task build, "builds the GBA rom":
   let args = commandLineParams()[1..^1].join(" ")

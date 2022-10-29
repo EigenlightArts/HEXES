@@ -6,24 +6,26 @@ asm """
 """
 
 import natu/[video, bios, irq, input, graphics, utils, memory]
-import utils/[objs, scene]
+import utils/[objs, scene, audio, savedata]
 import scenes/[game, title]
 
 
-# NOTE(Kal): Resources about Game Engine Development:
+# NOTE(Kal): Resources about Game Engine Development and Programming:
 # - https://www.gameprogrammingpatterns.com/
 # - https://www.gameenginebook.com/
+# - https://caseymuratori.com/blog_0015
+# - https://www.dataorienteddesign.com/dodbook/dodmain.html
 
 var canRedraw = false
 
 proc onVBlank =
-  # audio.vblank()
+  audio.vblank()
   if canRedraw:
     canRedraw = false
     flushPals()
     drawScene()
     oamUpdate() # clear unused entries, reset allocation counters
-  # audio.frame()
+  audio.frame()
 
 proc main =
   # Recommended waitstate configuration
@@ -33,6 +35,9 @@ proc main =
     rom2 = WsRom2.N8_S8, # 8 cycles to access ROM (mirror #2) which may be used for flash storage.
     prefetch = true # prefetch buffer enabled.
   )
+
+  savedata.load()
+  audio.init()
 
   irq.init()
   irq.put(iiVBlank, onVBlank)

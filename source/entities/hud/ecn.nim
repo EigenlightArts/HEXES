@@ -16,17 +16,17 @@ proc initCenterNumber*(value: sink int, target: sink int): CenterNumber =
   posprintf(addr result.labelBuffer, "$%X", result.value)
   result.label.put(addr result.labelBuffer)
 
-proc draw*(self: var CenterNumber; gameStatus: GameStatus) =
+proc draw*(self: var CenterNumber; gameState: GameState) =
   self.label.draw()
 
-  if gameStatus == GameOver:
+  if gameState == GameOver:
     let size = tte.getTextSize(addr self.labelBuffer)
     self.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
       ScreenHeight div 2 - size.y div 2)
 
     posprintf(addr self.labelBuffer, "GAME OVER")
     self.label.put(addr self.labelBuffer)
-  elif gameStatus == LevelUp:
+  elif gameState == LevelUp:
     let size = tte.getTextSize(addr self.labelBuffer)
     self.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
       ScreenHeight div 2 - size.y div 2)

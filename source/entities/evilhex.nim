@@ -1,21 +1,32 @@
 import natu/[math, graphics, video, utils]
+import utils/objs
 import components/shared
 import modules/shooter
-import types/entities
+import types/[entities, scenes]
 
 proc initEvilHex*(): EvilHex =
   result.initialised = true
   result.body = initBody(vec2f(ScreenWidth div 2 - 10, ScreenHeight div 2 - 10), 20, 20)
 
-  result.tileId = allocObjTiles(gfxShipPlayer)
-  result.paletteId = acquireObjPal(gfxShipPlayer)
+  result.tileId = allocObjTiles(gfxEvilHex)
+  result.paletteId = acquireObjPal(gfxEvilHex)
 
-
-# draw evilhex and related parts
-# proc draw*(self: var EvilHex) =
+  copyFrame(addr objTileMem[result.tileId], gfxEvilHex, 0)
 
 # proc update*(self: var EvilHex) =
+# TODO(Kal): Add slowly rotating EvilHex
 
+proc draw*(self: var EvilHex, gameState: GameState) =
+  if gameState != LevelUp:
+    withObj:
+      obj.init(
+        mode = omReg,
+        pos = vec2i(self.body.pos) - vec2i(
+            gfxEvilHex.width div 2 - 10, gfxEvilHex.height div 2 - 10),
+        tid = self.tileId,
+        pal = self.paletteId,
+        size = gfxEvilHex.size
+      )
 
 proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
     playerShipPos: Vec2f) =

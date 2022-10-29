@@ -1,5 +1,5 @@
 import natu/[math, graphics, video, oam, utils]
-import utils/[objs, body]
+import utils/[objs, body, audio]
 import components/shared
 import components/projectile/bulletenemy
 
@@ -100,6 +100,7 @@ proc update*(enemy: var Enemy) =
     if enemy.kind == ekLozenge:
       dec enemy.shootTimer
       if enemy.shootTimer <= 0:
+        audio.playSound(sfxEnemyShoot)
         let bulEnemyProj = initProjectileBulletEnemy(gfxBulletEnemy,
             enemy.body.pos)
         fireBulletEnemy(bulEnemyProj, enemy.body.pos, enemy.angle)

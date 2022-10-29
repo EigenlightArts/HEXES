@@ -12,14 +12,14 @@ proc initTarget*(target: int): Target =
   result.label.shadow = 0 # set the shadow colour (only relevant if the font actually has more than 1 colour)
 
 
-proc draw*(self: var Target, gameStatus: GameStatus) =
-  if gameStatus == Play or gameStatus == Intro:
+proc draw*(self: var Target, gameState: GameState) =
+  if gameState == Play or gameState == Intro:
     self.label.draw()
 
     let size = tte.getTextSize(addr self.labelBuffer)
     self.label.pos = vec2i(ScreenWidth div 12 - size.x div 2,
       ScreenHeight - 16 - size.y div 2)
 
-    if gameStatus != Intro:
+    if gameState != Intro:
       posprintf(addr self.labelBuffer, "$%X", self.target)
       self.label.put(addr self.labelBuffer)

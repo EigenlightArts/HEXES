@@ -1,7 +1,7 @@
 import natu/[video, utils]
 import components/projectile/[bulletplayer, bulletenemy, enemy, modifier]
 import components/shared
-import utils/[body, log]
+import utils/[body, audio, log]
 import types/[entities, hud, scenes]
 
 export bulletplayer, bulletenemy, enemy, modifier
@@ -12,8 +12,8 @@ proc destroy*() =
   enemyEntitiesInstances.clear()
   modifierEntitiesInstances.clear()
 
-proc draw*(gameStatus: GameStatus) =
-  if gameStatus != LevelUp:
+proc draw*(gameState: GameState) =
+  if gameState != LevelUp:
     for bulletPlayer in mitems(bulletPlayerEntitiesInstances):
       bulletPlayer.draw()
     for bulletEnemy in mitems(bulletEnemyEntitiesInstances):
@@ -32,6 +32,9 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex,
         enemy.update()
 
         if collide(playerShip.body, enemy.body) and not invisibilityOn:
+          # TODO(Kal): Make "Player Hit" Function, 
+          # may have to make BulletEnemy a field of Enemy
+          audio.playSound(sfxPlayerHit)
           enemy.status = Finished
           timeScoreValue = timeScorePenalty
           screenStopOn = true
@@ -42,6 +45,7 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex,
         bulletEnemy.update(speed = 2)
 
         if collide(playerShip.body, bulletEnemy.body) and not invisibilityOn:
+          audio.playSound(sfxPlayerHit)
           bulletEnemy.status = Finished
           timeScoreValue = timeScorePenalty
           screenStopOn = true
@@ -64,17 +68,28 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex,
         for enemyBP in mitems(enemyEntitiesInstances):
           if enemyBP.status == Active:
             if collide(enemyBP.body, bulletPlayer.body):
+              audio.playSound(sfxEnemyHit)
+
               dec enemyBP.health
               bulletPlayer.status = Finished
+
               if enemyBP.health <= 0:
+                let sfxChoice = rand(0..1)
+                if sfxChoice == 0:
+                  audio.playSound(sfxExplosion)
+                else:
+                  audio.playSound(sfxExplosion2)
+
                 timeScoreValue = enemyBP.timeScore
                 enemyBP.status = Finished
         if collide(evilHex.body, bulletPlayer.body):
+          audio.playSound(sfxEnemyHit)
           bulletPlayer.status = Finished
 
   # handle Screen effects
   if screenStopOn:
     if screenStopFrames <= 0:
+      audio.playSound(sfxPlayerHitFlashing)
       screenStopFrames = screenStopFramesConst
       screenStopOn = false
 

@@ -7,13 +7,13 @@ import types/[hud, scenes]
 proc initModifierSlots*(): ModifierSlots =
   result.initialised = true
 
-proc update*(self: var ModifierSlots, gameStatus: GameStatus) =
-  if gameStatus == GameOver or gameStatus == LevelUp:
+proc update*(self: var ModifierSlots, gameState: GameState) =
+  if gameState == GameOver or gameState == LevelUp:
     self.modifierNumber.valueNumber = 0
     self.modifierOperator.valueOperator = okNone
         
-proc draw*(self: var ModifierSlots, gameStatus: GameStatus) =
-  if gameStatus == Play or gameStatus == Intro:
+proc draw*(self: var ModifierSlots, gameState: GameState) =
+  if gameState == Play or gameState == Intro:
     if self.drawOperator:
       if self.modifierOperator.valueOperator != okNone:
         withObj:

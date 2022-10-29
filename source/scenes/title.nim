@@ -1,6 +1,6 @@
 import natu/[bios, irq, oam, input, video, math, tte, posprintf]
 import natu/[graphics, backgrounds]
-import utils/[objs, labels, scene]
+import utils/[objs, labels, scene, audio]
 
 proc goToGameScene()
 
@@ -11,6 +11,8 @@ var startLabel: Label
 var labelBuffer: array[9, char]
 
 proc onShow =
+  audio.stopSong()
+
   # Use a BG Control register to select a charblock and screenblock:
   bgcnt[1].init(cbb = 0, sbb = 31)
 
@@ -27,6 +29,8 @@ proc onShow =
   startLabel.obj.pal = acquireObjPal(gfxShipPlayer)
   startLabel.ink = 2 # set the ink colour index to use from the palette
   startLabel.shadow = 0 # set the shadow colour (only relevant if the font actually has more than 1 colour)
+
+  audio.playMusic(modTitle)
 
   # enable VBlank interrupt so we can wait for
   # the end of the frame without burning CPU cycles

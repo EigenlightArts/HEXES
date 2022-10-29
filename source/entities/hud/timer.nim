@@ -1,5 +1,5 @@
 import natu/[math, graphics, video, tte, posprintf]
-import utils/objs
+import utils/[objs, audio]
 import types/[hud, scenes]
 
 
@@ -18,50 +18,53 @@ proc initTimer*(valueSeconds: int, introSeconds: int, limitSeconds: int): Timer 
 
 proc getValueSeconds*(self: Timer): int = self.valueFrames div 60
 proc setValueSeconds*(self: var Timer, valueSeconds: int) = self.valueFrames = valueSeconds * 60
+proc addValueSeconds*(self: var Timer, valueSeconds: int) = self.valueFrames += valueSeconds * 60
 
-proc update*(self: var Timer, gameStatus: var GameStatus) =
+proc update*(self: var Timer, gameState: var GameState) =
   dec self.valueFrames
 
   if self.valueFrames mod 60 == 0:
-    if gameStatus == Intro:
+    if gameState == Intro:
       dec self.introSeconds
 
     if self.introSeconds <= 0:
-      gameStatus = Play
+      gameState = Play
 
   if timeScoreValue != 0:
-
-    self.valueFrames += (timeScoreValue * 60)
+    self.addValueSeconds(timeScoreValue)
 
     if self.valueFrames > (self.limitSeconds * 60):
       self.valueFrames = self.limitSeconds
 
     timeScoreValue = 0
 
+  if self.getValueSeconds() mod 30 == 0:
+    audio.playSound(sfxTimeAlert)
+
   if self.valueFrames <= 0:
-    gameStatus = GameOver
+    gameState = GameOver
 
 
-proc draw*(self: var Timer, target: int, gameStatus: GameStatus,
+proc draw*(self: var Timer, target: int, gameState: GameState,
     eventLoopTimer: int) =
-  if gameStatus != GameOver:
-    if gameStatus == Play or gameStatus == Intro:
+  if gameState != GameOver:
+    if gameState == Play or gameState == Intro:
       self.label.draw()
 
     let size = tte.getTextSize(addr self.labelBuffer)
     self.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
       ScreenHeight div 12 - size.y div 2)
 
-    if gameStatus == Paused:
+    if gameState == Paused:
       if (eventLoopTimer div 25) mod 2 == 0:
         self.label.draw()
 
         posprintf(addr self.labelBuffer, "PAUSED")
         self.label.put(addr self.labelBuffer)
-    elif gameStatus == LevelUp:
-      # gameStatus = Intro
+    elif gameState == LevelUp:
+      # gameState = Intro
       self.introSeconds = self.introSecondsInitial
-    elif gameStatus == Intro:
+    elif gameState == Intro:
       posprintf(addr self.labelBuffer, "Get to $%X!", target)
       self.label.put(addr self.labelBuffer)
     else:

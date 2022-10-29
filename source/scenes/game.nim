@@ -1,5 +1,5 @@
 import natu/[video, graphics, input, irq, math, utils]
-import utils/[scene, log]
+import utils/[scene, log, audio]
 import entities/[playership, evilhex]
 import entities/hud/[ecn, timer, target, modifierslots]
 import modules/[shooter, player, score, levels]
@@ -35,13 +35,11 @@ const timerGameOverFrames = 170
 # - https://stackoverflow.com/a/28933315/10916748
 # - https://www.geeksforgeeks.org/random-number-generator-in-arbitrary-probability-distribution-fashion/
 
-# TODO(Kal): Remaining things for Game Jam
-# - Go to endGameScene if Player finishes all levels
-# - Add score system calculated from remaining time in the timer
-# - Add rudimentary save system for High Scores
 
 proc reset(game: var Game) =
-  game.status = Intro
+  audio.stopSong()
+
+  game.state = Intro
 
   eventLevelUpTimer = timerLevelUpFrames
   eventGameOverTimer = timerGameOverFrames
@@ -61,13 +59,14 @@ proc reset(game: var Game) =
   game.targetInstance = initTarget(game.centerNumberInstance.target)
   game.modifierSlotsInstance = initModifierSlots()
 
+  game.playGameMusic()
 
-proc initGame(): Game = result.reset()
+proc initGame(): Game = result.level = 1; result.reset()
 
 proc levelUp(self: var Game) =
   if self.level < levelMax:
     inc self.level
-    self.status = LevelUp
+    self.state = LevelUp
   elif self.level >= levelMax:
     goToGameEndScene()
 
@@ -90,8 +89,6 @@ proc startEventLoop() =
 proc onShow =
   game = initGame()
 
-  game.level = 1
-
   # background color, approximating eigengrau
   bgColorBuf[0] = rgb8(22, 22, 29)
 
@@ -112,11 +109,11 @@ proc onUpdate =
   game.centerNumberInstance.update()
 
   player.controlsGame(game.playerShipInstance, game.centerNumberInstance,
-      game.modifierSlotsInstance, game.status)
+      game.modifierSlotsInstance, game)
 
-  game.modifierSlotsInstance.draw(game.status)
+  game.modifierSlotsInstance.draw(game.state)
 
-  if game.status == Play or game.status == Intro:
+  if game.state == Play or game.state == Intro:
     game.playerShipInstance.update()
 
     # fire the EvilHex projectiles
@@ -128,14 +125,14 @@ proc onUpdate =
           game.playerShipInstance.body.pos)
 
     # game.evilHexInstance.update()
-    game.timerInstance.update(game.status)
+    game.timerInstance.update(game.state)
     shooter.update(game.playerShipInstance, game.evilHexInstance, game.modifierSlotsInstance)
 
     # if keyHit(kiSelect): # FIXME(Kal): Debug Only
     if game.centerNumberInstance.value == game.centerNumberInstance.target:
       game.levelUp()
 
-  if game.status == LevelUp:
+  if game.state == LevelUp:
     discard rand() # introduce some nondeterminism to the RNG
 
     dec eventLevelUpTimer
@@ -144,7 +141,7 @@ proc onUpdate =
       shooter.destroy()
       game.reset()
   
-  if game.status == GameOver:
+  if game.state == GameOver:
     dec eventGameOverTimer
     if eventGameOverTimer <= 0:
       eventGameOverTimer = timerGameOverFrames
@@ -157,17 +154,18 @@ proc onHide =
   display.obj1d = false
 
 proc onDraw =
-  game.timerInstance.draw(game.centerNumberInstance.target, game.status, eventLoopTimer)
+  game.timerInstance.draw(game.centerNumberInstance.target, game.state, eventLoopTimer)
 
   # If it's no longer the intro, add a target label
-  game.targetInstance.draw(game.status)
+  game.targetInstance.draw(game.state)
 
   # draw the Shooter projectiles
-  shooter.draw(game.status)
+  shooter.draw(game.state)
 
-  game.centerNumberInstance.draw(game.status)
-  game.playerShipInstance.draw(game.status)
-  game.modifierSlotsInstance.draw(game.status)
+  game.evilHexInstance.draw(game.state)
+  game.centerNumberInstance.draw(game.state)
+  game.playerShipInstance.draw(game.state)
+  game.modifierSlotsInstance.draw(game.state)
 
 
 const GameScene* = Scene(

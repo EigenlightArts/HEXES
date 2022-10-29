@@ -15,8 +15,8 @@ proc initPlayerShip*(pos: Vec2f): PlayerShip =
 
 
 # draw ship sprite and all the affine snazziness
-proc draw*(self: var PlayerShip, gameStatus: GameStatus) =
-  if gameStatus != GameOver:
+proc draw*(self: var PlayerShip, gameState: GameState) =
+  if gameState != GameOver:
     copyFrame(addr objTileMem[self.tileId], gfxShipPlayer, 0)
     if not invisibilityOn and not screenStopOn:
       withObjAndAff:

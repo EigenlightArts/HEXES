@@ -1,7 +1,8 @@
 import types/[entities, hud]
+import utils/audio
 
 type
-  GameStatus* = enum
+  GameState* = enum
     None
     Intro
     Play
@@ -9,7 +10,7 @@ type
     LevelUp
     GameOver
   Game* = object
-    status*: GameStatus
+    state*: GameState
     
     level*: int
 
@@ -22,7 +23,13 @@ type
     modifierSlotsInstance*: ModifierSlots
 
 proc `=destroy`*(self: var Game) =
-  if self.status != None:
-    self.status = None
+  if self.state != None:
+    self.state = None
 
 proc `=copy`*(dest: var Game; source: Game) {.error: "Not implemented".}
+
+proc playGameMusic*(self: Game) =
+  if self.level mod 2 == 0:
+    audio.playMusic(modCommutative)
+  else:
+    audio.playMusic(modAssociative)
