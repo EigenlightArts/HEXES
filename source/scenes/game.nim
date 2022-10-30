@@ -1,4 +1,4 @@
-import natu/[video, graphics, input, irq, math, utils]
+import natu/[video, graphics, irq, math, utils]
 import utils/[scene, log, audio]
 import entities/[playership, evilhex]
 import entities/hud/[ecn, timer, target, modifierslots]
