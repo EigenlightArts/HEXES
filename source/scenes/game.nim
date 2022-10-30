@@ -130,8 +130,8 @@ proc onUpdate =
     game.timerInstance.update(game.state)
     shooter.update(game.playerShipInstance, game.evilHexInstance, game.modifierSlotsInstance)
 
-    if keyHit(kiSelect): # NOTE(Kal): Debug Only
-    # if game.centerNumberInstance.value == game.centerNumberInstance.target:
+    # if keyHit(kiSelect): # NOTE(Kal): Debug Only
+    if game.centerNumberInstance.value == game.centerNumberInstance.target:
       game.levelUp()
 
   if game.state == LevelUp:
