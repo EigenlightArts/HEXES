@@ -2,6 +2,18 @@
 
 HEXES, The fast-paced puzzle shoot'em up!
 
+# Controls
+
+Left and Right Pads - Move Ship
+
+A - Shoot Bullet
+
+B - Input Modifiers
+
+Start - Pause or Start Game
+
+# Credits
+
 Programming by: [Kaleidosium](https://github.com/Kaleidosium)
 
 Music and SFX by: [kathound](https://kathrynhathaway.bandcamp.com/)
