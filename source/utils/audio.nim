@@ -38,5 +38,5 @@ proc pauseSong*() {.inline.} =
 proc resumeSong*() {.inline.} =
   maxmod.resume()
 
-proc stopSong* {.inline.} =
+proc stopMusic* {.inline.} =
   maxmod.stop()

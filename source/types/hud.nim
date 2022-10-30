@@ -1,5 +1,5 @@
 import natu/[graphics, video]
-import utils/[labels, log, audio]
+import utils/[labels, audio]
 import components/projectile/modifier
 
 export labels

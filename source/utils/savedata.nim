@@ -1,7 +1,6 @@
-import natu/[bios, irq, oam, input, video, math, memory]
+import natu/[video, math, memory]
 import natu/utils as nutils
-import natu/[graphics, backgrounds]
-import utils/[scene, objs, log]
+import utils/log
 
 type SaveData = object
   header: uint32

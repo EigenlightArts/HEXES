@@ -1,7 +1,7 @@
-import natu/[bios, irq, oam, input, video, math, tte, posprintf]
-import natu/[graphics, backgrounds]
+import natu/[irq, oam, video, math, tte, posprintf]
+import natu/graphics
 import utils/[objs, labels, scene]
-import modules/[score, levels]
+import modules/score
 
 proc backToTitle()
 

@@ -1,4 +1,3 @@
-import natu/[bios, irq, oam, input, video, math, memory]
 import utils/savedata
 
 var totalScore*: uint

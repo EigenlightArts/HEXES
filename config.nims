@@ -22,7 +22,7 @@ if projectPath() == thisDir() / main:
   switch "nimcache", "nimcache"        # output C sources to local directory
   switch "cincludes", nimcacheDir()    # allow external C files to include "{project}.h"
   switch "linedir", "on"               # get Nim stack traces instead of C 
-  warning "UnusedImport", off          # ignore unused import warnings, FIXME(Kal): remove after going to final stages of production 
+  # warning "UnusedImport", off          # ignore unused import warnings, FIXME(Kal): remove after going to final stages of production 
 
 task assets, "convert assets":
   gfxConvert "graphics.nims"

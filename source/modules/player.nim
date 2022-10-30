@@ -12,8 +12,8 @@ proc controlsGame*(playerShip: var PlayerShip; centerNumber: var CenterNumber;
         playerShip.angle += 350
       if keyIsDown(kiRight):
         playerShip.angle -= 350
-      # if keyHit(kiLeft) or keyHit(kiRight):
-      #   audio.playSound(sfx)
+      if keyHit(kiLeft) or keyHit(kiRight):
+        audio.playSound(sfxShipAccel)
       if keyHit(kiA):
         audio.playSound(sfxPlayerShoot)
         let bulPlayerProj = initProjectileBulletPlayer(gfxBulletPlayer,
@@ -22,7 +22,7 @@ proc controlsGame*(playerShip: var PlayerShip; centerNumber: var CenterNumber;
       if keyHit(kiB):
         centerNumber.inputModifierValue(modifierSlots)
     if keyHit(kiStart):
-      audio.stopSong()
+      audio.stopMusic()
       if game.state == Paused:
         game.playGameMusic()
         game.state = Play

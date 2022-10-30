@@ -1,4 +1,4 @@
-import natu/[bios, irq, oam, input, video, math, tte, posprintf]
+import natu/[irq, oam, input, video, math, tte, posprintf]
 import natu/[graphics, backgrounds]
 import utils/[objs, labels, scene, audio]
 
@@ -11,7 +11,7 @@ var startLabel: Label
 var labelBuffer: array[9, char]
 
 proc onShow =
-  audio.stopSong()
+  audio.stopMusic()
 
   # Use a BG Control register to select a charblock and screenblock:
   bgcnt[1].init(cbb = 0, sbb = 31)

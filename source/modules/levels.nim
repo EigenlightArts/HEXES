@@ -1,6 +1,4 @@
-import natu/[bios, irq, oam, input, video, math, utils]
-import natu/[graphics, backgrounds]
-import utils/[objs, scene]
+import natu/utils
 
 type
   Level = object

@@ -37,7 +37,7 @@ const timerGameOverFrames = 170
 
 
 proc reset(game: var Game) =
-  audio.stopSong()
+  audio.stopMusic()
 
   game.state = Intro
 
@@ -64,6 +64,8 @@ proc reset(game: var Game) =
 proc initGame(): Game = result.level = 1; result.reset()
 
 proc levelUp(self: var Game) =
+  audio.stopMusic()
+  audio.playMusic(modCompletionLoop)
   if self.level < levelMax:
     inc self.level
     self.state = LevelUp
@@ -128,8 +130,8 @@ proc onUpdate =
     game.timerInstance.update(game.state)
     shooter.update(game.playerShipInstance, game.evilHexInstance, game.modifierSlotsInstance)
 
-    # if keyHit(kiSelect): # FIXME(Kal): Debug Only
-    if game.centerNumberInstance.value == game.centerNumberInstance.target:
+    if keyHit(kiSelect): # NOTE(Kal): Debug Only
+    # if game.centerNumberInstance.value == game.centerNumberInstance.target:
       game.levelUp()
 
   if game.state == LevelUp:

@@ -1,7 +1,7 @@
 import natu/[video, utils]
 import components/projectile/[bulletplayer, bulletenemy, enemy, modifier]
 import components/shared
-import utils/[body, audio, log]
+import utils/[body, audio]
 import types/[entities, hud, scenes]
 
 export bulletplayer, bulletenemy, enemy, modifier

@@ -5,9 +5,9 @@ asm """
 .balign 4
 """
 
-import natu/[video, bios, irq, input, graphics, utils, memory]
+import natu/[bios, irq, input, graphics, utils, memory]
 import utils/[objs, scene, audio, savedata]
-import scenes/[game, title]
+import scenes/title
 
 
 # NOTE(Kal): Resources about Game Engine Development and Programming:
