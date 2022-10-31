@@ -2,15 +2,7 @@
 
 HEXES, The fast-paced puzzle shoot'em up!
 
-# Controls
-
-Left and Right Pads - Move Ship
-
-A - Shoot Bullet
-
-B - Input Modifiers
-
-Start - Pause or Start Game
+Check out [our itch.io page](https://kaleidosium.itch.io/hexes) for more information about the game!
 
 # Credits
 

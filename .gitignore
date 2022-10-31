@@ -3,6 +3,7 @@
 /output
 /mGBA-dev
 /xniq
+/html
 
 # Development Junk
 *.elf
@@ -12,6 +13,7 @@
 *.h
 *.bin
 *.7z
+*.zip
 
 NOTES.md
 logs.txt
