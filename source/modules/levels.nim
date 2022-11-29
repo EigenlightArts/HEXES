@@ -8,6 +8,9 @@ type
 
 const levelMax* = 4
 
+# TODO(Kal): Split configuration to TOML files?
+# Using https://github.com/status-im/nim-toml-serialization
+
 const levels: array[1..levelMax, Level] = [
   1: Level(
     enemySelect: 1..2,
