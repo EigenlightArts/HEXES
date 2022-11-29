@@ -10,14 +10,14 @@ proc initPlayerShip*(pos: Vec2f): PlayerShip =
   result.body = initBody(pos, 14, 14)
   result.angle = 0
   result.centerPoint = vec2i(ScreenWidth div 2, ScreenHeight div 2)
-  result.tileId = allocObjTiles(gfxShipPlayer)
+  result.tid = allocObjTiles(gfxShipPlayer)
   result.paletteId = acquireObjPal(gfxShipPlayer)
 
 
 # draw ship sprite and all the affine snazziness
 proc draw*(self: var PlayerShip, gameState: GameState) =
   if gameState != GameOver:
-    copyFrame(addr objTileMem[self.tileId], gfxShipPlayer, 0)
+    copyFrame(addr objTileMem[self.tid], gfxShipPlayer, 0)
     if not invisibilityOn and not screenStopOn:
       withObjAndAff:
         let delta = self.centerPoint - self.body.pos
@@ -28,8 +28,8 @@ proc draw*(self: var PlayerShip, gameState: GameState) =
           pos = vec2i(self.body.pos) - vec2i(gfxShipPlayer.width div 2,
               gfxShipPlayer.height div 2)
           size = gfxShipPlayer.size
-          tileId = self.tileId
-          palId = self.paletteId
+          tid = self.tid
+          pal = self.paletteId
     elif invisibilityOn:
       if (invisibilityFrames div 20) mod 2 == 0:
         withObjAndAff:
@@ -41,8 +41,8 @@ proc draw*(self: var PlayerShip, gameState: GameState) =
             pos = vec2i(self.body.pos) - vec2i(gfxShipPlayer.width div 2,
                 gfxShipPlayer.height div 2)
             size = gfxShipPlayer.size
-            tileId = self.tileId
-            palId = self.paletteId
+            tid = self.tid
+            pal = self.paletteId
 
 
 # calculate and update ship position

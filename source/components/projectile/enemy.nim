@@ -1,5 +1,5 @@
 import natu/[math, graphics, video, oam, utils]
-import utils/[objs, body, audio]
+import utils/[objs, body, audio, sprites]
 import components/shared
 import components/projectile/bulletenemy
 
@@ -17,8 +17,7 @@ type
     ekCircle
   Enemy* = object
     status*: ProjectileStatus
-    graphic*: Graphic
-    tileId*, palId*: int
+    sprite*: Sprite
     angle*: Angle
     body*: Body
 
@@ -41,8 +40,8 @@ type
 proc `=destroy`*(enemy: var Enemy) =
   if enemy.status != Uninitialised:
     enemy.status = Uninitialised
-    freeObjTiles(enemy.tileId)
-    releaseObjPal(enemy.graphic)
+    freeObjTiles(enemy.sprite.tid)
+    releaseObjPal(enemy.sprite.graphic)
 
 proc `=copy`*(a: var Enemy; b: Enemy) {.error: "Not supported".}
 
@@ -52,9 +51,7 @@ var enemyEntitiesInstances*: List[3, Enemy]
 proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int;
     enemyHealth: int; enemyTimeScore: int;pos: Vec2f): Enemy =
   result = Enemy(
-    graphic: gfx,
-    tileId: allocObjTiles(gfx),
-    palId: acquireObjPal(gfx),
+    sprite: initSprite(gfx, vec2i(pos)),
     body: initBody(pos, 12, 12),
     timeScore: enemyTimeScore,
     health: enemyHealth,
@@ -77,7 +74,7 @@ proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int;
     of skFast:
       fp(2)
 
-  copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
+  copyFrame(addr objTileMem[result.sprite.tid], result.sprite.graphic, 0)
 
 proc update*(enemy: var Enemy) =
   if enemy.status == Active:
@@ -116,11 +113,11 @@ proc draw*(enemy: var Enemy) =
         mode = omAff,
         aff = affId,
         pos = vec2i(enemy.body.pos) - vec2i(
-            enemy.graphic.width div 2,
-            enemy.graphic.height div 2),
-        tid = enemy.tileId,
-        pal = enemy.palId,
-        size = enemy.graphic.size
+            enemy.sprite.graphic.width div 2,
+            enemy.sprite.graphic.height div 2),
+        tid = enemy.sprite.tid,
+        pal = enemy.sprite.pal,
+        size = enemy.sprite.graphic.size
       )
 
 proc fireEnemy*(enemy: sink Enemy; angle: Angle = 0) =

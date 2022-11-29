@@ -1,11 +1,10 @@
 import natu/[math, graphics, video, oam, utils]
-import utils/[objs, body]
+import utils/[objs, body, sprites]
 import components/shared
 
 type BulletEnemy* = object
   status*: ProjectileStatus
-  graphic*: Graphic
-  tileId*, palId*: int
+  sprite*: Sprite
   angle*: Angle
   body*: Body
 
@@ -14,8 +13,8 @@ type BulletEnemy* = object
 proc `=destroy`*(be: var BulletEnemy) =
   if be.status != Uninitialised:
     be.status = Uninitialised
-    freeObjTiles(be.tileId)
-    releaseObjPal(be.graphic)
+    freeObjTiles(be.sprite.tid)
+    releaseObjPal(be.sprite.graphic)
 
 proc `=copy`*(a: var BulletEnemy; b: BulletEnemy) {.error: "Not supported".}
 
@@ -23,12 +22,10 @@ var bulletEnemyEntitiesInstances*: List[3, BulletEnemy]
 
 proc initProjectileBulletEnemy*(gfx: Graphic; pos: Vec2f): BulletEnemy =
   result = BulletEnemy(
-    graphic: gfx,
-    tileId: allocObjTiles(gfx),
-    palId: acquireObjPal(gfx),
+    sprite: initSprite(gfx, vec2i(pos)),
     body: initBody(pos, 8, 2),
   )
-  copyFrame(addr objTileMem[result.tileId], result.graphic, 0)
+  copyFrame(addr objTileMem[result.sprite.tid], result.sprite.graphic, 0)
 
 proc update*(be: var BulletEnemy; speed: int = 2) =
   if be.status == Active:
@@ -49,11 +46,11 @@ proc draw*(be: var BulletEnemy) =
         mode = omAff,
         aff = affId,
         pos = vec2i(be.body.pos) - vec2i(
-            be.graphic.width div 2,
-            be.graphic.height div 2),
-        tid = be.tileId,
-        pal = be.palId,
-        size = be.graphic.size
+            be.sprite.graphic.width div 2,
+            be.sprite.graphic.height div 2),
+        tid = be.sprite.tid,
+        pal = be.sprite.pal,
+        size = be.sprite.graphic.size
       )
 
 proc fireBulletEnemy*(be: sink BulletEnemy; pos: Vec2f = vec2f(0,

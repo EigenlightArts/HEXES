@@ -76,7 +76,7 @@ proc startEventLoop() =
   eventLoopTimer = 0
 
   shootEnemy = rand(0..1)
-  chooseModifierKind = rand(1..4)
+  chooseModifierKind = rand(0..2)
 
   log "game.level: %d", game.level
 
@@ -85,7 +85,7 @@ proc startEventLoop() =
   eventModifierShoot = enemyModifier(game.level)
 
   # excludes 0 and $
-  eventModifierIndex = if chooseModifierKind == 4: rand(16..19) else: rand(
+  eventModifierIndex = if chooseModifierKind == 0: rand(16..19) else: rand(
       1..15)
 
 proc onShow =
@@ -122,7 +122,7 @@ proc onUpdate =
     if eventLoopTimer == eventModifierShoot:
       game.evilHexInstance.fireModifierHex(eventModifierIndex,
           game.playerShipInstance.body.pos)
-    if eventLoopTimer == eventEnemyShoot and shootEnemy == 1:
+    if eventLoopTimer == eventEnemyShoot and shootEnemy == 0:
       game.evilHexInstance.fireEnemyHex(eventEnemySelect,
           game.playerShipInstance.body.pos)
 

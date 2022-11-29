@@ -14,7 +14,7 @@ var screenStopFrames*: int = screenStopFramesConst
 
 type PlayerShip* = object
   initialised*: bool
-  tileId*, paletteId*: int
+  tid*, paletteId*: int
   orbitRadius*: Vec2i
   centerPoint*: Vec2i
   body*: Body
@@ -24,7 +24,7 @@ type PlayerShip* = object
 proc `=destroy`*(self: var PlayerShip) =
   if self.initialised:
     self.initialised = false
-    freeObjTiles(self.tileId)
+    freeObjTiles(self.tid)
     releaseObjPal(gfxShipPlayer)
 
 proc `=copy`*(dest: var PlayerShip; source: PlayerShip) {.error: "Not implemented".}
@@ -33,7 +33,7 @@ proc `=copy`*(dest: var PlayerShip; source: PlayerShip) {.error: "Not implemente
 type EvilHex* = object
   initialised*: bool
 
-  tileId*, paletteId*: int
+  tid*, paletteId*: int
   body*: Body
 
   orbitRadius*: Vec2i
@@ -43,7 +43,7 @@ type EvilHex* = object
 proc `=destroy`*(self: var EvilHex) =
   if self.initialised:
     self.initialised = false
-    freeObjTiles(self.tileId)
+    freeObjTiles(self.tid)
     releaseObjPal(gfxShipPlayer)
 
 proc `=copy`*(dest: var EvilHex; source: EvilHex) {.error: "Not implemented".}

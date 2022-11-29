@@ -24,7 +24,7 @@ proc draw*(self: var ModifierSlots, gameState: GameState) =
                 self.modifierOperator.graphic.height div 2),
             tid = self.modifierOperator.modifierObj.tid +
             (self.modifierOperator.index * 4),
-            pal = self.modifierOperator.modifierObj.palId,
+            pal = self.modifierOperator.modifierObj.pal,
             size = self.modifierOperator.graphic.size
           )
     if self.drawNumber:
@@ -37,7 +37,7 @@ proc draw*(self: var ModifierSlots, gameState: GameState) =
                 self.modifierNumber.graphic.height div 2),
             tid = self.modifierNumber.modifierObj.tid +
             (self.modifierNumber.index * 4),
-            pal = self.modifierNumber.modifierObj.palId,
+            pal = self.modifierNumber.modifierObj.pal,
             size = self.modifierNumber.graphic.size
           )
 

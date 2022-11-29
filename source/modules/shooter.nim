@@ -36,7 +36,7 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex,
           # may have to make BulletEnemy a field of Enemy
           audio.playSound(sfxPlayerHit)
           enemy.status = Finished
-          timeScoreValue = timeScorePenalty
+          timeScoreValue = -(enemy.timeScore)
           screenStopOn = true
           invisibilityOn = true
 
@@ -47,7 +47,7 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex,
         if collide(playerShip.body, bulletEnemy.body) and not invisibilityOn:
           audio.playSound(sfxPlayerHit)
           bulletEnemy.status = Finished
-          timeScoreValue = timeScorePenalty
+          timeScoreValue = timeScorePenaltyBul
           screenStopOn = true
           invisibilityOn = true
 

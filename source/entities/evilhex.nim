@@ -8,10 +8,10 @@ proc initEvilHex*(): EvilHex =
   result.initialised = true
   result.body = initBody(vec2f(ScreenWidth div 2 - 10, ScreenHeight div 2 - 10), 20, 20)
 
-  result.tileId = allocObjTiles(gfxEvilHex)
+  result.tid = allocObjTiles(gfxEvilHex)
   result.paletteId = acquireObjPal(gfxEvilHex)
 
-  copyFrame(addr objTileMem[result.tileId], gfxEvilHex, 0)
+  copyFrame(addr objTileMem[result.tid], gfxEvilHex, 0)
 
 # proc update*(self: var EvilHex) =
 # TODO(Kal): Add slowly rotating EvilHex
@@ -23,7 +23,7 @@ proc draw*(self: var EvilHex, gameState: GameState) =
         mode = omReg,
         pos = vec2i(self.body.pos) - vec2i(
             gfxEvilHex.width div 2 - 10, gfxEvilHex.height div 2 - 10),
-        tid = self.tileId,
+        tid = self.tid,
         pal = self.paletteId,
         size = gfxEvilHex.size
       )

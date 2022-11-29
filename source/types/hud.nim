@@ -5,7 +5,7 @@ import components/projectile/modifier
 export labels
 
 var timeScoreValue*: int
-var timeScorePenalty*: int = -30
+var timeScorePenaltyBul*: int = -10
 
 type ModifierSlots* = object
   initialised*: bool
