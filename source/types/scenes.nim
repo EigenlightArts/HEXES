@@ -19,6 +19,7 @@ type
 
     centerNumberInstance*: CenterNumber
     timerInstance*: Timer
+    statusInstance*: Status
     targetInstance*: Target
     modifierSlotsInstance*: ModifierSlots
 

@@ -82,8 +82,6 @@ proc inputModifierValue*(self: var CenterNumber;
 type
   Timer* = object
     initialised*: bool
-    label*: Label
-    labelBuffer*: array[9, char]
 
     valueSeconds*: int
     valueFrames*: int
@@ -94,12 +92,26 @@ type
 proc `=destroy`*(self: var Timer) =
   if self.initialised:
     self.initialised = false
-    releaseObjPal(gfxShipPlayer)
-    self.label.destroy()
 
 proc `=copy`*(dest: var Timer;
     source: Timer) {.error: "Not implemented".}
 
+type
+  Status* = object
+    initialised*: bool
+    label*: Label
+    labelBuffer*: array[9, char]
+
+    timer*: Timer
+
+proc `=destroy`*(self: var Status) =
+  if self.initialised:
+    self.initialised = false
+    releaseObjPal(gfxShipPlayer)
+    self.label.destroy()
+
+proc `=copy`*(dest: var Status;
+    source: Status) {.error: "Not implemented".}
 
 type Target* = object
   initialised*: bool

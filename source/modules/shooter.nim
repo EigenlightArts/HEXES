@@ -32,8 +32,6 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex,
         enemy.update()
 
         if collide(playerShip.body, enemy.body) and not invisibilityOn:
-          # TODO(Kal): Make "Player Hit" Function, 
-          # may have to make BulletEnemy a field of Enemy
           audio.playSound(sfxPlayerHit)
           enemy.status = Finished
           timeScoreValue = -(enemy.timeScore)

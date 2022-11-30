@@ -1,8 +1,9 @@
 import natu/[video, graphics, irq, math, utils]
 import utils/[scene, log, audio]
 import entities/[playership, evilhex]
-import entities/hud/[ecn, timer, target, modifierslots]
+import entities/hud/[ecn, status, target, modifierslots]
 import modules/[shooter, player, score, levels]
+import components/timer
 import types/[scenes, entities, hud]
 
 proc goToGameEndScene()
@@ -56,6 +57,7 @@ proc reset(game: var Game) =
 
   game.centerNumberInstance = initCenterNumber(ecnValue, ecnTarget)
   game.timerInstance = initTimer(timerInitialSeconds, timerIntroSeconds, timerLimitSeconds)
+  game.statusInstance = initStatus()
   game.targetInstance = initTarget(game.centerNumberInstance.target)
   game.modifierSlotsInstance = initModifierSlots()
 
@@ -156,7 +158,7 @@ proc onHide =
   display.obj1d = false
 
 proc onDraw =
-  game.timerInstance.draw(game.centerNumberInstance.target, game.state, eventLoopTimer)
+  game.statusInstance.draw(game.timerInstance, game.state, game.centerNumberInstance.target, eventLoopTimer)
 
   # If it's no longer the intro, add a target label
   game.targetInstance.draw(game.state)
