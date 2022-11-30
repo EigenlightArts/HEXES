@@ -1,5 +1,4 @@
 import natu/[math, graphics, posprintf, video, tte]
-import utils/objs
 import types/[hud, scenes]
 
 proc initCenterNumber*(value: sink int, target: sink int): CenterNumber =
@@ -8,10 +7,8 @@ proc initCenterNumber*(value: sink int, target: sink int): CenterNumber =
   result.value = value
   result.target = target
 
-  result.label.init(vec2i(ScreenWidth div 2, ScreenHeight div 2), s8x16, count = 10)
-  result.label.obj.pal = acquireObjPal(gfxShipPlayer)
-  result.label.ink = 2 # set the ink colour index to use from the palette
-  result.label.shadow = 1 # set the shadow colour (only relevant if the font actually has more than 1 colour)
+  let labelPal = acquireObjPal(gfxShipPlayer)
+  prepareLabel(result.label, vec2i(ScreenWidth div 2, ScreenHeight div 2), labelPal, 10, 2, 1)
 
   posprintf(addr result.labelBuffer, "$%X", result.value)
   result.label.put(addr result.labelBuffer)

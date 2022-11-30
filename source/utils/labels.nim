@@ -138,3 +138,9 @@ proc draw*(self: var Label) =
         objs[i] = self.obj.dup(x = x, tid = tid)
         tid += tilesPerObj
         x += w
+
+proc prepareLabel*(label: var Label, pos: Vec2i, pal, count: int, ink, shadow: uint16) =
+  label.init(pos, s8x16, count = count)
+  label.obj.pal = pal
+  label.ink = ink # set the ink colour index to use from the palette
+  label.shadow = shadow # set the shadow colour (only relevant if the font actually has more than 1 colour)

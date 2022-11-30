@@ -1,6 +1,6 @@
-import natu/[irq, oam, video, math, tte, posprintf]
+import natu/[irq, video, math, tte, posprintf]
 import natu/graphics
-import utils/[objs, labels, scene]
+import utils/[labels, scene]
 import modules/score
 
 proc backToTitle()
@@ -24,27 +24,16 @@ proc onShow =
   bgColorBuf[0] = rgb8(22, 22, 29)
 
   # Show the background:
-  # dispcnt.init(layers = {lBg0})
-
   display.layers = {lBg0, lObj}
   display.obj1d = true
 
   eventEndGameTimer = timerEndGameFrames
 
-  thanksLabel.init(vec2i(ScreenWidth div 2, ScreenHeight div 2 - 32), s8x16, count = 30)
-  thanksLabel.obj.pal = acquireObjPal(gfxShipPlayer)
-  thanksLabel.ink = 2 # set the ink colour index to use from the palette
-  thanksLabel.shadow = 0 # set the shadow colour (only relevant if the font actually has more than 1 colour)
+  let labelPal = acquireObjPal(gfxShipPlayer)
 
-  scoreLabel.init(vec2i(ScreenWidth div 2, ScreenHeight div 2), s8x16, count = 15)
-  scoreLabel.obj.pal = acquireObjPal(gfxShipPlayer)
-  scoreLabel.ink = 2 # set the ink colour index to use from the palette
-  scoreLabel.shadow = 0 # set the shadow colour (only relevant if the font actually has more than 1 colour)
-
-  highScoreLabel.init(vec2i(ScreenWidth div 2, ScreenHeight div 2 + 32), s8x16, count = 25)
-  highScoreLabel.obj.pal = acquireObjPal(gfxShipPlayer)
-  highScoreLabel.ink = 2 # set the ink colour index to use from the palette
-  highScoreLabel.shadow = 0 # set the shadow colour (only relevant if the font actually has more than 1 colour)
+  prepareLabel(thanksLabel, vec2i(ScreenWidth div 2, ScreenHeight div 2 - 32), labelPal, 30, 2, 0)
+  prepareLabel(scoreLabel, vec2i(ScreenWidth div 2, ScreenHeight div 2), labelPal, 15, 2, 0)
+  prepareLabel(highScoreLabel, vec2i(ScreenWidth div 2, ScreenHeight div 2 + 32), labelPal, 25, 2, 0)
 
   # enable VBlank interrupt so we can wait for
   # the end of the frame without burning CPU cycles
