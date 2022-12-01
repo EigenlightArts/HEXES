@@ -64,6 +64,17 @@ proc update*(modifier: var Modifier; speed: int = 1) =
 # TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
 proc draw*(modifier: var Modifier) =
   if modifier.status == Active:
+    if modifier.kind == mkNumber:
+      withObj:
+        obj.init(
+          mode = omReg,
+          pos = vec2i(modifier.body.x.toInt() - 8, modifier.body.y.toInt()) - vec2i(
+              modifier.graphic.width div 2, modifier.graphic.height div 2),
+          tid = modifier.modifierObj.tid + (20 *
+              4),
+          pal = modifier.modifierObj.palId,
+          size = modifier.graphic.size
+        )
     withObj:
       obj.init(
         mode = omReg,
