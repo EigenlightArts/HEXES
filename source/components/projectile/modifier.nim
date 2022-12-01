@@ -61,29 +61,21 @@ proc update*(modifier: var Modifier; speed: int = 1) =
     if (not onscreen(modifier.body.hitbox())):
       modifier.status = Finished
 
-# TODO(Kal): Add the `$` sprite to the left of the number modifier projectile
 proc draw*(modifier: var Modifier) =
   if modifier.status == Active:
+    let screenPos = vec2i(modifier.body.pos) - vec2i(
+        modifier.graphic.width div 2, modifier.graphic.height div 2)
+
     if modifier.kind == mkNumber:
       withObj:
-        obj.init(
-          mode = omReg,
-          pos = vec2i(modifier.body.x.toInt() - 8, modifier.body.y.toInt()) - vec2i(
-              modifier.graphic.width div 2, modifier.graphic.height div 2),
-          tid = modifier.modifierObj.tid + (20 *
-              4),
-          pal = modifier.modifierObj.palId,
-          size = modifier.graphic.size
+        obj = modifier.modifierObj.dup(
+          pos = screenPos + vec2i(-8, 0),
+          tid = modifier.modifierObj.tid + (16 * 4),
         )
     withObj:
-      obj.init(
-        mode = omReg,
-        pos = vec2i(modifier.body.pos) - vec2i(
-            modifier.graphic.width div 2, modifier.graphic.height div 2),
-        tid = modifier.modifierObj.tid + (modifier.index *
-            4),
-        pal = modifier.modifierObj.palId,
-        size = modifier.graphic.size
+      obj = modifier.modifierObj.dup(
+        pos = screenPos,
+        tid = modifier.modifierObj.tid + (modifier.index * 4),
       )
 
 proc fireModifier*(modifier: sink Modifier; angle: Angle = 0) =
