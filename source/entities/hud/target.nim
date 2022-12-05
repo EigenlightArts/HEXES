@@ -16,6 +16,5 @@ proc draw*(self: var Target, gameState: GameState) =
     self.label.pos = vec2i(ScreenWidth div 12 - size.x div 2,
       ScreenHeight - 16 - size.y div 2)
 
-    if gameState != Intro:
-      posprintf(addr self.labelBuffer, "$%X", self.target)
-      self.label.put(addr self.labelBuffer)
+    posprintf(addr self.labelBuffer, "$%X", self.target)
+    self.label.put(addr self.labelBuffer)

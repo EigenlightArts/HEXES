@@ -19,7 +19,7 @@ proc draw*(self: var ModifierSlots, gameState: GameState) =
         withObj:
           obj.init(
             mode = omReg,
-            pos = vec2i(ScreenWidth - 26, ScreenHeight - 16) - vec2i(
+            pos = vec2i(ScreenWidth - 30, ScreenHeight - 16) - vec2i(
                 self.modifierOperator.graphic.width div 2,
                 self.modifierOperator.graphic.height div 2),
             tid = self.modifierOperator.modifierObj.tid +
@@ -32,7 +32,7 @@ proc draw*(self: var ModifierSlots, gameState: GameState) =
         withObj:
           obj.init(
             mode = omReg,
-            pos = vec2i(ScreenWidth - 10, ScreenHeight - 16) - vec2i(
+            pos = vec2i(ScreenWidth - 12, ScreenHeight - 16) - vec2i(
                 self.modifierNumber.graphic.width div 2,
                 self.modifierNumber.graphic.height div 2),
             tid = self.modifierNumber.modifierObj.tid +

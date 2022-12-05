@@ -1,4 +1,4 @@
-import natu/[video, graphics, irq, math, utils]
+import natu/[video, backgrounds, graphics, irq, math, utils]
 import utils/[scene, log, audio]
 import entities/[playership, evilhex]
 import entities/hud/[ecn, status, target, modifierslots]
@@ -96,7 +96,12 @@ proc onShow =
   # background color, approximating eigengrau
   bgColorBuf[0] = rgb8(22, 22, 29)
 
-  display.layers = {lBg0, lObj}
+  # Use a BG Control register to select a charblock and screenblock:
+  bgcnt[2].init(cbb = 1, sbb = 30)
+  # Load the tiles, map and palette into memory:
+  bgcnt[2].load(bgPlayingBG)
+
+  display.layers = {lBg0, lBg2, lObj}
   display.obj1d = true
 
   # enable VBlank interrupt so we can wait for
@@ -159,8 +164,6 @@ proc onHide =
 
 proc onDraw =
   game.statusInstance.draw(game.timerInstance, game.state, game.centerNumberInstance.target, eventLoopTimer)
-
-  # If it's no longer the intro, add a target label
   game.targetInstance.draw(game.state)
 
   # draw the Shooter projectiles
