@@ -68,6 +68,8 @@ proc initGame(): Game = result.level = 1; result.reset()
 proc levelUp(self: var Game) =
   audio.stopMusic()
   audio.playMusic(modCompletionLoop)
+  display.layers = display.layers - {lBg2}
+  
   if self.level < levelMax:
     inc self.level
     self.state = LevelUp
@@ -135,7 +137,8 @@ proc onUpdate =
 
     # game.evilHexInstance.update()
     game.timerInstance.update(game.state)
-    shooter.update(game.playerShipInstance, game.evilHexInstance, game.modifierSlotsInstance)
+    shooter.update(game.playerShipInstance, game.evilHexInstance,
+        game.modifierSlotsInstance)
 
     # if keyHit(kiSelect): # NOTE(Kal): Debug Only
     if game.centerNumberInstance.value == game.centerNumberInstance.target:
@@ -148,8 +151,10 @@ proc onUpdate =
     if eventLevelUpTimer <= 0:
       addScoreFromSeconds(game.timerInstance.getValueSeconds())
       shooter.destroy()
+      display.layers = display.layers + {lBg2}
+
       game.reset()
-  
+
   if game.state == GameOver:
     dec eventGameOverTimer
     if eventGameOverTimer <= 0:
@@ -159,11 +164,12 @@ proc onUpdate =
   inc eventLoopTimer
 
 proc onHide =
-  display.layers = display.layers - {lBg0, lObj}
+  display.layers = display.layers - {lBg0, lBg2, lObj}
   display.obj1d = false
 
 proc onDraw =
-  game.statusInstance.draw(game.timerInstance, game.state, game.centerNumberInstance.target, eventLoopTimer)
+  game.statusInstance.draw(game.timerInstance, game.state,
+      game.centerNumberInstance.target, eventLoopTimer)
   game.targetInstance.draw(game.state)
 
   # draw the Shooter projectiles
