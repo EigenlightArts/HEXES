@@ -1,6 +1,7 @@
 import natu/[math, graphics, video, utils]
 import utils/objs
 import components/shared
+import components/projectile/[enemy, modifier]
 import modules/shooter
 import types/[entities, scenes]
 
@@ -43,7 +44,7 @@ proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
 
   shooter.fireModifier(modifier, angle)
 
-proc fireEnemyHex*(self: var EvilHex; enemySelect: int;
+proc fireEnemyHex*(self: var EvilHex; enemySelect: EnemyKind;
     playerShipPos: Vec2f) =
   # TODO(Kal): Implement Controlled RNG to select the Enemy type and angle+position of bullets
   # With bias towards player postion
@@ -55,35 +56,35 @@ proc fireEnemyHex*(self: var EvilHex; enemySelect: int;
       self.body.y - fp(luSin(angle) * self.body.h))
 
   var gfxEnemy: Graphic
-  var enemyTimeScore: int
-  var enemySpeed: int
+  var enemySpeed: SpeedKind
   var enemyHealth: int
+  var enemyTimeScore: int
   case enemySelect:
-  of 1:
-    gfxEnemy = gfxEnemyTriangle
-    enemyTimeScore = 20
-    enemySpeed = 2
-    enemyHealth = 2
-  of 2:
-    gfxEnemy = gfxEnemySquare
-    enemyTimeScore = 15
-    enemySpeed = 2
-    enemyHealth = 3
-  of 3:
-    gfxEnemy = gfxEnemyLozenge
-    enemyTimeScore = 30
-    enemySpeed = 1
-    enemyHealth = 2
-  of 4:
-    gfxEnemy = gfxEnemyCircle
-    enemyTimeScore = 20
-    enemySpeed = 3
-    enemyHealth = 1
-  else:
+  of ekNone:
     gfxEnemy = gfxShipPlayer
     enemyTimeScore = 0
-    enemySpeed = 0
+    enemySpeed = skNone
     enemyHealth = 0
+  of ekTriangle:
+    gfxEnemy = gfxEnemyTriangle
+    enemyTimeScore = 20
+    enemySpeed = skMedium
+    enemyHealth = 2
+  of ekSquare:
+    gfxEnemy = gfxEnemySquare
+    enemyTimeScore = 15
+    enemySpeed = skMedium
+    enemyHealth = 3
+  of ekLozenge:
+    gfxEnemy = gfxEnemyLozenge
+    enemyTimeScore = 30
+    enemySpeed = skSlow
+    enemyHealth = 2
+  of ekCircle:
+    gfxEnemy = gfxEnemyCircle
+    enemyTimeScore = 20
+    enemySpeed = skFast
+    enemyHealth = 1
 
   let enemy = initEnemy(gfxEnemy, enemySelect, enemySpeed, enemyHealth,
       enemyTimeScore, pos)

@@ -4,6 +4,7 @@ import entities/[playership, evilhex]
 import entities/hud/[ecn, status, target, modifierslots]
 import modules/[shooter, player, score, levels]
 import components/timer
+import components/projectile/[enemy, modifier]
 import types/[scenes, entities, hud]
 
 proc goToGameEndScene()
@@ -21,7 +22,8 @@ var eventGameOverTimer: int
 var eventModifierIndex: int
 var eventModifierShoot: int
 var eventEnemyShoot: int
-var eventEnemySelect: int
+var eventAllowedEnemies: EnemyKind
+var eventAllowedOperators: OperatorKind
 
 const timerInitialSeconds = 300
 const timerIntroSeconds = 5
@@ -84,12 +86,13 @@ proc startEventLoop() =
 
   log "game.level: %d", game.level
 
-  eventEnemySelect = selectEnemy(game.level)
+  eventAllowedEnemies = selectEnemy(game.level)
+  eventAllowedOperators = selectOperator(game.level)
   eventEnemyShoot = enemyShoot(game.level)
   eventModifierShoot = enemyModifier(game.level)
 
   # excludes 0 and $
-  eventModifierIndex = if chooseModifierKind == 0: rand(16..19) else: rand(
+  eventModifierIndex = if chooseModifierKind == 0: int(eventAllowedOperators) + 15 else: rand(
       1..15)
 
 proc onShow =
@@ -132,7 +135,7 @@ proc onUpdate =
       game.evilHexInstance.fireModifierHex(eventModifierIndex,
           game.playerShipInstance.body.pos)
     if eventLoopTimer == eventEnemyShoot and shootEnemy == 0:
-      game.evilHexInstance.fireEnemyHex(eventEnemySelect,
+      game.evilHexInstance.fireEnemyHex(eventAllowedEnemies,
           game.playerShipInstance.body.pos)
 
     # game.evilHexInstance.update()

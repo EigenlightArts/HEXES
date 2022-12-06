@@ -48,15 +48,15 @@ proc `=copy`*(a: var Enemy; b: Enemy) {.error: "Not supported".}
 var enemyEntitiesInstances*: List[3, Enemy]
 
 
-proc initEnemy*(gfx: Graphic; enemySelect: int; enemySpeed: int;
+proc initEnemy*(gfx: Graphic; enemySelect: EnemyKind; enemySpeed: SpeedKind;
     enemyHealth: int; enemyTimeScore: int;pos: Vec2f): Enemy =
   result = Enemy(
     sprite: initSprite(gfx, vec2i(pos)),
     body: initBody(pos, 12, 12),
+    kind: enemySelect,
     timeScore: enemyTimeScore,
     health: enemyHealth,
-    speedKind: SpeedKind(enemySpeed),
-    kind: EnemyKind(enemySelect)
+    speedKind: enemySpeed
   )
 
   if result.kind == ekTriangle:
