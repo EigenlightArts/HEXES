@@ -15,6 +15,7 @@ type
     ekSquare
     ekLozenge
     ekCircle
+    ekPentagon
   Enemy* = object
     status*: ProjectileStatus
     sprite*: Sprite
@@ -80,10 +81,18 @@ proc update*(enemy: var Enemy) =
   if enemy.status == Active:
 
     # make sure the enemy players go where they are supposed to go
-    enemy.body.pos.x = enemy.body.pos.x - fp(luCos(
-        enemy.angle)) * enemy.speed
-    enemy.body.pos.y = enemy.body.pos.y - fp(luSin(
-         enemy.angle)) * enemy.speed
+    if enemy.kind != ekPentagon:
+      enemy.body.pos.x = enemy.body.pos.x - fp(luCos(
+          enemy.angle)) * enemy.speed
+      enemy.body.pos.y = enemy.body.pos.y - fp(luSin(
+          enemy.angle)) * enemy.speed
+    else:
+    # TODO(Kal): Find a way to make this a spiral instead of a straightline
+    # - Talked with Exe about this a bit in the natu channel
+      enemy.body.pos.x = enemy.body.pos.x - fp(luCos(
+          enemy.angle)) * enemy.speed
+      enemy.body.pos.y = enemy.body.pos.y - fp(luSin(
+          enemy.angle)) * enemy.speed
 
     if enemy.kind == ekTriangle and not enemy.flipDone:
       dec enemy.flipTimer

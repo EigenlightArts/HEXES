@@ -62,7 +62,7 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex,
               bulletPlayer.status = Finished
               modifierBP.status = Finished
 
-              modifierSlots.assignModifiers(modifierBP)
+              modifierSlots.storeModifier(modifierBP)
         for enemyBP in mitems(enemyEntitiesInstances):
           if enemyBP.status == Active:
             if collide(enemyBP.body, bulletPlayer.body):

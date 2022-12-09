@@ -12,6 +12,7 @@ type
     okSub
     okMul
     okDiv
+    okMod
   Modifier* = object
     status*: ProjectileStatus
     graphic*: Graphic

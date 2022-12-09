@@ -7,6 +7,38 @@ import modules/shooter
 # TODO(Kal): Need to experiment with this value
 const playerSpeed = 400 
 
+proc resetModifierValue(modifierSlots: var ModifierSlots) =
+  modifierSlots.modifierNumber.valueNumber = 0
+  modifierSlots.modifierOperator.valueOperator = okNone
+
+proc inputModifierValue(self: var CenterNumber;
+    modifierSlots: var ModifierSlots) =
+  if modifierSlots.modifierNumber.valueNumber == 0:
+    audio.playSound(sfxError)
+  else:
+    case modifierSlots.modifierOperator.valueOperator:
+    of okNone: audio.playSound(sfxError)
+    of okAdd:
+      self.value = self.value + modifierSlots.modifierNumber.valueNumber
+      audio.playSound(sfxCenterNumberChange)
+      modifierSlots.resetModifierValue()
+    of okSub:
+      self.value = self.value - modifierSlots.modifierNumber.valueNumber
+      audio.playSound(sfxCenterNumberChange)
+      modifierSlots.resetModifierValue()
+    of okMul:
+      self.value = self.value * modifierSlots.modifierNumber.valueNumber
+      audio.playSound(sfxCenterNumberChange)
+      modifierSlots.resetModifierValue()
+    of okDiv:
+      self.value = self.value div modifierSlots.modifierNumber.valueNumber
+      audio.playSound(sfxCenterNumberChange)
+      modifierSlots.resetModifierValue()
+    of okMod:
+      self.value = self.value mod modifierSlots.modifierNumber.valueNumber
+      audio.playSound(sfxCenterNumberChange)
+      modifierSlots.resetModifierValue()
+
 proc controlsGame*(playerShip: var PlayerShip; centerNumber: var CenterNumber;
     modifierSlots: var ModifierSlots; game: var Game) =
   if game.state != GameOver:
@@ -34,4 +66,3 @@ proc controlsGame*(playerShip: var PlayerShip; centerNumber: var CenterNumber;
         game.state = Paused
   else:
     audio.playSound(sfxPlayerDeath)
-

@@ -22,7 +22,7 @@ proc `=destroy`*(self: var ModifierSlots) =
 proc `=copy`*(dest: var ModifierSlots;
     source: ModifierSlots) {.error: "Not implemented".}
 
-proc assignModifiers*(modifierSlots: var ModifierSlots;
+proc storeModifier*(modifierSlots: var ModifierSlots;
     modifierStored: Modifier) =
   if modifierStored.kind == mkNumber:
     audio.playSound(sfxNumberChange)
@@ -49,35 +49,6 @@ proc `=destroy`*(self: var CenterNumber) =
 
 proc `=copy`*(dest: var CenterNumber;
     source: CenterNumber) {.error: "Not implemented".}
-
-proc resetModifierValue(modifierSlots: var ModifierSlots) =
-  modifierSlots.modifierNumber.valueNumber = 0
-  modifierSlots.modifierOperator.valueOperator = okNone
-
-proc inputModifierValue*(self: var CenterNumber;
-    modifierSlots: var ModifierSlots) =
-  if modifierSlots.modifierNumber.valueNumber != 0:
-    case modifierSlots.modifierOperator.valueOperator:
-    of okNone: audio.playSound(sfxError)
-    of okAdd:
-      self.value = self.value + modifierSlots.modifierNumber.valueNumber
-      audio.playSound(sfxCenterNumberChange)
-      modifierSlots.resetModifierValue()
-    of okSub:
-      self.value = self.value - modifierSlots.modifierNumber.valueNumber
-      audio.playSound(sfxCenterNumberChange)
-      modifierSlots.resetModifierValue()
-    of okMul:
-      self.value = self.value * modifierSlots.modifierNumber.valueNumber
-      audio.playSound(sfxCenterNumberChange)
-      modifierSlots.resetModifierValue()
-    of okDiv:
-      self.value = self.value div modifierSlots.modifierNumber.valueNumber
-      audio.playSound(sfxCenterNumberChange)
-      modifierSlots.resetModifierValue()
-  else:
-    audio.playSound(sfxError)
-
 
 type
   Timer* = object
