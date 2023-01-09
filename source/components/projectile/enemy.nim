@@ -36,6 +36,8 @@ type
     of ekLozenge:
       shootEnable*: bool
       shootTimer*: int
+    of ekPentagon:
+      ticker*: Fixed
 
 
 proc `=destroy`*(enemy: var Enemy) =
@@ -79,6 +81,7 @@ proc initEnemy*(gfx: Graphic; enemySelect: EnemyKind; enemySpeed: SpeedKind;
 
 proc update*(enemy: var Enemy) =
   if enemy.status == Active:
+    let pivot = vec2f(ScreenWidth div 2, ScreenHeight div 2)
 
     # make sure the enemy players go where they are supposed to go
     if enemy.kind != ekPentagon:
@@ -89,18 +92,24 @@ proc update*(enemy: var Enemy) =
     else:
     # TODO(Kal): Find a way to make this a spiral instead of a straightline
     # - Talked with Exe about this a bit in the natu channel
-      enemy.body.pos.x = enemy.body.pos.x - fp(luCos(
-          enemy.angle)) * enemy.speed
-      enemy.body.pos.y = enemy.body.pos.y - fp(luSin(
-          enemy.angle)) * enemy.speed
+      let angularVel: Angle = 100
+
+      enemy.angle += angularVel # Where angularVel is a number that decreases overtime
+      enemy.ticker += enemy.speed
+
+      enemy.body.pos.x = pivot.x - fp(luCos(
+          enemy.angle)) * enemy.ticker
+      enemy.body.pos.y = pivot.y - fp(luSin(
+          enemy.angle)) * enemy.ticker
 
     if enemy.kind == ekTriangle and not enemy.flipDone:
       dec enemy.flipTimer
       if enemy.flipTimer <= 0:
         enemy.speed = enemy.speed * -1
+
         # MP = pv - (pv - P)
-        let pivot = vec2f(ScreenWidth div 2, ScreenHeight div 2)
         let diff = pivot - enemy.body.pos
+        
         enemy.body.pos = pivot - diff
         enemy.flipDone = true
     if enemy.kind == ekLozenge:

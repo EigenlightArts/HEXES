@@ -31,9 +31,12 @@ proc onShow =
 
   let labelPal = acquireObjPal(gfxShipPlayer)
 
-  prepareLabel(thanksLabel, vec2i(ScreenWidth div 2, ScreenHeight div 2 - 32), labelPal, 30, 2, 0)
-  prepareLabel(scoreLabel, vec2i(ScreenWidth div 2, ScreenHeight div 2), labelPal, 15, 2, 0)
-  prepareLabel(highScoreLabel, vec2i(ScreenWidth div 2, ScreenHeight div 2 + 32), labelPal, 25, 2, 0)
+  prepareLabel(thanksLabel, vec2i(ScreenWidth div 2, ScreenHeight div 2 - 32),
+      labelPal, 30, 2, 0)
+  prepareLabel(scoreLabel, vec2i(ScreenWidth div 2, ScreenHeight div 2),
+      labelPal, 15, 2, 0)
+  prepareLabel(highScoreLabel, vec2i(ScreenWidth div 2, ScreenHeight div 2 +
+      32), labelPal, 25, 2, 0)
 
   # enable VBlank interrupt so we can wait for
   # the end of the frame without burning CPU cycles
@@ -58,32 +61,32 @@ proc onDraw =
   scoreLabel.draw()
   highScoreLabel.draw()
 
-  let sizeT = tte.getTextSize(addr labelBufferT)
+  let sizeT = tte.getTextSize(cast[cstring](addr labelBufferT))
   thanksLabel.pos = vec2i(ScreenWidth div 2 - sizeT.x div 2,
     (ScreenHeight div 2 - 32) - sizeT.y div 2)
 
-  posprintf(addr labelBufferT, "THANKS FOR PLAYING THIS DEMO")
-  thanksLabel.put(addr labelBufferT)
+  posprintf(cast[cstring](addr labelBufferT), "THANKS FOR PLAYING THIS DEMO")
+  thanksLabel.put(cast[cstring](addr labelBufferT))
 
-  let sizeS = tte.getTextSize(addr labelBufferS)
+  let sizeS = tte.getTextSize(cast[cstring](addr labelBufferS))
   scoreLabel.pos = vec2i(ScreenWidth div 2 - sizeS.x div 2,
     (ScreenHeight div 2) - sizeS.y div 2)
 
-  posprintf(addr labelBufferS, "SCORE: %d", totalScore)
-  scoreLabel.put(addr labelBufferS)
+  posprintf(cast[cstring](addr labelBufferS), "SCORE: %d", totalScore)
+  scoreLabel.put(cast[cstring](addr labelBufferS))
 
-  let sizeH = tte.getTextSize(addr labelBufferH)
+  let sizeH = tte.getTextSize(cast[cstring](addr labelBufferH))
   highScoreLabel.pos = vec2i(ScreenWidth div 2 - sizeH.x div 2,
     (ScreenHeight div 2 + 32) - sizeH.y div 2)
 
   checkAndStoreIfNewHighScore()
 
   if newHighScore:
-    posprintf(addr labelBufferH, "NEW HIGHSCORE: %d", highScore)
-    highScoreLabel.put(addr labelBufferH)
+    posprintf(cast[cstring](addr labelBufferH), "NEW HIGHSCORE: %d", highScore)
+    highScoreLabel.put(cast[cstring](addr labelBufferH))
   else:
-    posprintf(addr labelBufferH, "HIGHSCORE: %d", highScore)
-    highScoreLabel.put(addr labelBufferH)
+    posprintf(cast[cstring](addr labelBufferH), "HIGHSCORE: %d", highScore)
+    highScoreLabel.put(cast[cstring](addr labelBufferH))
 
 const GameEndScene* = Scene(
   show: onShow,

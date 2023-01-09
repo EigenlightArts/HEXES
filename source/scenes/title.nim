@@ -50,12 +50,12 @@ proc onUpdate =
 proc onDraw =
   startLabel.draw()
 
-  let size = tte.getTextSize(addr labelBuffer)
+  let size = tte.getTextSize(cast[cstring](addr labelBuffer))
   startLabel.pos = vec2i(ScreenWidth div 2 - size.x div 2,
     (ScreenHeight - 32) - size.y div 2)
 
-  posprintf(addr labelBuffer, "PRESS START")
-  startLabel.put(addr labelBuffer)
+  posprintf(cast[cstring](addr labelBuffer), "PRESS START")
+  startLabel.put(cast[cstring](addr labelBuffer))
 
 const TitleScene* = Scene(
   show: onShow,
