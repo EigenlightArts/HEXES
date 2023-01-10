@@ -92,7 +92,7 @@ proc update*(enemy: var Enemy) =
     else:
     # TODO(Kal): Find a way to make this a spiral instead of a straightline
     # - Talked with Exe about this a bit in the natu channel
-      let angularVel: Angle = 100
+      let angularVel: Angle = 180
 
       enemy.angle += angularVel # Where angularVel is a number that decreases overtime
       enemy.ticker += enemy.speed
