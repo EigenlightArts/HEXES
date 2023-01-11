@@ -71,7 +71,7 @@ proc levelUp(self: var Game) =
   audio.stopMusic()
   audio.playMusic(modCompletionLoop)
   display.layers = display.layers - {lBg2}
-  
+
   if self.level < levelMax:
     inc self.level
     self.state = LevelUp
@@ -92,8 +92,8 @@ proc startEventLoop() =
   eventModifierShoot = enemyModifier(game.level)
 
   # excludes 0 and $
-  eventModifierIndex = if chooseModifierKind == 0: int(eventAllowedOperators) + 15 else: rand(
-      1..15)
+  eventModifierIndex = if chooseModifierKind == 0: int(eventAllowedOperators) +
+      15 else: rand(1..15)
 
 proc onShow =
   game = initGame()
@@ -126,6 +126,9 @@ proc onUpdate =
       game.modifierSlotsInstance, game)
 
   game.modifierSlotsInstance.draw(game.state)
+  # log("modifierNumber.valueNumber: %d", game.modifierSlotsInstance.modifierNumber.valueNumber)
+  # log("modifierOperator.valueOperator: %d",
+  #     game.modifierSlotsInstance.modifierOperator.valueOperator)
 
   if game.state == Play or game.state == Intro:
     game.playerShipInstance.update()

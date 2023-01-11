@@ -10,8 +10,8 @@ var timeScorePenaltyBul*: int = -10
 type ModifierSlots* = object
   initialised*: bool
 
-  modifierOperator*: Modifier
   modifierNumber*: Modifier
+  modifierOperator*: Modifier
   drawNumber*: bool
   drawOperator*: bool
 
@@ -28,7 +28,7 @@ proc storeModifier*(modifierSlots: var ModifierSlots;
     audio.playSound(sfxNumberChange)
     modifierSlots.modifierNumber = modifierStored
     modifierSlots.drawNumber = true
-  if modifierStored.kind == mkOperator:
+  elif modifierStored.kind == mkOperator:
     audio.playSound(sfxOperatorChange)
     modifierSlots.modifierOperator = modifierStored
     modifierSlots.drawOperator = true

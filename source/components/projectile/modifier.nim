@@ -32,9 +32,9 @@ type
 # NOTE(Kal): Exe says that we don't need to free anything,
 # but I think he's under the impression that we have a shared state,
 # if push comes to shove try clearing the modifierObj stuff
-proc `=destroy`*(modifier: var Modifier) =
-  if modifier.status != Uninitialised:
-    modifier.status = Uninitialised
+# proc `=destroy`*(modifier: var Modifier) =
+#   if modifier.status != Uninitialised:
+#     modifier.status = Uninitialised
 
 # proc `=copy`*(a: var Modifier; b: Modifier) {.error: "Not supported".}
 
