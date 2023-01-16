@@ -23,13 +23,15 @@ const levels: array[1..levelMax, Level] = [
     isBoss: false,
     enemyRate: 30..90,
     modifierRate: 15..40,
-    allowedEnemies: {ekTriangle, ekSquare},
+    allowedTargetRange: 16..64,
+    allowedEnemies: {ekPentagon},
     allowedOperators: {okAdd, okSub},
   ),
   2: Level(
     isBoss: false,
     enemyRate: 30..85,
     modifierRate: 10..45,
+    allowedTargetRange: 8..64,
     allowedEnemies: {ekTriangle, ekSquare, ekLozenge},
     allowedOperators: {okAdd, okSub},
   ),
@@ -37,6 +39,7 @@ const levels: array[1..levelMax, Level] = [
     isBoss: false,
     enemyRate: 35..80,
     modifierRate: 10..50,
+    allowedTargetRange: 8..96,
     allowedEnemies: {ekTriangle, ekSquare, ekLozenge},
     allowedOperators: {okAdd, okSub},
   ),
@@ -44,6 +47,7 @@ const levels: array[1..levelMax, Level] = [
     isBoss: true,
     enemyRate: 40..75,
     modifierRate: 10..60,
+    allowedTargetRange: 0..128,
     allowedEnemies: {ekTriangle, ekSquare, ekLozenge},
     allowedOperators: {okAdd, okSub},
   )
@@ -73,10 +77,14 @@ proc selectOperator*(currentLevel: int): OperatorKind =
   let slice = levels[currentLevel].allowedOperators
   result = randSet(slice)
 
+proc selectTargetRange*(currentLevel: int): int =
+  let slice = levels[currentLevel].allowedTargetRange
+  result = rand(slice)
+
 proc enemyShoot*(currentLevel: int): int =
   let slice = levels[currentLevel].enemyRate
   result = rand(slice)
 
-proc enemyModifier*(currentLevel: int): int =
+proc modifierShoot*(currentLevel: int): int =
   let slice = levels[currentLevel].modifierRate
   result = rand(slice)

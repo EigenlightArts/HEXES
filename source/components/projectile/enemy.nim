@@ -38,6 +38,7 @@ type
       shootTimer*: int
     of ekPentagon:
       ticker*: Fixed
+      directionChoice*: int
 
 
 proc `=destroy`*(enemy: var Enemy) =
@@ -66,6 +67,8 @@ proc initEnemy*(gfx: Graphic; enemySelect: EnemyKind; enemySpeed: SpeedKind;
     result.flipTimer = rand(30..85)
   if result.kind == ekLozenge:
     result.shootTimer = rand(25..60)
+  if result.kind == ekPentagon:
+    result.directionChoice = rand(0..1)
 
   result.speed = case result.speedKind:
     of skNone:
@@ -90,11 +93,13 @@ proc update*(enemy: var Enemy) =
       enemy.body.pos.y = enemy.body.pos.y - fp(luSin(
           enemy.angle)) * enemy.speed
     else:
-    # TODO(Kal): Find a way to make this a spiral instead of a straightline
-    # - Talked with Exe about this a bit in the natu channel
-      let angularVel: Angle = 180
+      let angularVel: Angle = 180 # Where angularVel is a number that decreases over time
+      
+      if enemy.directionChoice == 0:
+        enemy.angle += angularVel 
+      else:
+        enemy.angle -= angularVel 
 
-      enemy.angle += angularVel # Where angularVel is a number that decreases overtime
       enemy.ticker += enemy.speed
 
       enemy.body.pos.x = pivot.x - fp(luCos(

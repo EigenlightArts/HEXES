@@ -47,11 +47,11 @@ proc reset(game: var Game) =
   eventLevelUpTimer = timerLevelUpFrames
   eventGameOverTimer = timerGameOverFrames
 
-  ecnValue = rand(0..255)
-  ecnTarget = rand(0..255)
+  ecnValue = rand(selectTargetRange(game.level))
+  ecnTarget = rand(selectTargetRange(game.level))
 
   while ecnValue == ecnTarget:
-    ecnTarget = rand(0..255)
+    ecnTarget = rand(selectTargetRange(game.level))
 
   game.evilHexInstance = initEvilHex()
   game.playerShipInstance = initPlayerShip(vec2f(75, 0))
@@ -89,7 +89,7 @@ proc startEventLoop() =
   eventAllowedEnemies = selectEnemy(game.level)
   eventAllowedOperators = selectOperator(game.level)
   eventEnemyShoot = enemyShoot(game.level)
-  eventModifierShoot = enemyModifier(game.level)
+  eventModifierShoot = modifierShoot(game.level)
 
   # excludes 0 and $
   eventModifierIndex = if chooseModifierKind == 0: int(eventAllowedOperators) +
