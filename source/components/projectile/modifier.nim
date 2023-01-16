@@ -71,7 +71,7 @@ proc draw*(modifier: var Modifier) =
       withObj:
         obj = modifier.modifierObj.dup(
           pos = screenPos + vec2i(-8, 0),
-          tid = modifier.modifierObj.tid + (20 * 4),
+          tid = modifier.modifierObj.tid + (21 * 4),
         )
     withObj:
       obj = modifier.modifierObj.dup(

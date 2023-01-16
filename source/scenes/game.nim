@@ -127,8 +127,7 @@ proc onUpdate =
 
   game.modifierSlotsInstance.draw(game.state)
   # log("modifierNumber.valueNumber: %d", game.modifierSlotsInstance.modifierNumber.valueNumber)
-  # log("modifierOperator.valueOperator: %d",
-  #     game.modifierSlotsInstance.modifierOperator.valueOperator)
+  # log("modifierOperator.valueOperator: %s", $game.modifierSlotsInstance.modifierOperator.valueOperator)
 
   if game.state == Play or game.state == Intro:
     game.playerShipInstance.update()
