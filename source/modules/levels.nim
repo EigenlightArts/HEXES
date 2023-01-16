@@ -24,7 +24,7 @@ const levels: array[1..levelMax, Level] = [
     enemyRate: 30..90,
     modifierRate: 15..40,
     allowedTargetRange: 16..64,
-    allowedEnemies: {ekPentagon},
+    allowedEnemies: {ekTriangle, ekSquare},
     allowedOperators: {okAdd, okSub},
   ),
   2: Level(
