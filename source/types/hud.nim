@@ -41,6 +41,13 @@ type CenterNumber* = object
   value*: int
   target*: int
 
+  # TODO(Kal): Consider making this a new type? Effects/Boss?
+  seqChangeSec*: int
+  seqPatternCurrent*: int
+  seqPattern*: array[6, int]
+  seqActive*: bool
+  seqSubract*: bool
+
 proc `=destroy`*(self: var CenterNumber) =
   if self.initialised:
     self.initialised = false

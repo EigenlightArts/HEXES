@@ -39,9 +39,22 @@ proc draw*(self: var CenterNumber; gameState: GameState) =
     self.label.put((cast[cstring](addr self.labelBuffer)))
 
 
-proc update*(self: var CenterNumber) =
+proc update*(self: var CenterNumber, timer: Timer) =
   # check if CenterNumber is overflowing or underflowing
   if self.value >= 256:
     self.value -= 256
   if self.value <= -1:
     self.value += 256
+
+  # Only enabled if BossLevel with Sequence Patterns
+  if self.seqActive:
+    if self.seqPatternCurrent == high(self.seqPattern):
+      self.seqPatternCurrent = 0
+    
+    self.seqPatternCurrent += 1
+
+    if timer.getValueSeconds() mod self.seqChangeSec == 0:
+      if self.seqSubract:  
+        self.value -= self.seqPattern[self.seqPatternCurrent]
+      else:
+        self.value += self.seqPattern[self.seqPatternCurrent]
