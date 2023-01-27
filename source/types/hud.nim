@@ -41,13 +41,6 @@ type CenterNumber* = object
   value*: int
   target*: int
 
-  # TODO(Kal): Consider making this a new type? Effects/Boss?
-  seqChangeSec*: int
-  seqPatternCurrent*: int
-  seqPattern*: array[6, int]
-  seqActive*: bool
-  seqSubract*: bool
-
 proc `=destroy`*(self: var CenterNumber) =
   if self.initialised:
     self.initialised = false
@@ -73,6 +66,10 @@ proc `=destroy`*(self: var Timer) =
 
 proc `=copy`*(dest: var Timer;
     source: Timer) {.error: "Not implemented".}
+
+proc getValueSeconds*(self: Timer): int = self.valueFrames div 60
+proc setValueSeconds*(self: var Timer, valueSeconds: int) = self.valueFrames = valueSeconds * 60
+proc addValueSeconds*(self: var Timer, valueSeconds: int) = self.valueFrames += valueSeconds * 60
 
 type
   Status* = object

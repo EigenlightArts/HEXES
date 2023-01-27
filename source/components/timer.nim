@@ -9,10 +9,6 @@ proc initTimer*(valueSeconds: int, introSeconds: int, limitSeconds: int): Timer 
   result.introSecondsInitial = result.introSeconds
   result.limitSeconds = limitSeconds
 
-proc getValueSeconds*(self: Timer): int = self.valueFrames div 60
-proc setValueSeconds*(self: var Timer, valueSeconds: int) = self.valueFrames = valueSeconds * 60
-proc addValueSeconds*(self: var Timer, valueSeconds: int) = self.valueFrames += valueSeconds * 60
-
 proc update*(self: var Timer, gameState: var GameState) =
   dec self.valueFrames
 
