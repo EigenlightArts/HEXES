@@ -13,6 +13,7 @@ type
     state*: GameState
     
     level*: int
+    isBoss*: bool
 
     playerShipInstance*: PlayerShip
     evilHexInstance*: EvilHex

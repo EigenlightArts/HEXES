@@ -33,6 +33,23 @@ proc storeModifier*(modifierSlots: var ModifierSlots;
     modifierSlots.modifierOperator = modifierStored
     modifierSlots.drawOperator = true
 
+type
+  BossEffectKind* = enum
+    beSequence
+    beShields
+  BossEffect* = object
+    case kind*: BossEffectKind
+    of beSequence:
+      bseqActive*: bool
+      bseqSubract*: bool
+      bseqChangeFrames*: int
+      bseqPatternCurrent*: int
+      bseqPattern*: array[6, int]
+    of beShields:
+      nil
+
+import modules/levels
+
 type CenterNumber* = object
   initialised*: bool
   label*: Label
@@ -40,6 +57,8 @@ type CenterNumber* = object
 
   value*: int
   target*: int
+
+  activeBEs*: array[maxActiveBEs, BossEffect]
 
 proc `=destroy`*(self: var CenterNumber) =
   if self.initialised:
@@ -67,6 +86,7 @@ proc `=destroy`*(self: var Timer) =
 proc `=copy`*(dest: var Timer;
     source: Timer) {.error: "Not implemented".}
 
+proc getValueFrames*(self: Timer): int = self.valueFrames
 proc getValueSeconds*(self: Timer): int = self.valueFrames div 60
 proc setValueSeconds*(self: var Timer, valueSeconds: int) = self.valueFrames = valueSeconds * 60
 proc addValueSeconds*(self: var Timer, valueSeconds: int) = self.valueFrames += valueSeconds * 60

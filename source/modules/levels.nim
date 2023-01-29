@@ -1,9 +1,15 @@
 import natu/utils
 import components/projectile/[enemy, modifier]
 
+const maxActiveBEs* = 6
+const levelMax* = 4
+
+import types/hud
+
 type
   Level = object
     isBoss: bool
+    bossEffect: seq[BossEffect]
 
     enemyRate: Slice[int]
     modifierRate: Slice[int]
@@ -12,8 +18,6 @@ type
     allowedEnemies: set[EnemyKind]
     allowedOperators: set[OperatorKind]
 
-
-const levelMax* = 4
 
 # TODO(Kal): Split configuration to TOML files?
 # Using https://github.com/status-im/nim-toml-serialization
@@ -45,6 +49,9 @@ const levels: array[1..levelMax, Level] = [
   ),
   4: Level(
     isBoss: true,
+    bossEffect: @[
+      BossEffect(kind: beSequence, bseqActive: true, bseqChangeFrames: 600,
+          bseqPattern: [2, 3, 2, 3, 4, 6])],
     enemyRate: 40..75,
     modifierRate: 10..60,
     allowedTargetRange: 0..128,
@@ -55,19 +62,26 @@ const levels: array[1..levelMax, Level] = [
 
 proc randSet[T](slice: set[T]): T =
   let r = rand(card(slice) - 1)
-  
+
   var i = 0
   for kind in slice:
     if i == r:
       return kind
     else:
       inc i
-  
+
   # if the for loop doesn't return something, return the type's None value
-  # there shouldn't really be an occasion where this gets reached 
+  # there shouldn't really be an occasion where this gets reached
   # but it's here just in case
   return T(0)
 
+proc bossCheck*(currentLevel: int): bool =
+  let slice = levels[currentLevel].isBoss
+  result = slice
+
+proc getEffects*(currentLevel: int): seq[BossEffect] =
+  let slice = levels[currentLevel].bossEffect
+  result = slice
 
 proc selectEnemy*(currentLevel: int): EnemyKind =
   let slice = levels[currentLevel].allowedEnemies

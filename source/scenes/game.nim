@@ -63,6 +63,13 @@ proc reset(game: var Game) =
   game.targetInstance = initTarget(game.centerNumberInstance.target)
   game.modifierSlotsInstance = initModifierSlots()
 
+  game.isBoss = bossCheck(game.level)
+  if game.isBoss:
+    let levelEffects = getEffects(game.level)
+    assert(levelEffects.len <= maxActiveBEs, "Too many boss effects in level config.")
+    for (i, effect) in levelEffects.pairs:
+      game.centerNumberInstance.activeBEs[i] = effect
+
   game.playGameMusic()
 
 proc initGame(): Game = result.level = 1; result.reset()
@@ -120,7 +127,7 @@ proc onUpdate =
   if eventLoopTimer == 100:
     startEventLoop()
 
-  game.centerNumberInstance.update()
+  game.centerNumberInstance.update(game.timerInstance, game.isBoss)
 
   player.controlsGame(game.playerShipInstance, game.centerNumberInstance,
       game.modifierSlotsInstance, game)

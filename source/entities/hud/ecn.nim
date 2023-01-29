@@ -1,6 +1,6 @@
 import natu/[math, graphics, posprintf, video, tte]
 import types/[hud, scenes]
-import components/bosseffects
+import modules/levels
 
 proc initCenterNumber*(value: sink int, target: sink int): CenterNumber =
   result.initialised = true
@@ -41,22 +41,21 @@ proc draw*(self: var CenterNumber; gameState: GameState) =
     self.label.put((cast[cstring](addr self.labelBuffer)))
 
 
-proc update*(self: var CenterNumber, timer: Timer) =
-  # check if CenterNumber is overflowing or underflowing
-  if self.value >= 256:
-    self.value -= 256
-  if self.value <= -1:
-    self.value += 256
+proc update*(self: var CenterNumber, timer: Timer, isBoss: bool) =
+  # Prevent CenterNumber from overflowing or underflowing
+  self.value = self.value and 255
 
-  # Only enabled if BossLevel with Sequence Patterns
-  if self.boss.bseqActive:
-    if self.boss.bseqPatternCurrent == high(self.boss.bseqPattern):
-      self.boss.bseqPatternCurrent = 0
+  if isBoss:
+    # if BossLevel with Sequence Patterns
+    for effect in mitems(self.activeBEs):
+      if effect.bseqActive:
+        if effect.bseqPatternCurrent == high(effect.bseqPattern):
+          effect.bseqPatternCurrent = 0
 
-    self.boss.bseqPatternCurrent += 1
+        effect.bseqPatternCurrent += 1
 
-    if timer.getValueSeconds() mod self.boss.bseqChangeSec == 0:
-      if self.boss.bseqSubract:
-        self.value -= self.boss.bseqPattern[self.boss.bseqPatternCurrent]
-      else:
-        self.value += self.boss.bseqPattern[self.boss.bseqPatternCurrent]
+        if timer.getValueFrames() mod effect.bseqChangeFrames == 0:
+          if effect.bseqSubract:
+            self.value -= effect.bseqPattern[effect.bseqPatternCurrent]
+          else:
+            self.value += effect.bseqPattern[effect.bseqPatternCurrent]
