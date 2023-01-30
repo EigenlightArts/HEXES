@@ -10,7 +10,7 @@ proc initModifierSlots*(): ModifierSlots =
   result.modifierOperator = Modifier(kind: mkOperator)
 
 proc draw*(self: var ModifierSlots, gameState: GameState) =
-  if gameState == Play or gameState == Intro:
+  if gameState == Play or gameState == Intro or gameState == Paused:
     if self.drawOperator:
       if self.modifierOperator.valueOperator != okNone:
         withObj:

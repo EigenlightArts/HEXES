@@ -67,14 +67,14 @@ proc fireEnemyHex*(self: var EvilHex; enemySelect: EnemyKind;
     enemyHealth = 0
   of ekTriangle:
     gfxEnemy = gfxEnemyTriangle
-    enemyTimeScore = 20
+    enemyTimeScore = 15
     enemySpeed = skMedium
-    enemyHealth = 2
+    enemyHealth = 3
   of ekSquare:
     gfxEnemy = gfxEnemySquare
     enemyTimeScore = 15
     enemySpeed = skMedium
-    enemyHealth = 3
+    enemyHealth = 2
   of ekLozenge:
     gfxEnemy = gfxEnemyLozenge
     enemyTimeScore = 30
@@ -82,12 +82,12 @@ proc fireEnemyHex*(self: var EvilHex; enemySelect: EnemyKind;
     enemyHealth = 2
   of ekCircle:
     gfxEnemy = gfxEnemyCircle
-    enemyTimeScore = 20
+    enemyTimeScore = 30
     enemySpeed = skFast
     enemyHealth = 1
   of ekPentagon:
     gfxEnemy = gfxEnemyPentagon
-    enemyTimeScore = 20
+    enemyTimeScore = 30
     enemySpeed = skMedium
     enemyHealth = 1
 

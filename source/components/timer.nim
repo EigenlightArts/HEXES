@@ -27,10 +27,9 @@ proc update*(self: var Timer, gameState: var GameState) =
 
     timeScoreValue = 0
 
-  if self.getValueSeconds() mod 60 == 0:
+  # Added some headstart to offset delay
+  if self.getValueFrames() mod 3610 == 0:
     audio.playSound(sfxTimeAlertMin)
-  elif self.getValueSeconds() mod 30 == 0:
-    audio.playSound(sfxTimeAlert30Sec)
 
   if self.valueFrames <= 0:
     gameState = GameOver

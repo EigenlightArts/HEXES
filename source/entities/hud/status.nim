@@ -8,22 +8,28 @@ proc initStatus*(): Status =
   let labelPal = acquireObjPal(gfxShipPlayer)
   prepareLabel(result.label, vec2i(ScreenWidth div 2, ScreenHeight div 12), labelPal, 15, 2, 0)
 
+proc drawLabel(self: var Status, flicker: bool, eventLoopStatus: int) =
+  if flicker:
+    if (eventLoopStatus div 25) mod 2 == 0:
+        self.label.draw()
+  else:
+    self.label.draw()
+
 proc draw*(self: var Status, timer: var Timer, gameState: GameState,
     target: int, eventLoopStatus: int) =
   if gameState != GameOver:
     if gameState == Play or gameState == Intro:
-      self.label.draw()
+      self.drawLabel(false, eventLoopStatus)
 
     let size = tte.getTextSize((cast[cstring](addr self.labelBuffer)))
     self.label.pos = vec2i(ScreenWidth div 2 - size.x div 2,
       ScreenHeight div 12 - size.y div 2)
 
     if gameState == Paused:
-      if (eventLoopStatus div 25) mod 2 == 0:
-        self.label.draw()
+      self.drawLabel(true, eventLoopStatus)
 
-        posprintf((cast[cstring](addr self.labelBuffer)), "PAUSED")
-        self.label.put((cast[cstring](addr self.labelBuffer)))
+      posprintf((cast[cstring](addr self.labelBuffer)), "PAUSED")
+      self.label.put((cast[cstring](addr self.labelBuffer)))
     elif gameState == LevelUp:
       # gameState = Intro
       timer.introSeconds = timer.introSecondsInitial

@@ -30,7 +30,7 @@ proc playSound*(sampleId: Sample) {.inline.} =
 
 proc playMusic*(moduleId: Module) {.inline.} =
   maxmod.start(moduleId, mmPlayLoop)
-  maxmod.setModuleVolume(0.5.toFixed(10))
+  maxmod.setModuleVolume(1.0.toFixed(10))
 
 proc pauseSong*() {.inline.} =
   maxmod.pause()

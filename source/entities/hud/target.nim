@@ -9,7 +9,7 @@ proc initTarget*(target: int): Target =
   prepareLabel(result.label, vec2i(ScreenWidth div 12, ScreenHeight - 16), labelPal, 16, 2, 0)
 
 proc draw*(self: var Target, gameState: GameState) =
-  if gameState == Play or gameState == Intro:
+  if gameState == Play or gameState == Intro or gameState == Paused:
     self.label.draw()
 
     let size = tte.getTextSize((cast[cstring](addr self.labelBuffer)))
