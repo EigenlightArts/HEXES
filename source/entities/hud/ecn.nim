@@ -49,7 +49,7 @@ proc update*(self: var CenterNumber, timer: Timer, isBoss: bool) =
     # if BossLevel with Sequence Patterns
     for effect in mitems(self.activeBEs):
       if effect.bseqActive:
-        if effect.bseqPatternCurrent == high(effect.bseqPattern):
+        if effect.bseqPatternCurrent == bseqPatternMax:
           effect.bseqPatternCurrent = 0
 
         effect.bseqPatternCurrent += 1

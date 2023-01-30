@@ -33,6 +33,8 @@ proc storeModifier*(modifierSlots: var ModifierSlots;
     modifierSlots.modifierOperator = modifierStored
     modifierSlots.drawOperator = true
 
+const bseqPatternMax* = 6
+
 type
   BossEffectKind* = enum
     beSequence
@@ -44,7 +46,7 @@ type
       bseqSubract*: bool
       bseqChangeFrames*: int
       bseqPatternCurrent*: int
-      bseqPattern*: array[6, int]
+      bseqPattern*: array[bseqPatternMax, int]
     of beShields:
       nil
 
