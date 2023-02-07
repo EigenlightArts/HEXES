@@ -54,13 +54,14 @@ import modules/levels
 
 type CenterNumber* = object
   initialised*: bool
+  isBoss*: bool
+
   label*: Label
   labelBuffer*: array[9, char]
+  activeBEs*: array[maxActiveBEs, BossEffect]
 
   value*: int
   target*: int
-
-  activeBEs*: array[maxActiveBEs, BossEffect]
 
 proc `=destroy`*(self: var CenterNumber) =
   if self.initialised:

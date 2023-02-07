@@ -3,31 +3,50 @@ import utils/objs
 import components/shared
 import components/projectile/[enemy, modifier]
 import modules/shooter
-import types/[entities, scenes]
+import types/[entities, scenes, hud]
 
-proc initEvilHex*(): EvilHex =
+proc initEvilHex*(isBoss: bool): EvilHex =
   result.initialised = true
-  result.body = initBody(vec2f(ScreenWidth div 2 - 10, ScreenHeight div 2 - 10), 20, 20)
+  result.isBoss = isBoss
+  result.angle = 0
 
+  result.body = initBody(vec2f(ScreenWidth div 2 - 10, ScreenHeight div 2 - 10), 20, 20)
   result.tid = allocObjTiles(gfxEvilHex)
   result.paletteId = acquireObjPal(gfxEvilHex)
 
   copyFrame(addr objTileMem[result.tid], gfxEvilHex, 0)
 
-# proc update*(self: var EvilHex) =
-# TODO(Kal): Add slowly rotating EvilHex
+proc update*(self: var EvilHex, timer: Timer) =
+  if self.isBoss:
+    if timer.getValueFrames() mod 120 == 0:  
+      self.angle += 1
+
+    self.angle = self.angle and 360
 
 proc draw*(self: var EvilHex, gameState: GameState) =
   if gameState != LevelUp:
-    withObj:
-      obj.init(
-        mode = omReg,
-        pos = vec2i(self.body.pos) - vec2i(
-            gfxEvilHex.width div 2 - 10, gfxEvilHex.height div 2 - 10),
-        tid = self.tid,
-        pal = self.paletteId,
-        size = gfxEvilHex.size
-      )
+    if self.isBoss:
+      withObjAndAff:
+        aff.setToRotationInv(self.angle.uint16)
+        obj.init(
+          mode = omAff,
+          aff = affId,
+          pos = vec2i(self.body.pos) - vec2i(
+              gfxEvilHex.width div 2 - 10, gfxEvilHex.height div 2 - 10),
+          tid = self.tid,
+          pal = self.paletteId,
+          size = gfxEvilHex.size
+        )
+    else:
+      withObj:
+        obj.init(
+          mode = omReg,
+          pos = vec2i(self.body.pos) - vec2i(
+              gfxEvilHex.width div 2 - 10, gfxEvilHex.height div 2 - 10),
+          tid = self.tid,
+          pal = self.paletteId,
+          size = gfxEvilHex.size
+        )
 
 proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
     playerShipPos: Vec2f) =
@@ -46,9 +65,6 @@ proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
 
 proc fireEnemyHex*(self: var EvilHex; enemySelect: EnemyKind;
     playerShipPos: Vec2f) =
-  # TODO(Kal): Implement Controlled RNG to select the Enemy type and angle+position of bullets
-  # With bias towards player postion
-
   let angle: Angle = rand(uint16)
   # let angle: Angle = 25368 # for testing and debugging
   let pos: Vec2f = vec2f(

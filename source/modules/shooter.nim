@@ -1,7 +1,7 @@
-import natu/[video, utils]
+import natu/[video, utils, math]
 import components/projectile/[bulletplayer, bulletenemy, enemy, modifier]
 import components/shared
-import utils/[body, audio]
+import utils/[body, audio, camera]
 import types/[entities, hud, scenes]
 
 export bulletplayer, bulletenemy, enemy, modifier
@@ -43,6 +43,7 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex,
         bulletEnemy.update(speed = 2)
 
         if collide(playerShip.body, bulletEnemy.body) and not invisibilityOn:
+          cameraShake(fp(3),fp(0.25))
           audio.playSound(sfxPlayerHit)
           bulletEnemy.status = Finished
           timeScoreValue = timeScorePenaltyBul

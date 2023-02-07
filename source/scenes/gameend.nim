@@ -21,7 +21,7 @@ const timerEndGameFrames = 200
 
 proc onShow =
   # background color, approximating eigengrau
-  bgColorBuf[0] = rgb8(22, 22, 29)
+  bgColorBuf[2] = rgb8(22, 22, 29)
 
   # Show the background:
   display.layers = {lBg0, lObj}

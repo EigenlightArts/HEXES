@@ -1,6 +1,5 @@
 import natu/[math, graphics, video, tte, posprintf]
 import types/[hud, scenes]
-import components/timer
 
 proc initStatus*(): Status =
   result.initialised = true

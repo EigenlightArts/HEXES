@@ -1,10 +1,10 @@
 import natu/[math, graphics, posprintf, video, tte]
 import types/[hud, scenes]
-import modules/levels
 
-proc initCenterNumber*(value: sink int, target: sink int): CenterNumber =
+proc initCenterNumber*(value: sink int, target: sink int, isBoss: bool): CenterNumber =
   result.initialised = true
-
+  result.isBoss = isBoss
+  
   result.value = value
   result.target = target
 
@@ -41,11 +41,11 @@ proc draw*(self: var CenterNumber; gameState: GameState) =
     self.label.put((cast[cstring](addr self.labelBuffer)))
 
 
-proc update*(self: var CenterNumber, timer: Timer, isBoss: bool) =
+proc update*(self: var CenterNumber, timer: Timer) =
   # Prevent CenterNumber from overflowing or underflowing
   self.value = self.value and 255
 
-  if isBoss:
+  if self.isBoss:
     # if BossLevel with Sequence Patterns
     for effect in mitems(self.activeBEs):
       if effect.bseqActive:

@@ -1,5 +1,5 @@
-import natu/[video, backgrounds, graphics, irq, math, utils]
-import utils/[scene, log, audio]
+import natu/[video, backgrounds, irq, math, utils]
+import utils/[scene, log, audio, camera]
 import entities/[playership, evilhex]
 import entities/hud/[ecn, status, target, modifierslots]
 import modules/[shooter, player, score, levels]
@@ -53,22 +53,22 @@ proc reset(game: var Game) =
   while ecnValue == ecnTarget:
     ecnTarget = rand(selectTargetRange(game.level))
 
-  game.evilHexInstance = initEvilHex()
-  game.playerShipInstance = initPlayerShip(vec2f(75, 0))
-  game.playerShipInstance.angle = 16500
-
-  game.centerNumberInstance = initCenterNumber(ecnValue, ecnTarget)
-  game.timerInstance = initTimer(timerInitialSeconds, timerIntroSeconds, timerLimitSeconds)
-  game.statusInstance = initStatus()
-  game.targetInstance = initTarget(game.centerNumberInstance.target)
-  game.modifierSlotsInstance = initModifierSlots()
-
   game.isBoss = bossCheck(game.level)
   if game.isBoss:
     let levelEffects = getEffects(game.level)
     assert(levelEffects.len <= maxActiveBEs, "Too many boss effects in level config.")
     for (i, effect) in levelEffects.pairs:
       game.centerNumberInstance.activeBEs[i] = effect
+
+  game.evilHexInstance = initEvilHex(game.isBoss)
+  game.playerShipInstance = initPlayerShip(vec2f(75, 0))
+  game.playerShipInstance.angle = 16500
+
+  game.centerNumberInstance = initCenterNumber(ecnValue, ecnTarget, game.isBoss)
+  game.timerInstance = initTimer(timerInitialSeconds, timerIntroSeconds, timerLimitSeconds)
+  game.statusInstance = initStatus()
+  game.targetInstance = initTarget(game.centerNumberInstance.target)
+  game.modifierSlotsInstance = initModifierSlots()
 
   game.playGameMusic()
 
@@ -105,29 +105,32 @@ proc startEventLoop() =
 proc onShow =
   game = initGame()
 
-  # background color, approximating eigengrau
-  bgColorBuf[0] = rgb8(22, 22, 29)
-
   # Use a BG Control register to select a charblock and screenblock:
-  bgcnt[2].init(cbb = 1, sbb = 30)
+  bgcnt[0].init(cbb = 1, sbb = 30)
   # Load the tiles, map and palette into memory:
+  bgcnt[0].load(bgPlayingHUD)
+
+  # background asset
+  bgcnt[2].init(cbb = 2, sbb = 24)
   bgcnt[2].load(bgPlayingBG)
 
   display.layers = {lBg0, lBg2, lObj}
   display.obj1d = true
 
   # enable VBlank interrupt so we can wait for
-  # the end of the frame without burning CPU cycles
+  # the end of the frame without burning CPU cyclessize
   irq.enable(iiVBlank)
 
   startEventLoop()
 
 proc onUpdate =
+  updateCamera()
+
   # after 100 vblank units, restart event loop
   if eventLoopTimer == 100:
     startEventLoop()
 
-  game.centerNumberInstance.update(game.timerInstance, game.isBoss)
+  game.centerNumberInstance.update(game.timerInstance)
 
   player.controlsGame(game.playerShipInstance, game.centerNumberInstance,
       game.modifierSlotsInstance, game)
@@ -147,7 +150,7 @@ proc onUpdate =
       game.evilHexInstance.fireEnemyHex(eventAllowedEnemies,
           game.playerShipInstance.body.pos)
 
-    # game.evilHexInstance.update()
+    game.evilHexInstance.update(game.timerInstance)
     game.timerInstance.update(game.state)
     shooter.update(game.playerShipInstance, game.evilHexInstance,
         game.modifierSlotsInstance)
