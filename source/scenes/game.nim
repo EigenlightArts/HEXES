@@ -1,4 +1,4 @@
-import natu/[video, backgrounds, irq, math, utils]
+import natu/[video, backgrounds, irq, math, utils, input]
 import utils/[scene, log, audio, camera]
 import entities/[playership, evilhex]
 import entities/hud/[ecn, status, target, modifierslots]
@@ -43,6 +43,8 @@ proc reset(game: var Game) =
   audio.stopMusic()
 
   game.state = Intro
+
+  cameraOffset = vec2i()
 
   eventLevelUpTimer = timerLevelUpFrames
   eventGameOverTimer = timerGameOverFrames
@@ -114,6 +116,9 @@ proc onShow =
   bgcnt[2].init(cbb = 2, sbb = 24)
   bgcnt[2].load(bgPlayingBG)
 
+  bgofs[2].x = - cameraOffset.x.int16
+  bgofs[2].y = - cameraOffset.y.int16
+
   display.layers = {lBg0, lBg2, lObj}
   display.obj1d = true
 
@@ -155,8 +160,8 @@ proc onUpdate =
     shooter.update(game.playerShipInstance, game.evilHexInstance,
         game.modifierSlotsInstance)
 
-    # if keyHit(kiSelect): # NOTE(Kal): Debug Only
-    if game.centerNumberInstance.value == game.centerNumberInstance.target:
+    if keyHit(kiSelect) or game.centerNumberInstance.value == game.centerNumberInstance.target: # NOTE(Kal): Debug Only
+    # if game.centerNumberInstance.value == game.centerNumberInstance.target:
       game.levelUp()
 
   if game.state == LevelUp:

@@ -1,5 +1,5 @@
 import natu/[math, graphics, video, oam, utils]
-import utils/[objs, body, audio, sprites]
+import utils/[objs, body, audio, sprites, camera]
 import components/shared
 import components/projectile/bulletenemy
 
@@ -135,7 +135,7 @@ proc draw*(enemy: var Enemy) =
       obj.init(
         mode = omAff,
         aff = affId,
-        pos = vec2i(enemy.body.pos) - vec2i(
+        pos = vec2i(enemy.body.pos) - cameraOffset - vec2i(
             enemy.sprite.graphic.width div 2,
             enemy.sprite.graphic.height div 2),
         tid = enemy.sprite.tid,

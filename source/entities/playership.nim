@@ -1,5 +1,5 @@
 import natu/[math, graphics, video, bios]
-import utils/objs
+import utils/[objs, camera]
 import types/[entities, scenes]
 
 
@@ -25,7 +25,7 @@ proc draw*(self: var PlayerShip, gameState: GameState) =
         obj.init:
           mode = omAff
           affId = affId
-          pos = vec2i(self.body.pos) - vec2i(gfxShipPlayer.width div 2,
+          pos = vec2i(self.body.pos) - cameraOffset - vec2i(gfxShipPlayer.width div 2,
               gfxShipPlayer.height div 2)
           size = gfxShipPlayer.size
           tid = self.tid
@@ -38,7 +38,7 @@ proc draw*(self: var PlayerShip, gameState: GameState) =
           obj.init:
             mode = omAff
             affId = affId
-            pos = vec2i(self.body.pos) - vec2i(gfxShipPlayer.width div 2,
+            pos = vec2i(self.body.pos) - cameraOffset - vec2i(gfxShipPlayer.width div 2,
                 gfxShipPlayer.height div 2)
             size = gfxShipPlayer.size
             tid = self.tid

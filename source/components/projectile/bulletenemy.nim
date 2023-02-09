@@ -1,5 +1,5 @@
 import natu/[math, graphics, video, oam, utils]
-import utils/[objs, body, sprites]
+import utils/[objs, body, sprites, camera]
 import components/shared
 
 type BulletEnemy* = object
@@ -45,7 +45,7 @@ proc draw*(be: var BulletEnemy) =
       obj.init(
         mode = omAff,
         aff = affId,
-        pos = vec2i(be.body.pos) - vec2i(
+        pos = vec2i(be.body.pos) - cameraOffset - vec2i(
             be.sprite.graphic.width div 2,
             be.sprite.graphic.height div 2),
         tid = be.sprite.tid,
