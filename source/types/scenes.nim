@@ -29,9 +29,3 @@ proc `=destroy`*(self: var Game) =
     self.state = None
 
 proc `=copy`*(dest: var Game; source: Game) {.error: "Not implemented".}
-
-proc playGameMusic*(self: Game) =
-  if self.level mod 2 == 0:
-    audio.playMusic(modCommutative)
-  else:
-    audio.playMusic(modAssociative)

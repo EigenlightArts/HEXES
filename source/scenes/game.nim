@@ -72,7 +72,7 @@ proc reset(game: var Game) =
   game.targetInstance = initTarget(game.centerNumberInstance.target)
   game.modifierSlotsInstance = initModifierSlots()
 
-  game.playGameMusic()
+  audio.playMusic(getLevelMusic(game.level))
 
 proc initGame(): Game = result.level = 1; result.reset()
 
@@ -115,9 +115,6 @@ proc onShow =
   # background asset
   bgcnt[2].init(cbb = 2, sbb = 24)
   bgcnt[2].load(bgPlayingBG)
-
-  bgofs[2].x = - cameraOffset.x.int16
-  bgofs[2].y = - cameraOffset.y.int16
 
   display.layers = {lBg0, lBg2, lObj}
   display.obj1d = true
@@ -188,6 +185,9 @@ proc onHide =
   display.obj1d = false
 
 proc onDraw =
+  bgofs[2].x = - cameraOffset.x.int16
+  bgofs[2].y = - cameraOffset.y.int16
+
   game.statusInstance.draw(game.timerInstance, game.state,
       game.centerNumberInstance.target, eventLoopTimer)
   game.targetInstance.draw(game.state)

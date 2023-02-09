@@ -32,7 +32,7 @@ proc update*(playerShip: var PlayerShip, evilHex: var EvilHex,
         enemy.update()
 
         if collide(playerShip.body, enemy.body) and not invisibilityOn:
-          cameraShake(fp(3),fp(0.25))
+          cameraShake(fp(4),fp(0.5))
           audio.playSound(sfxPlayerHit)
           enemy.status = Finished
           timeScoreValue = -(enemy.timeScore)

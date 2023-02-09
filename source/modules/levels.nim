@@ -1,4 +1,4 @@
-import natu/utils
+import natu/[utils, maxmod]
 import components/projectile/[enemy, modifier]
 
 const maxActiveBEs* = 6
@@ -11,6 +11,7 @@ type
     isBoss: bool
     bossEffect: seq[BossEffect]
 
+    levelMusic: Module
     enemyRate: Slice[int]
     modifierRate: Slice[int]
 
@@ -27,6 +28,7 @@ const levels: array[1..levelMax, Level] = [
     isBoss: false,
     enemyRate: 30..90,
     modifierRate: 15..40,
+    levelMusic: modCommutative,
     allowedTargetRange: 16..64,
     allowedEnemies: {ekTriangle, ekSquare},
     allowedOperators: {okAdd, okSub},
@@ -81,6 +83,10 @@ proc bossCheck*(currentLevel: int): bool =
 
 proc getEffects*(currentLevel: int): seq[BossEffect] =
   let slice = levels[currentLevel].bossEffect
+  result = slice
+
+proc getLevelMusic*(currentLevel: int): Module =
+  let slice = levels[currentLevel].levelMusic
   result = slice
 
 proc selectEnemy*(currentLevel: int): EnemyKind =
