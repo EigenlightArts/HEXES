@@ -2,10 +2,10 @@ import natu/[graphics, input]
 import types/[scenes, entities, hud]
 import utils/audio
 import components/projectile/bulletplayer
-import modules/shooter
+import modules/[shooter, levels]
 
 # TODO(Kal): Need to experiment with this value
-const playerSpeed = 400 
+const playerSpeed = 400
 
 proc resetModifierValue(modifierSlots: var ModifierSlots) =
   modifierSlots.modifierNumber.valueNumber = 0
@@ -59,7 +59,7 @@ proc controlsGame*(playerShip: var PlayerShip; centerNumber: var CenterNumber;
     if keyHit(kiStart):
       audio.stopMusic()
       if game.state == Paused:
-        game.playGameMusic()
+        audio.playMusic(getLevelMusic(game.level))
         game.state = Play
       elif game.state == Play:
         audio.playMusic(modPause)

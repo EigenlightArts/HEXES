@@ -1,4 +1,5 @@
 import natu/[utils, oam, video, math, graphics, tte, surfaces]
+import fonts/squarewave
 import utils/objs
 
 export tte
@@ -13,7 +14,7 @@ var tc: TextContextObj
 
 # init
 tte.setContext(addr tc)
-tte.initBase(fntVerdana9b4, chr4cDrawgB4cts, chr4cErase)
+tte.initBase(fntSquarewave, chr4cDrawgB4cts, chr4cErase)
 
 type Label* = object
   obj*: ObjAttr               # base sprite
@@ -62,7 +63,7 @@ proc put*(self: var Label; text: cstring) =
     self.width = 0
 
 proc init*(self: var Label, pos: Vec2i, size: ObjSize, count: range[1..32],
-    text: cstring = nil, font = fntVerdana9b4, ink = 1, shadow = 2) =
+    text: cstring = nil, font = fntSquarewave, ink = 1, shadow = 2) =
   let (w, h) = getSize(size)
   var tid = self.obj.tid
 
