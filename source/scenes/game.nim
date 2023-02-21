@@ -1,5 +1,5 @@
 import natu/[video, backgrounds, irq, math, utils, input]
-import utils/[scene, log, audio, camera]
+import utils/[scene, audio, camera]
 import entities/[playership, evilhex]
 import entities/hud/[ecn, status, target, modifierslots]
 import modules/[shooter, player, score, levels]
@@ -28,8 +28,8 @@ var eventAllowedOperators: OperatorKind
 const timerInitialSeconds = 300
 const timerIntroSeconds = 5
 const timerLimitSeconds = 600
-const timerLevelUpFrames = 120
-const timerGameOverFrames = 170
+const timerLevelUpFrames = 280
+const timerGameOverFrames = 380
 
 # TODO(Kal): Implement Controlled RNG for game events
 # See:
@@ -55,18 +55,18 @@ proc reset(game: var Game) =
   while ecnValue == ecnTarget:
     ecnTarget = rand(selectTargetRange(game.level))
 
+  game.evilHexInstance = initEvilHex()
+  game.playerShipInstance = initPlayerShip(vec2f(75, 0))
+  game.playerShipInstance.angle = 16500
+
   game.isBoss = bossCheck(game.level)
+  game.centerNumberInstance = initCenterNumber(ecnValue, ecnTarget, game.isBoss)
   if game.isBoss:
     let levelEffects = getEffects(game.level)
     assert(levelEffects.len <= maxActiveBEs, "Too many boss effects in level config.")
     for (i, effect) in levelEffects.pairs:
       game.centerNumberInstance.activeBEs[i] = effect
 
-  game.evilHexInstance = initEvilHex(game.isBoss)
-  game.playerShipInstance = initPlayerShip(vec2f(75, 0))
-  game.playerShipInstance.angle = 16500
-
-  game.centerNumberInstance = initCenterNumber(ecnValue, ecnTarget, game.isBoss)
   game.timerInstance = initTimer(timerInitialSeconds, timerIntroSeconds, timerLimitSeconds)
   game.statusInstance = initStatus()
   game.targetInstance = initTarget(game.centerNumberInstance.target)
@@ -79,7 +79,7 @@ proc initGame(): Game = result.level = 1; result.reset()
 proc levelUp(self: var Game) =
   audio.stopMusic()
   audio.playMusic(modCompletionLoop)
-  display.layers = display.layers - {lBg2}
+  display.layers = {lBg2, lObj}
 
   if self.level < levelMax:
     inc self.level
@@ -92,8 +92,6 @@ proc startEventLoop() =
 
   shootEnemy = rand(0..1)
   chooseModifierKind = rand(0..2)
-
-  log "game.level: %d", game.level
 
   eventAllowedEnemies = selectEnemy(game.level)
   eventAllowedOperators = selectOperator(game.level)
@@ -152,13 +150,12 @@ proc onUpdate =
       game.evilHexInstance.fireEnemyHex(eventAllowedEnemies,
           game.playerShipInstance.body.pos)
 
-    game.evilHexInstance.update(game.timerInstance)
     game.timerInstance.update(game.state)
     shooter.update(game.playerShipInstance, game.evilHexInstance,
         game.modifierSlotsInstance)
 
-    if keyHit(kiSelect) or game.centerNumberInstance.value == game.centerNumberInstance.target: # NOTE(Kal): Debug Only
-    # if game.centerNumberInstance.value == game.centerNumberInstance.target:
+    # if keyHit(kiSelect) or game.centerNumberInstance.value == game.centerNumberInstance.target: # NOTE(Kal): Debug Only
+    if game.centerNumberInstance.value == game.centerNumberInstance.target:
       game.levelUp()
 
   if game.state == LevelUp:
@@ -168,12 +165,13 @@ proc onUpdate =
     if eventLevelUpTimer <= 0:
       addScoreFromSeconds(game.timerInstance.getValueSeconds())
       shooter.destroy()
-      display.layers = display.layers + {lBg2}
+      display.layers = {lBg0, lBg2, lObj}
 
       game.reset()
 
   if game.state == GameOver:
     dec eventGameOverTimer
+    # display.layers = display.layers - {lBg0}
     if eventGameOverTimer <= 0:
       eventGameOverTimer = timerGameOverFrames
       goToGameEndScene()

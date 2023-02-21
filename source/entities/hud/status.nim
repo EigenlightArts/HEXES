@@ -30,7 +30,6 @@ proc draw*(self: var Status, timer: var Timer, gameState: GameState,
       posprintf((cast[cstring](addr self.labelBuffer)), "PAUSED")
       self.label.put((cast[cstring](addr self.labelBuffer)))
     elif gameState == LevelUp:
-      # gameState = Intro
       timer.introSeconds = timer.introSecondsInitial
     elif gameState == Intro:
       posprintf((cast[cstring](addr self.labelBuffer)), "Get to $%X!", target)

@@ -3,12 +3,10 @@ import utils/objs
 import components/shared
 import components/projectile/[enemy, modifier]
 import modules/shooter
-import types/[entities, scenes, hud]
+import types/[entities, scenes]
 
-proc initEvilHex*(isBoss: bool): EvilHex =
+proc initEvilHex*(): EvilHex =
   result.initialised = true
-  result.isBoss = isBoss
-  result.angle = 0
 
   result.body = initBody(vec2f(ScreenWidth div 2 - 10, ScreenHeight div 2 - 10), 20, 20)
   result.tid = allocObjTiles(gfxEvilHex)
@@ -16,37 +14,17 @@ proc initEvilHex*(isBoss: bool): EvilHex =
 
   copyFrame(addr objTileMem[result.tid], gfxEvilHex, 0)
 
-proc update*(self: var EvilHex, timer: Timer) =
-  if self.isBoss:
-    if timer.getValueFrames() mod 120 == 0:  
-      self.angle += 1
-
-    self.angle = self.angle and 360
-
 proc draw*(self: var EvilHex, gameState: GameState) =
   if gameState != LevelUp:
-    if self.isBoss:
-      withObjAndAff:
-        aff.setToRotationInv(self.angle.uint16)
-        obj.init(
-          mode = omAff,
-          aff = affId,
-          pos = vec2i(self.body.pos) - vec2i(
-              gfxEvilHex.width div 2 - 10, gfxEvilHex.height div 2 - 10),
-          tid = self.tid,
-          pal = self.paletteId,
-          size = gfxEvilHex.size
-        )
-    else:
-      withObj:
-        obj.init(
-          mode = omReg,
-          pos = vec2i(self.body.pos) - vec2i(
-              gfxEvilHex.width div 2 - 10, gfxEvilHex.height div 2 - 10),
-          tid = self.tid,
-          pal = self.paletteId,
-          size = gfxEvilHex.size
-        )
+    withObj:
+      obj.init(
+        mode = omReg,
+        pos = vec2i(self.body.pos) - vec2i(
+            gfxEvilHex.width div 2 - 10, gfxEvilHex.height div 2 - 10),
+        tid = self.tid,
+        pal = self.paletteId,
+        size = gfxEvilHex.size
+      )
 
 proc fireModifierHex*(self: var EvilHex; modifierIndex: int;
     playerShipPos: Vec2f) =

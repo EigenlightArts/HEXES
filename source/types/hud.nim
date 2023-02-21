@@ -62,6 +62,7 @@ type CenterNumber* = object
 
   value*: int
   target*: int
+  bossWarningFrames*: int
 
 proc `=destroy`*(self: var CenterNumber) =
   if self.initialised:
@@ -96,6 +97,7 @@ proc addValueSeconds*(self: var Timer, valueSeconds: int) = self.valueFrames += 
 
 type
   Status* = object
+    isBoss*: bool
     initialised*: bool
     label*: Label
     labelBuffer*: array[9, char]

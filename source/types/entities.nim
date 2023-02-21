@@ -32,11 +32,9 @@ proc `=copy`*(dest: var PlayerShip; source: PlayerShip) {.error: "Not implemente
 
 type EvilHex* = object
   initialised*: bool
-  isBoss*: bool
 
   tid*, paletteId*: int
   body*: Body
-  angle*: Angle
 
   orbitRadius*: Vec2i
   centerPoint*: Vec2i

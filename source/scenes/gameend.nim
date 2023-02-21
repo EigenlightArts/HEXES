@@ -20,11 +20,8 @@ const timerEndGameFrames = 200
 
 
 proc onShow =
-  # background color, approximating eigengrau
-  bgColorBuf[2] = rgb8(22, 22, 29)
-
   # Show the background:
-  display.layers = {lBg0, lObj}
+  display.layers = {lBg2, lObj}
   display.obj1d = true
 
   eventEndGameTimer = timerEndGameFrames
@@ -43,7 +40,7 @@ proc onShow =
   irq.enable(iiVBlank)
 
 proc onHide =
-  display.layers = display.layers - {lBg0, lObj}
+  display.layers = display.layers - {lBg1, lObj}
   display.obj1d = false
 
   releaseObjPal(gfxShipPlayer)

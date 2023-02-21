@@ -1,7 +1,5 @@
 import utils/savedata
 
-# TODO(Kal): Implement better save system
-
 var totalScore*: uint
 var highScore*: uint = getHighScore()
 var newHighScore*: bool
