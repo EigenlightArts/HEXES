@@ -62,7 +62,7 @@ proc onDraw =
   thanksLabel.pos = vec2i(ScreenWidth div 2 - sizeT.x div 2,
     (ScreenHeight div 2 - 32) - sizeT.y div 2)
 
-  posprintf(cast[cstring](addr labelBufferT), "THANKS FOR PLAYING THIS DEMO")
+  posprintf(cast[cstring](addr labelBufferT), "THANKS FOR PLAYING")
   thanksLabel.put(cast[cstring](addr labelBufferT))
 
   let sizeS = tte.getTextSize(cast[cstring](addr labelBufferS))
