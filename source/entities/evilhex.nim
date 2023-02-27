@@ -83,7 +83,7 @@ proc fireEnemyHex*(self: var EvilHex; enemySelect: EnemyKind;
     gfxEnemy = gfxEnemyPentagon
     enemyTimeScore = 30
     enemySpeed = skMedium
-    enemyHealth = 1
+    enemyHealth = 2
 
   let enemy = initEnemy(gfxEnemy, enemySelect, enemySpeed, enemyHealth,
       enemyTimeScore, pos)
