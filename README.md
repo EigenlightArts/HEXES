@@ -12,7 +12,7 @@ Music and SFX by: [Kathound (Kathryn Hathaway)](https://kathrynhathaway.bandcamp
 
 ## Special Thanks
 
-- [exelotl](https://natu.exelo.tl), along with PyroPyro for the Natu library and the source code of the games [XNIQ](https://git.sr.ht/~exelotl/xniq) and [ARHJ](https://git.sr.ht/~pyropyro/A-Rushed-Hack-Job) which was partially used as reference or documentation
+- [exelotl](https://natu.exelo.tl), along with PyroPyro for the Natu library and the source code of the games [XNIQ](https://git.sr.ht/~exelotl/xniq) and [ARHJ](https://git.sr.ht/~pyropyro/A-Rushed-Hack-Job) which were partially used as reference or documentation
 - [Jeti](https://fontenddev.com) for the *Squarewave* font, We used the regular version of the font for the UI and a modified bold version for the Game Mechanics
 - [Jonathan So](https://jonathan-so.itch.io/creatorpack) for *The Game Creator's Pack*, used temporarily during development
 - [Mark Brown](https://www.youtube.com/c/MarkBrownGMT) for the *Developing* series, which pushed me to work on this project
