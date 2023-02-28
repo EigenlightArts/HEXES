@@ -1,6 +1,6 @@
 <p align="center"><img width="550" src=".github/HEXES - Logo.png" alt="HEXES Segments Logo"></p>
 
-HEXES, The fast-paced puzzle shoot'em up!
+HEXES, A puzzle shoot'em up!
 
 Check out [our itch.io page](https://kaleidosium.itch.io/hexes) for more information about the game!
 
