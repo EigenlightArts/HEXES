@@ -6,9 +6,9 @@ Check out [our itch.io page](https://kaleidosium.itch.io/hexes) for more informa
 
 # Credits
 
-Programming and Art by: [Kaleidosium (Dania Rifki)](https://github.com/Kaleidosium)
+Programming and Art by: [Dania Rifki (Kaleidosium)](https://github.com/Kaleidosium)
 
-Music and SFX by: [Kathound (Kathryn Hathaway)](https://kathrynhathaway.bandcamp.com)
+Music and SFX by: [Kathryn Hathaway (Kathound)](https://kathrynhathaway.bandcamp.com)
 
 ## Special Thanks
 
