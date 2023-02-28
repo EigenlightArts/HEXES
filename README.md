@@ -2,7 +2,7 @@
 
 HEXES, A puzzle shoot'em up!
 
-Check out [our itch.io page](https://kaleidosium.itch.io/hexes) for more information about the game!
+Check out [our itch.io page](https://kaleidosium.itch.io/hexes) for the download link and more information about the game!
 
 # Credits
 
