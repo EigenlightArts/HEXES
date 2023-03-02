@@ -8,7 +8,7 @@ Check out [our itch.io page](https://kaleidosium.itch.io/hexes) for the download
 
 Programming and Art by: [Dania Rifki (Kaleidosium)](https://github.com/Kaleidosium)
 
-Music and SFX by: [Kathryn Hathaway (Kathound)](https://kathrynhathaway.bandcamp.com)
+Music and SFX by: [Kathryn Hathaway (Kathound)](https://kathrynhathaway.bandcamp.com), You can also [purchase the OST on her bandcamp](https://kathrynhathaway.bandcamp.com/album/hexes-official-soundtrack)!
 
 ## Special Thanks
 
