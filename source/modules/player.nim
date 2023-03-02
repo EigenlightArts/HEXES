@@ -4,7 +4,7 @@ import utils/audio
 import components/projectile/bulletplayer
 import modules/[shooter, levels]
 
-const playerSpeed = 420
+const playerSpeed = 450
 
 proc resetModifierValue(modifierSlots: var ModifierSlots) =
   modifierSlots.modifierNumber.valueNumber = 0

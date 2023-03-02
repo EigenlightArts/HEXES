@@ -51,7 +51,7 @@ proc initProjectileModifier*(gfx: Graphic; obj: ObjAttr;
   )
   result.modifierObj.tileId = obj.tileId * result.graphic.frameTiles
 
-proc update*(modifier: var Modifier; speed: int = 1) =
+proc update*(modifier: var Modifier; speed: Fixed = fp(0.8)) =
   if modifier.status == Active:
     # make sure the modifiers go where they are supposed to go
     modifier.body.pos.x = modifier.body.pos.x - fp(luCos(

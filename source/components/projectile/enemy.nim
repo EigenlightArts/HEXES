@@ -74,11 +74,11 @@ proc initEnemy*(gfx: Graphic; enemySelect: EnemyKind; enemySpeed: SpeedKind;
     of skNone:
       fp(0)
     of skSlow:
-      fp(0.5)
+      fp(0.3)
     of skMedium:
-      fp(1)
+      fp(0.8)
     of skFast:
-      fp(2)
+      fp(1.8)
 
   copyFrame(addr objTileMem[result.sprite.tid], result.sprite.graphic, 0)
 
